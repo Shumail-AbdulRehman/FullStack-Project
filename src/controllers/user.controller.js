@@ -4,7 +4,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
-
+import { deleteImageByUrl } from "../utils/deleteImageFromCloudinary.js";
 
 const registerUser=asyncHandler(async(req,res)=>
     
@@ -284,6 +284,8 @@ const updateAvatar=asyncHandler(async(req,res)=>
         throw new ApiError(500,"something went wrong while uploading avatar");
     }
 
+    const oldUserAvatar=req.user?.avatar
+
     const user=await User.findByIdAndUpdate(req.user?._id,{
         $set:{
             avatar:avatar.url
@@ -295,6 +297,14 @@ const updateAvatar=asyncHandler(async(req,res)=>
         throw new ApiError(401,"user not found")
     }
 
+    try {
+        const oldUserAvatarDeleted=await deleteImageByUrl(oldUserAvatar)
+    
+        
+        console.log(oldUserAvatarDeleted)
+    } catch (error) {
+        console.log("avatar image not deleted and error is:",error)
+    }
 
     res.status(200).json(
         new ApiResponse(200,user,"avatar updated successfully")
@@ -318,6 +328,8 @@ const updateCoverImage=asyncHandler(async(req,res)=>
         throw new ApiError(500,"something went wrong while uploading coverImage");
     }
 
+    const oldUserCoverImage=req.user?.coverImage
+    
     const user=await User.findByIdAndUpdate(req.user?._id,{
         $set:{coverImage:coverImage.url}
     },{new:true}).select("-password -refreshToken")
@@ -327,9 +339,121 @@ const updateCoverImage=asyncHandler(async(req,res)=>
         throw new ApiError(404,"user not found")
     }
 
+    if(oldUserCoverImage)
+    {
+        try {
+            const oldUserCoverImageDeleted=await deleteImageByUrl(oldUserCoverImage)
+    
+        
+            console.log(oldUserCoverImageDeleted)
+        } catch (error) {
+            console.log("old cover image not deleted error:",error)
+        }
+    }
+    
+
     res.status(200).json(
         new ApiResponse(200,user,"cover image updated successfully")
     )
 })
 
-export {registerUser,userLogin,userLogOut,generateNewAccessToken,getCurrentUser,updateUserEmailAndFullName,updateAvatar,updateCoverImage}
+const getUserChannelProfile=asyncHandler(async(req,res)=>
+{
+    const {username}=req.params
+    if(!username?.trim())
+    {
+        throw new ApiError(400,"username is missing")
+    }
+    const loggedInUserId = new mongoose.Types.ObjectId(req.user?._id);
+    const channel=await User.aggregate([
+        {
+            $match:{
+                username: username?.toLowerCase()
+            }
+        },
+        {
+            $lookup:{
+                from:"subscriptions",
+                localField:"_id",
+                foreignField:"channel",
+                as:"subscribers"
+            }
+        },
+        {
+            $lookup:{
+                from:"subscriptions",
+                localField:"_id",
+                foreignField:"subscriber",
+                as:"subscribedTo"
+            }
+        },
+        {
+            $addFields:
+            {
+                subscribersCount:{
+                    $size: "$subscribers"
+                },
+                channelSubscribedTo:{
+                    $size:"$subscribedTo"
+                },
+                isSubscribed:{
+                    $cond:{
+                        if:{
+                            $in:[loggedInUserId,"$subscribers.subscriber"]
+                        },
+                        then:true,
+                        else:false
+                    }
+                }
+            }
+        },
+        {
+            $project:{
+                fullName:1,
+                username:1,
+                subscribersCount:1,
+                channelSubscribedTo:1,
+                isSubscribed:1,
+                _id:1,
+                avatar:1,
+                coverImage:1,
+                email:1,
+                createdAt:1
+
+            }
+        }
+    ])
+
+    if(!channel?.length)
+    {
+        throw new ApiError(404,"channel doesnt exist")
+    }
+
+
+    res.status(200).json(
+        new ApiResponse(200,channel[0],"user channel data sent successfully")
+    )
+
+    
+})
+
+
+
+
+
+
+
+
+
+
+export {
+    registerUser,
+    userLogin,
+    userLogOut,
+    generateNewAccessToken,
+    getCurrentUser,
+    updateUserEmailAndFullName,
+    updateAvatar,
+    updateCoverImage,
+    getUserChannelProfile,
+}
