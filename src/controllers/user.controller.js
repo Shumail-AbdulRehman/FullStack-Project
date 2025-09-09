@@ -3,6 +3,8 @@ import ApiError from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken"
+
 
 const registerUser=asyncHandler(async(req,res)=>
     
@@ -152,4 +154,59 @@ const userLogOut=asyncHandler(async(req,res)=>
     )
 })
 
-export {registerUser,userLogin,userLogOut}
+const generateNewAccessToken=asyncHandler(async (req,res)=>
+{
+    const incomingRefreshToken= req.cookies?.refreshToken;
+
+    if(!incomingRefreshToken)
+    {
+        throw new ApiError(401,"refresh Token is required")
+
+    }
+    let decodedIncomingRefreshToken;
+    try {
+         decodedIncomingRefreshToken= jwt.verify(incomingRefreshToken,process.env.REFRESH_TOKEN_SECRET)
+    
+    } catch (error) {
+        throw new ApiError(401,"expired or invalid token")
+    }
+    const user=await User.findById(decodedIncomingRefreshToken._id)
+
+    if(!user)
+    {
+        throw new ApiError(401,"invalid refresh Token")
+    }
+
+    if(user.refreshToken!==incomingRefreshToken)
+    {
+        throw new ApiError(401,"user refreshToken doesnt matches with incoming refreshToken")
+    }
+
+    const newAccessToken= await user.generateAccessToken();
+    const newRefreshToken=await user.generateRefreshToken();
+
+    user.refreshToken=newRefreshToken
+
+    await user.save()
+
+    const updatedUserData=await User.findById(user._id).select("-password -refreshToken")
+
+    const options={
+        httpOnly:true,
+        secure:true
+    }
+
+    res.status(200)
+    .cookie("accessToken",newAccessToken,options)
+    .cookie("refreshToken",newRefreshToken,options)
+    .json(
+        new ApiResponse(200,updatedUserData,"new accessToken and refreshToken generated successfully")
+    )
+
+
+
+
+})
+
+
+export {registerUser,userLogin,userLogOut,generateNewAccessToken}
