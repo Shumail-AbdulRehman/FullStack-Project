@@ -200,7 +200,7 @@ const generateNewAccessToken=asyncHandler(async (req,res)=>
     .cookie("accessToken",newAccessToken,options)
     .cookie("refreshToken",newRefreshToken,options)
     .json(
-        new ApiResponse(200,updatedUserData,"new accessToken and refreshToken generated successfully")
+        new ApiResponse(200,{updatedUserData,refreshToken:newRefreshToken,accessToken:newAccessToken},"new accessToken and refreshToken generated successfully")
     )
 
 
