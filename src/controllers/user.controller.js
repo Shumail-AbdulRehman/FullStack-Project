@@ -66,8 +66,6 @@ const registerUser=asyncHandler(async(req,res)=>
    )
 })
 
-
-
 const userLogin=asyncHandler(async(req,res)=>
 {
     const {email,password}=req.body;
@@ -126,7 +124,6 @@ const userLogin=asyncHandler(async(req,res)=>
 
 
 })
-
 
 const userLogOut=asyncHandler(async(req,res)=>
 {
@@ -205,7 +202,6 @@ const generateNewAccessToken=asyncHandler(async (req,res)=>
     )
 })
 
-
 const getCurrentUser=asyncHandler(async(req,res)=>
 {
     const user=req?.user;
@@ -219,7 +215,6 @@ const getCurrentUser=asyncHandler(async(req,res)=>
         new ApiResponse(200,user,"user found")
     )
 })
-
 
 const updateUserEmailAndFullName=asyncHandler(async(req,res)=>
 {
@@ -438,9 +433,6 @@ const getUserChannelProfile=asyncHandler(async(req,res)=>
     
 })
 
-
-
-
 const getUserWatchHistory=asyncHandler(async(req,res)=>
 {
     const userWatchHistory=await User.aggregate([
@@ -502,6 +494,7 @@ const getUserWatchHistory=asyncHandler(async(req,res)=>
         new ApiResponse(200,userWatchHistory,"user watch history sent successfully")
     )
 })
+
 
 
 export {
