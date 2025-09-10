@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { deleteImageByUrl } from "../utils/deleteImageFromCloudinary.js";
+import mongoose from "mongoose";
 
 const registerUser=asyncHandler(async(req,res)=>
     
@@ -440,7 +441,67 @@ const getUserChannelProfile=asyncHandler(async(req,res)=>
 
 
 
+const getUserWatchHistory=asyncHandler(async(req,res)=>
+{
+    const userWatchHistory=await User.aggregate([
+        {
+            $match:{
+                _id:new mongoose.Types.ObjectId(req.user._id)
+            },
+            
+        },
+        {
+            $lookup:{
+                from:"videos",
+                localField:"watchHistory",
+                foreignField:"_id",
+                as:"watchHistory",
+                pipeline:[
+                    {
+                        $lookup:
+                        {
+                            from:"users",
+                            localField:"owner",
+                            foreignField:"_id",
+                            as:"owner",
+                            pipeline:[
+                                {
+                                    $project:{
+                                        fullName:1,
+                                        username:1,
+                                        avatar:1,
+                                        coverImage:1
 
+                                    }
+                                }
+                            ]
+                        },
+                        
+                       
+                    },
+                    {
+                            $addFields:{
+                                owner:{
+                                    $first:"$owner"
+                                }
+                            }
+                    }
+                ]
+            }
+        },
+        {
+            $project:{
+                watchHistory:1
+            }
+        }
+    ])
+
+   
+    res.status(200)
+    .json(
+        new ApiResponse(200,userWatchHistory,"user watch history sent successfully")
+    )
+})
 
 
 
@@ -456,4 +517,5 @@ export {
     updateAvatar,
     updateCoverImage,
     getUserChannelProfile,
+    getUserWatchHistory,
 }
