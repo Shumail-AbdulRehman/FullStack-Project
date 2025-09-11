@@ -11,6 +11,7 @@ const subscriptionSchema = new Schema({
     }
 }, {timestamps: true})
 
-
+// chai aur code, ducky,
+// shumail,arham,asnan 
 
 export const Subscription = mongoose.model("Subscription", subscriptionSchema)
