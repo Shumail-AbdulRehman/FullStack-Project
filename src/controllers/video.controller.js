@@ -1,14 +1,37 @@
 import mongoose, {isValidObjectId} from "mongoose"
 import {Video} from "../models/video.model.js"
-import {User} from "../models/user.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
-
+import { deleteImageByUrl } from "../utils/deleteImageFromCloudinary.js"
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
+    const { page = 1, limit = 10 } = req.query
+
+    const options={
+        page:parseInt(page),
+        limit:parseInt(limit)
+    }
+
+    const pipeline=[
+        {
+            $sort:{
+                createdAt:-1
+            }
+        }
+    ]
+    const aggregate= Video.aggregate(pipeline)
+
+    const result=await Video.aggregatePaginate(aggregate,options)
+
+    res.status(200).json(
+        new ApiResponse(200,result,"videos sent successfullt")
+    )
+
+
+
+
 
 })
 
@@ -58,34 +81,42 @@ const getVideoById = asyncHandler(async (req, res) => {
         new ApiResponse(200,video,"video fetched successfully")
     )
 })
-
 const updateVideo = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
-    const {title,description}=req.body
+    const { videoId } = req.params;
+    const { title, description } = req.body;
 
-    if(!req.file?.path) throw new ApiError(400,"thumbnail is required")
-    const uploadThumbnail=await uploadOnCloudinary(req.file?.path)
-    const userVideo=await Video.findById(videoId)
-    if(req.user._id.toString() !==  userVideo.owner.toString()) throw new ApiError(401,"unauthorize access")
-    if(!uploadThumbnail?.secure_url) throw new ApiError(500,"soemthing went wrong while updating thumnbnail")
+    const userVideo = await Video.findById(videoId);
+    if (!userVideo) throw new ApiError(404, "video not found");
 
-    const updatedVideo=await Video.findByIdAndUpdate(videoId,
-        {
-            title:title,
-            description:description,
-            thumbnail:uploadThumbnail.secure_url
-        },
-        {
-            new:true
+    if (req.user._id.toString() !== userVideo.owner.toString()) {
+        throw new ApiError(401, "unauthorized access");
+    }
+
+    const updateData = {};
+
+    if (title) updateData.title = title;
+    if (description) updateData.description = description;
+
+    if (req.file?.path) {
+        const uploadThumbnail = await uploadOnCloudinary(req.file.path);
+        if (!uploadThumbnail?.secure_url) {
+            throw new ApiError(500, "error while updating thumbnail");
         }
-    )
 
-    if(!updatedVideo) throw new ApiError(500,"soemthing went wrong while updating the video")
-    
+        updateData.thumbnail = uploadThumbnail.secure_url;
+
+        await deleteImageByUrl(userVideo.thumbnail, "image");
+    }
+
+    const updatedVideo = await Video.findByIdAndUpdate(videoId, updateData, { new: true });
+
+    if (!updatedVideo) throw new ApiError(500, "something went wrong while updating the video");
+
     res.status(200).json(
-        new ApiResponse(200,updatedVideo,"video updated successfully")
-    )
-})
+        new ApiResponse(200, updatedVideo, "video updated successfully")
+    );
+});
+
 
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
@@ -93,13 +124,21 @@ const deleteVideo = asyncHandler(async (req, res) => {
     if(!videoId) throw new ApiError(400,"video id is required")
     
     const video=await Video.findById(videoId)
+    
     if(!video) throw new ApiError(404,"video not found")
+    const oldVideoUrl=video?.videoFile
+    const oldThumbnailUrl=video?.thumbnail
     if(req.user._id.toString() !== video.owner.toString()) throw new ApiError(401,"unauthorize access")
 
     const deleteVideo=await Video.findByIdAndDelete(videoId)
 
     if(!deleteVideo) throw new ApiError(500,"soemthing wnet wrong while deleting video")
-    
+    const videoDeletedFromCloudinary=await deleteImageByUrl(oldVideoUrl,"video")
+
+    if(videoDeletedFromCloudinary?.result !== "ok") console.log(videoDeletedFromCloudinary,"something went wrong while deleting videoFile")
+    const thumbnailDeletedFromCloudinary=await deleteImageByUrl(oldThumbnailUrl,"image")
+
+    if(thumbnailDeletedFromCloudinary?.result !=="ok") console.log(thumbnailDeletedFromCloudinary,"something wnet wring while deleting thumbnail in deleteVideo controller")
     res.status(200).json(
         new ApiResponse(200,true,"video deleted successfully")
     )
