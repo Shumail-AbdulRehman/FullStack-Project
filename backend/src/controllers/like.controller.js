@@ -6,6 +6,8 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
     const {videoId} = req.params
+
+    console.log("video id is =>",videoId);
     //TODO: toggle like on video
     const userId=req.user?._id;
     if(!videoId)
@@ -30,6 +32,8 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
             likedBy:userId,
             video:videoId
         })
+
+        console.log("video Like ran when creating so liek video is :=>",likeVideo)
 
         if(!likeVideo)
         {
@@ -136,7 +140,6 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
 const toggleTweetLike = asyncHandler(async (req, res) => {
     const { tweetId } = req.params;
-    //TODO: toggle like on tweet
     const userId = req.user?._id;
 
     if (!tweetId) {
@@ -241,9 +244,39 @@ const getLikedVideos = asyncHandler(async (req, res) => {
 
 })
 
+const getLikesCount= asyncHandler(async(req,res)=>
+{
+    const {videoId}=req.params;
+
+    if(!videoId)
+    {
+        throw new ApiError(401,"videoId is required");
+    }
+
+    const likesCount=await Like.aggregate(
+        [
+            {
+                $match:{
+                    video:new mongoose.Types.ObjectId(videoId)
+                }
+            },
+            {
+                $count:"likesCount"
+            },
+        ]
+    )
+
+
+    const totalLikes=likesCount[0]?.likesCount || 0;
+    res.status(200).json(
+        new ApiResponse(200,totalLikes,"video likes ent successfully")
+    )
+})
+
 export {
     toggleCommentLike,
     toggleTweetLike,
     toggleVideoLike,
-    getLikedVideos
+    getLikedVideos,
+    getLikesCount
 }

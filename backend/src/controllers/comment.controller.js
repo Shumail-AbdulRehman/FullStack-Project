@@ -7,7 +7,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 const getVideoComments = asyncHandler(async (req, res) => {
     const {videoId} = req.params
     const {page = 1, limit = 10} = req.query
-    
+    console.log("video id is :=>",videoId)
     if(!videoId)
     {
         throw new ApiError(400,"video id is required")
@@ -20,9 +20,39 @@ const getVideoComments = asyncHandler(async (req, res) => {
             }
         },
         {
+            $lookup:{
+                from:"users",
+                localField: "owner",
+                foreignField: "_id",
+                as:"owner",
+                pipeline:
+                [
+                    {
+                        $project:{
+                            _id: true,
+                            username: true,
+                            avatar: true
+                        }
+                    }
+                ]
+
+            }
+        },
+        {
+            $project:{
+                content:true,
+                createdAt:true,
+                owner:true,
+                video:true
+            }
+        }, 
+        {
             $sort:{
                 createdAt:-1
             }
+        },
+        {
+            $unwind:"$owner"
         }
     ])
 
@@ -31,8 +61,10 @@ const getVideoComments = asyncHandler(async (req, res) => {
         limit:parseInt(limit)
     }
 
-    const comments=await Comment.aggregatePaginate(commentsAggregate,options)
+    // console.log("comments AGgregate is:=>",commentsAggregate);
 
+    const comments=await Comment.aggregatePaginate(commentsAggregate,options)
+    console.log("comments are =>",comments);
     res.status(200)
     .json(
         new ApiResponse(200,comments,"comments sent successfully")

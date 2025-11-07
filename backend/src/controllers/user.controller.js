@@ -1,8 +1,8 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import ApiError from "../utils/ApiError.js";
+import {ApiError} from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import ApiResponse from "../utils/ApiResponse.js";
+import {ApiResponse} from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { deleteImageByUrl } from "../utils/deleteImageFromCloudinary.js";
 import mongoose from "mongoose";
@@ -13,7 +13,7 @@ const registerUser=asyncHandler(async(req,res)=>
    const {fullName,username,email,password}=req.body
 
    if(
-    [fullName,username,email,password].some((filed)=> filed?.trim()==="")
+    [fullName,username,email,password].some((filed)=> !filed || filed?.trim()==="")
    )
    {
     throw new ApiError(400,"all fields are required")
@@ -70,7 +70,7 @@ const userLogin=asyncHandler(async(req,res)=>
 {
     const {email,password}=req.body;
 
-    if(!(email && password))
+    if(!(email.trim() && password.trim()))
     {
         throw new ApiError(400,"email and password is required");
 

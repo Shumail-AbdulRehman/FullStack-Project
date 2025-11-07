@@ -16,6 +16,36 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
     const pipeline=[
         {
+            $lookup:{
+                from:"users",
+                localField:"owner",
+                foreignField:"_id",
+                as:"owner"
+            }   
+        },
+        {
+            $unwind:"$owner"
+        },
+        {
+            $match:{
+                isPublished:true
+            }
+        },
+        {
+            $project:{
+                title:1,
+                description:1,
+                videoFile:1,
+                "owner.username":1,
+                views:1,
+                duration:1,
+                thumbnail:1,
+                createdAt:1,
+                "owner.avatar":1,
+                "owner._id":1
+            }
+        },
+        {
             $sort:{
                 createdAt:-1
             }
@@ -38,8 +68,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description,videoLink,videoDuration} = req.body
 
-    if(!(title && description && videoLink && videoDuration)) throw new ApiError(400,"title , description , video link and video duration is required")
-
+    if(!(title.trim() && description.trim() && videoLink.trim() && videoDuration.trim())) throw new ApiError(400,"title , description , video link and video duration is required")
+        console.log(videoDuration)
     const userId=req.user._id
     const uploadThumbnail=await uploadOnCloudinary(req.file?.path)
     const thumbnailUrl=uploadThumbnail?.secure_url || null
@@ -53,7 +83,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
         owner:userId,
         videoFile:videoLink,
         thumbnail:thumbnailUrl,
-        videoDuration
+        duration:videoDuration
     })
 
     if(!publishUserVideo) throw new ApiError(500,"something went wrong while publishing user video")
@@ -73,7 +103,42 @@ const getVideoById = asyncHandler(async (req, res) => {
     
     if(!videoId) throw new ApiError(400,"video id is required")
     
-    const video=await Video.findById(videoId)
+    // const video=await Video.findById(videoId)
+
+    //after this :=>
+
+        const video=await Video.aggregate([
+            {
+                $match:{
+                _id: new mongoose.Types.ObjectId(videoId)                  
+            }
+            },
+            {
+                $lookup:{
+                from:"users",
+                localField:"owner",
+                foreignField:"_id",
+                as:"owner"
+                }
+            },
+            {
+                $project:{
+                title:1,
+                description:1,
+                videoFile:1,
+                "owner.username":1,
+                views:1,
+                duration:1,
+                thumbnail:1,
+                createdAt:1,
+                "owner.avatar":1,
+                "owner._id":1
+            }
+            },
+            {
+                $unwind:"$owner"
+            }
+        ])
 
     if(!video) throw new ApiError(404,"video not found")
 
@@ -116,7 +181,6 @@ const updateVideo = asyncHandler(async (req, res) => {
         new ApiResponse(200, updatedVideo, "video updated successfully")
     );
 });
-
 
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
@@ -169,13 +233,49 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     )
 })
 
+const incrementViewCount =asyncHandler(async(req,res)=>
+{
+    const {videoId}=req.params;
+
+        if(!videoId) throw new ApiError(400,"video id is required");
+
+        const updatedVideo = await Video.findByIdAndUpdate(
+            videoId,
+            { $inc: { views: 1 } }, 
+            { new: true } 
+    );
+
+    if(!updatedVideo) throw new ApiError(404,"video not found while updating");
+
+    res.status(200).json(
+        new ApiResponse(200,updatedVideo,"video view count incremented by one")
+    );
+    
+}) 
+
+const getChannelVideos=asyncHandler(async(req,res)=>{
+
+    const {channelId}=req.params;
+    console.log("channelId is:=> ",channelId);
+    if(!channelId) throw new ApiError(400,"channelId is required");
+
+    const channelVideos= await Video.find({ owner: channelId });
+    console.log("channel Videos are these => :::: ",channelVideos);
+
+    res.status(200).json(
+        new ApiResponse(200,channelVideos,"channel Vidoes sent successfully")
+    );
+})
+
 export {
     getAllVideos,
     publishAVideo,
     getVideoById,
     updateVideo,
     deleteVideo,
-    togglePublishStatus
+    togglePublishStatus,
+    incrementViewCount,
+    getChannelVideos
 }
 
 

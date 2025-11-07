@@ -11,8 +11,16 @@ import {
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import axios from "axios";
+import Alert from "@/components/custom/Alert";
+import LoadingSpinner from "@/components/custom/LoadingSpinner";
+import { Link } from "react-router-dom";
 
 export default function SignUp() {
+
+  const [error,setError]=useState(null)
+  const [loading,setLoading]=useState(false)
   const {
     register,
     handleSubmit,
@@ -20,8 +28,42 @@ export default function SignUp() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log("Form Data:", data);
-    reset()
+   try {
+    setLoading(true)
+     setError(null)
+     const formData=new FormData()
+     formData.append("fullName",data.fullName)
+     formData.append("username",data.username)
+     formData.append("email",data.email)
+     formData.append("password",data.password)
+ 
+     if(data.avatar) formData.append("avatar",data.avatar[0])
+     if(data.coverImage?.length) formData.append("coverImage",data.coverImage[0])
+   console.log("form data is: ",formData)
+     const res=await axios.post("http://localhost:8000/api/v1/users/register",formData)
+
+     console.log("Success",res.data.message)
+    
+
+     
+     
+     reset()
+     setLoading(false)
+   } catch (error) {
+      if(error.response)
+      {
+        setError(error.response.data.message)
+        console.log(error.response.data.message)
+        setLoading(false)
+      }
+      else
+      {
+        console.error("else case on register maybe network error",error.message)
+        setError("something went wrong, please try again")
+        setLoading(false)
+
+      }
+   }
   };
 
   return (
@@ -33,15 +75,15 @@ export default function SignUp() {
             Fill out the details to create your account
           </CardDescription>
           <CardAction>
-            <Button variant="link">Login</Button>
+            <Link to={"/login"}>Login</Link>
           </CardAction>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div className="grid gap-4">
-              <Label htmlFor="fullname">Fullname</Label>
+              <Label htmlFor="fullName">Fullname</Label>
               <Input
-                {...register("fullname", { required: "Fullname is required" })}
+                {...register("fullName", { required: "Fullname is required" })}
                 id="fullname"
                 placeholder="Fullname"
               />
@@ -90,7 +132,7 @@ export default function SignUp() {
 
               <label className="inline-block px-4 py-2 text-white rounded cursor-pointer bg-gray-700 hover:bg-gray-800">
                 Upload Cover Image (Optional)
-                <input type="file" accept="image/*" className="hidden" />
+                <input {...register("coverImage")} type="file" accept="image/*" className="hidden" />
               </label>
 
               <Label htmlFor="password">Password</Label>
@@ -100,7 +142,7 @@ export default function SignUp() {
                   pattern: {
                      value: /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/,                    
                      message:
-                      "Password must be at least 8 characters, include uppercase, lowercase, number, and special character",
+                      "Password must be at least 8 characters, include uppercase, lowercase",
                   },
                 })}
                 id="password"
@@ -113,8 +155,12 @@ export default function SignUp() {
             </div>
 
             <CardFooter className="flex-col gap-2">
+              {error && (
+                <Alert message={error} />
+              )}
               <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700">
-                SignUp
+                {loading? <LoadingSpinner/>: <h1>SignUp</h1>}
+                
               </Button>
             </CardFooter>
           </form>
