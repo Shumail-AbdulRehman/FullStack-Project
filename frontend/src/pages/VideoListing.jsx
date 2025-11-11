@@ -65,7 +65,7 @@ function VideoListing() {
 
   <div className="col-span-6 bg-[#212121] flex flex-wrap gap-3 p-4">
     {videos?.map((video) => (
-      <Link to={`/video/${video._id}`}>   
+      <Link key={video._id} to={`/video/${video._id}`}>   
         <VideoCard key={video._id} {...video} />
       </Link>
     ))}

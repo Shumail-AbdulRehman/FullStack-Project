@@ -1,8 +1,11 @@
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 function ChannelNavbar({setSelectedOption,selectedOption}) {
-  const options = ["Videos", "Playlist", "Tweets", "Subscribed"];
+  const options = ["Videos", "Playlist", "Tweets"];
+  const userData=useSelector((state)=> state.auth.userData);
 
   return (
     <div className="w-full bg-black text-white py-2 flex justify-center gap-3">
@@ -18,8 +21,19 @@ function ChannelNavbar({setSelectedOption,selectedOption}) {
           }`}
         >
           {option}
+
+
         </Button>
+
+        
       ))}
+
+      <Link to={`/channel/${userData?._id}`}>
+
+      <div className='text-red h-auto w-auto text-xl bg-black'>
+        My channel
+      </div>
+      </Link>
     </div>
   );
 }

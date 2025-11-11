@@ -355,16 +355,18 @@ const updateCoverImage=asyncHandler(async(req,res)=>
 
 const getUserChannelProfile=asyncHandler(async(req,res)=>
 {
-    const {username}=req.params
-    if(!username?.trim())
+    const {channelId}=req.params;
+
+    console.log("chnnaleId is to get profile data is ::",channelId);
+    if(!channelId)
     {
-        throw new ApiError(400,"username is missing")
+        throw new ApiError(400,"channelId is missing")
     }
     const loggedInUserId = new mongoose.Types.ObjectId(req.user?._id);
     const channel=await User.aggregate([
         {
             $match:{
-                username: username?.toLowerCase()
+                _id: new mongoose.Types.ObjectId(channelId)
             }
         },
         {

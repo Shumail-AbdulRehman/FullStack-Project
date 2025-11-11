@@ -3,8 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import VideoCard from '../VideoCard';
 import LoadingSpinner from '../LoadingSpinner';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function Videos({channelId}) {
+
+    const userData=useSelector((state)=> state.auth.userData);
 
 
 const {data:userVideos=[],isLoading:fetchingUserVideos,isError:fetchingUserVideosError,refetch:refetchUserVideos}=useQuery({
@@ -35,18 +39,42 @@ if(userVideos.length==0)
     return (
         <div>
             <h1>No videos found</h1>
+
+            {userData&& (
+                userData._id === channelId? (
+                <Link to="/video/upload-video">Upload Video!</Link>
+                ):
+                null
+            )}
         </div>
+
     )
 }
 
 else
 {
     return (
-    <div>
-        {userVideos.map((video)=> (
+    <div className='flex w-auto h-auto'>
+        <div>
+            {userVideos.map((video)=> (
+            <Link key={video._id} to={`/video/${video._id}`}>   
             <VideoCard {...video}/>
+            </Link>
         ))}
+        </div>
+        
+
+        {userData&& (
+                userData._id === channelId? (
+                <div className='h-auto w-auto bg-amber-200'>
+            <Link to="/video/upload-video">Upload Video!</Link>
+        </div>
+                ):
+                null
+            )}
+        
     </div>
+
   )
 }
 

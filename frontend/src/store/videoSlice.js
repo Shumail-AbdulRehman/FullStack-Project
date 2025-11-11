@@ -8,7 +8,7 @@ const videoSlice=createSlice({
     name:"videos",
     initialState,
     reducers:
-    {
+    {   
         getVideos:(state,action)=>
         {
             state.allVideos=action.payload

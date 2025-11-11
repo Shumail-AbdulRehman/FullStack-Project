@@ -5,8 +5,13 @@ import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 
 const createTweet = asyncHandler(async (req, res) => {
-    const{content}=req.body
-    const userId=req.user?._id
+    const {channelId}=req.params;
+    const{content}=req.body;
+    const userId=req.user?._id;
+
+    console.log(userId.toString()," && ",channelId);
+
+    if(userId.toString() !== channelId ) throw new ApiError(401,"unauthorized channelID and userID doesnt match");
 
     if(!content)
         {
@@ -15,7 +20,7 @@ const createTweet = asyncHandler(async (req, res) => {
     const userTweet=await Tweet.create(
         {
             owner:userId,
-            content:content
+            content:content,
         })
 
     if(!userTweet)
@@ -30,11 +35,11 @@ const createTweet = asyncHandler(async (req, res) => {
 })
 
 const getUserTweets = asyncHandler(async (req, res) => {
-    const userId=req.user._id
-
+    // const userId=req.user._id
+    const {channelId}=req.params;
     const userTweets=await Tweet.find({
-        owner:userId
-    })
+        owner:channelId
+    }).sort({createdAt:-1});
 
     if(!userTweets.length)
     {
