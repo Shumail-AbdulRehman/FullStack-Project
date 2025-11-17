@@ -5,7 +5,8 @@ import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { deleteImageByUrl } from "../utils/deleteImageFromCloudinary.js"
-
+import { Like } from "../models/like.model.js"
+import { Subscription } from "../models/subscription.model.js"
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10 } = req.query
 
@@ -99,9 +100,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
+    const { videoId,channelId } = req.params
     
-    if(!videoId) throw new ApiError(400,"video id is required")
+    if(!videoId || !channelId) throw new ApiError(400,"video id and channelId is required")
     
     // const video=await Video.findById(videoId)
 
@@ -133,17 +134,22 @@ const getVideoById = asyncHandler(async (req, res) => {
                 createdAt:1,
                 "owner.avatar":1,
                 "owner._id":1
-            }
+            },
             },
             {
                 $unwind:"$owner"
             }
         ])
 
-    if(!video) throw new ApiError(404,"video not found")
+    if (!video || video.length === 0) throw new ApiError(404,"video not found");
 
+    const isLiked = await Like.findOne({ video: videoId, likedBy: req.user._id }) ? true : false;
+    const isSubscribed = await Subscription.findOne({ subscriber: req.user._id, channel: channelId }) ? true : false;
+
+
+    
     res.status(200).json(
-        new ApiResponse(200,video,"video fetched successfully")
+        new ApiResponse(200,{video,isSubscribed,isLiked},"video fetched successfully")
     )
 })
 const updateVideo = asyncHandler(async (req, res) => {

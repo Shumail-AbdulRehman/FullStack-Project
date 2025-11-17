@@ -40,7 +40,7 @@ router
 
 
 router
-  .route("/:videoId")
+  .route("/:videoId/:channelId")
   .get(getVideoById) 
   .delete(deleteVideo) 
   .patch(upload.single("thumbnail"), updateVideo); 

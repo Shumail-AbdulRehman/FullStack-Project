@@ -11,7 +11,9 @@ import { useQuery } from '@tanstack/react-query';
 
 function Video() {
 
-    const {videoId}=useParams();
+    const {videoId,channelId}=useParams();
+
+    console.log("videoID and chnnaleID::",videoId,channelId);
     // console.log("videoID is",videoId)
     // const [video,setVideo]=useState(null);
     // const [loading,setLoading]=useState(true);
@@ -52,8 +54,9 @@ function Video() {
       queryKey:["video",videoId],
       queryFn:async ()=> {
 
-        const res=await axios.get(`http://localhost:8000/api/v1/videos/${videoId}`,{withCredentials:true});
-        return res.data.data[0];
+        const res=await axios.get(`http://localhost:8000/api/v1/videos/${videoId}/${channelId}`,{withCredentials:true});
+        console.log("video page tanstack ran:::",res.data.data)
+        return res.data.data;
       },
     });
 
@@ -82,10 +85,10 @@ function Video() {
         </div>
         <div className='col-span-4 flex flex-col'>
             <div className=''>
-                <VideoPlayer {...video} videoId={videoId}/>
+                <VideoPlayer {...video.video[0]} videoId={videoId}/>
             </div>
             <div>
-                <VideoMeta {...video}/>
+                <VideoMeta isSubscribed={video.isSubscribed} isLiked={video.isLiked} {...video.video[0]}/>
             </div>
             <div>
                 <AddComment videoId={videoId}/>

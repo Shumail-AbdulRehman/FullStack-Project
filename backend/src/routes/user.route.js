@@ -8,8 +8,11 @@ import {
         updateUserEmailAndFullName, 
         userLogin,
         userLogOut,
-        getUserWatchHistory,
-        getUserChannelProfile
+        getWatchHistory,
+        getUserChannelProfile,
+        changePassword,
+        addWatchHistory,
+        clearWatchHistory
     } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -18,6 +21,8 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router=Router()
 
+
+router.route("/change-password").patch(verifyJwt,changePassword);
 
 router.route("/register").post(upload.fields([
     {
@@ -29,6 +34,8 @@ router.route("/register").post(upload.fields([
         maxCount:1
     }
 ]),registerUser)
+
+
 
 router.route("/login").post(upload.none(),userLogin)
 
@@ -44,7 +51,11 @@ router.route("/update-avatar").patch(verifyJwt,upload.single("avatar"),updateAva
 
 router.route("/update-cover-image").patch(verifyJwt,upload.single("coverImage"),updateCoverImage)
 
-router.route("/watch-history").get(verifyJwt,getUserWatchHistory)
+router.route("/watch-history").get(verifyJwt,getWatchHistory)
+
+router.route("/add-watch-history/:videoId").post(verifyJwt,addWatchHistory)
+
+router.route("/clear-watch-history").delete(verifyJwt,clearWatchHistory)
 
 router.route("/channel-profile/:channelId").get(verifyJwt,getUserChannelProfile)
 

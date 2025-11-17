@@ -15,6 +15,9 @@ import Video from './pages/Video'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Videos from './components/custom/Channel/Videos'
 import UserChannel from './pages/UserChannel'
+import Setting from './pages/Setting'
+import WatchHistory from './pages/WatchHistory'
+import LikedVideos from './pages/LikedVideos'
 
 const router= createBrowserRouter([
   {
@@ -52,7 +55,7 @@ const router= createBrowserRouter([
         
       },
       {
-        path:"/video/:videoId",
+        path:"/video/:videoId/:channelId",
         element:
         <AuthLayout>
           <Video/>
@@ -64,9 +67,29 @@ const router= createBrowserRouter([
         <AuthLayout>
           <UserChannel/>
         </AuthLayout>
-
+      },
+      {
+        path:"/channel/settings",
+        element:
+        <AuthLayout>
+          <Setting/>
+        </AuthLayout>
+      },
+      {
+        path:"/user/watch-history",
+        element:
+        <AuthLayout>
+          <WatchHistory/>
+        </AuthLayout>
+      },
+      {
+        path:"/user/liked-videos",
+        element:
+        <AuthLayout>
+          <LikedVideos/>
+        </AuthLayout>
       }
-  
+      
     ]
   }
 ])

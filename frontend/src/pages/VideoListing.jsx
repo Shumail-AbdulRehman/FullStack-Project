@@ -11,9 +11,12 @@ import { Link } from 'react-router-dom';
 function VideoListing() {
 
     const videos=(useSelector((state)=> state.videos.allVideos))
+    const [channelId,setChannelId]=useState(null);
     const [loading,setLoading]=useState(false)
     const dispatch=useDispatch()
-    console.log(videos)
+    // console.log("checking ::::",videos[])
+
+
     useEffect(()=>
     {
         setLoading(true)
@@ -37,6 +40,11 @@ function VideoListing() {
         ();
         setLoading(false)
     },[videos])
+
+    if(videos)
+    {
+      // setChannelId(videos.owner._id);
+    }
 
 
     if(loading)
@@ -65,7 +73,7 @@ function VideoListing() {
 
   <div className="col-span-6 bg-[#212121] flex flex-wrap gap-3 p-4">
     {videos?.map((video) => (
-      <Link key={video._id} to={`/video/${video._id}`}>   
+      <Link key={video._id} to={`/video/${video._id}/${video.owner._id}`}>   
         <VideoCard key={video._id} {...video} />
       </Link>
     ))}

@@ -1,68 +1,53 @@
 import axios from 'axios';
-import React from 'react'
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import {useMutation,useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+function AddComment({ videoId }) {
+  const { register, handleSubmit, reset } = useForm();
+  const queryClient = useQueryClient();
 
-function AddComment({videoId}) {
-
-  const {register,handleSubmit,reset}=useForm();
-  console.log("video id is: ",videoId);
-
-  const queryClient=useQueryClient();
-  
-  const {mutate}= useMutation({
-      mutationFn: async (newComment)=>
-      {
-      
-       const res = await axios.post(
+  const { mutate } = useMutation({
+    mutationFn: async (newComment) => {
+      const res = await axios.post(
         `http://localhost:8000/api/v1/comments/${videoId}`,
         { content: newComment },
         { withCredentials: true }
       );
+      return res.data.data;
+    },
+    onSuccess: (newComment) => {
+      queryClient.setQueryData(["comment", videoId], (old) => [newComment, ...(old || [])]);
+    },
+  });
 
-      console.log("adding comment is: ",res.data.data, " and video id is=>",videoId);
-      return res.data.data;   
-          
-      },
-      onSuccess: (newComment)=>
-      {
-        queryClient.setQueryData(["comment",videoId],(old)=> [newComment, ...(old || [])])
-      }
-    })
-
-  const onSubmit = async(data)=>
-  {
-    mutate(data.comment)
-   console.log("data is=>",data);
-   reset();
-  }
+  const onSubmit = (data) => {
+    mutate(data.comment);
+    reset();
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}  className="flex items-start gap-3 p-3 border-t border-gray-200">
-      
-      <div className="flex-1">
-        <h1 className="font-bold text-white text-2xl">Comment:</h1>
-        <textarea
-        {
-          ...register('comment',{required:true})
-        }
-          placeholder="Add a public comment..."
-          rows="3"
-          className="w-full resize-none p-2 border text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-indigo-300"
-        />
-        <div className="mt-2 flex justify-end">
-          <button
-            type="submit"
-            className="px-3 py-1.5 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700"
-          >
-            Comment
-          </button>
-        </div>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-4 p-4 border-t border-gray-700 bg-[#0f0f0f] rounded-lg"
+    >
+      <h2 className="font-bold text-white text-lg sm:text-xl">Add a Comment</h2>
+      <textarea
+        {...register('comment', { required: true })}
+        placeholder="Write your comment..."
+        rows="4"
+        className="w-full p-3 text-white text-sm resize-none rounded-md border border-gray-600 bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200"
+      />
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-md hover:bg-indigo-700 transition-colors duration-200"
+        >
+          Comment
+        </button>
       </div>
     </form>
   );
 }
 
 export default AddComment;
-

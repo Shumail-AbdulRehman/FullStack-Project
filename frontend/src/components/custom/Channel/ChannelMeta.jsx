@@ -33,6 +33,8 @@ function ChannelMeta({ channelId }) {
     },
   });
 
+  console.log("channelData is::",channelData);
+
   const toggleSubscription = () => {
     subscriptionMutate();
   };

@@ -35,7 +35,7 @@ function VideosSuggestion() {
   return (
     <div className='flex flex-col border-2 border-black'>
         {videos?.map((video) => (
-      <Link to={`/video/${video._id}`}>   
+      <Link to={`/video/${video._id}/${video.owner._id}`}>   
         <VideoCard key={video._id} {...video} />
       </Link>
     ))}

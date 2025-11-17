@@ -14,12 +14,7 @@ const userSchema=mongoose.Schema({
     coverImage:{
         type:String
     },
-    watchHistory:[
-        {
-            type: Schema.Types.ObjectId,
-            ref:"Video"
-        }
-    ],
+    
     avatar:
     {
         type:String,

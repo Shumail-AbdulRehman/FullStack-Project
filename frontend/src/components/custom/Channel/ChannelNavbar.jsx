@@ -28,12 +28,12 @@ function ChannelNavbar({setSelectedOption,selectedOption}) {
         
       ))}
 
-      <Link to={`/channel/${userData?._id}`}>
+      {/* <Link to={`/channel/${userData?._id}`}>
 
       <div className='text-red h-auto w-auto text-xl bg-black'>
         My channel
       </div>
-      </Link>
+      </Link> */}
     </div>
   );
 }
