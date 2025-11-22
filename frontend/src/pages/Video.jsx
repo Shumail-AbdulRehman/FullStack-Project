@@ -7,12 +7,15 @@ import { useParams } from 'react-router-dom'
 import VideosSuggestion from '@/components/custom/Video/VideosSuggestion';
 import VideoComment from '@/components/custom/Video/VideoComment';
 import AddComment from '@/components/custom/Video/AddComment';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery,useQueryClient } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
 
 function Video() {
 
-    const {videoId,channelId}=useParams();
 
+    const queryClient=useQueryClient();
+    const {videoId,channelId}=useParams();
+    const userData=useSelector((state)=> state.auth.userData)
     console.log("videoID and chnnaleID::",videoId,channelId);
     // console.log("videoID is",videoId)
     // const [video,setVideo]=useState(null);
@@ -71,6 +74,37 @@ function Video() {
 
     console.log("comments are these =>:::: ",comments);
 
+    const {mutate:deleteUserComment}=useMutation({
+    mutationFn:async(comment)=>
+    {
+      const res=await axios.delete(`http://localhost:8000/api/v1/comments/c/${comment._id}`,{withCredentials:true});
+
+      return true;
+    },
+    onSuccess:()=>
+    {
+      queryClient.invalidateQueries(["comment",videoId]);
+    },
+    onError:(err)=>
+    {
+      console.log("deleting comment err::",err);
+    }
+    })
+
+    const deleteComment=async(comment)=>
+    {
+      console.log("deleteing comment");
+      deleteUserComment(comment);
+      // axios.delete(`http://localhost/api/v1/comments//c/${comment._id}`)
+
+
+    }
+
+    const updateComment=async(comment)=>
+    {
+      console.log("updating comment");
+    }
+
     if(videoLoading || commentsLoading)
     {
         return(
@@ -104,6 +138,16 @@ function Video() {
         owner={comment.owner?.username}   
         avatar={comment.owner?.avatar} 
          />
+         {comment.owner._id == userData._id &&(
+          <div className='flex gap-3'>
+                      <button className='h-auto w-auto text-red-700 bg-black' onClick={()=> deleteComment(comment)}>Delete</button>
+                      <br />
+                    <button className='h-auto w-auto text-red-700 bg-black' onClick={()=> updateComment(comment)}>update</button>
+
+
+          </div>
+          
+         )}
       </div>
     ))
     :

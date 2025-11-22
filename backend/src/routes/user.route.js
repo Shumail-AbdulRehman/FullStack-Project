@@ -12,7 +12,11 @@ import {
         getUserChannelProfile,
         changePassword,
         addWatchHistory,
-        clearWatchHistory
+        clearWatchHistory,
+        updateUsername,
+        updateUserEmail,
+        updateFullname
+
     } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -21,8 +25,10 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router=Router()
 
-
+router.route("/update-username").patch(verifyJwt,updateUsername);
 router.route("/change-password").patch(verifyJwt,changePassword);
+router.route("/update-email").patch(verifyJwt,updateUserEmail)
+router.route("/update-fullname").patch(verifyJwt,updateFullname)
 
 router.route("/register").post(upload.fields([
     {

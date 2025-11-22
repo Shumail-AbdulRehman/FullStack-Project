@@ -266,6 +266,154 @@ const updateUserEmailAndFullName=asyncHandler(async(req,res)=>
     
 })
 
+
+const updateFullname=asyncHandler(async(req,res)=>
+{
+    const{fullName}=req.body;
+
+    if(!fullName)
+    {
+        throw new ApiError(400," fullname is required ")
+    }
+
+    const checkUser=req?.user;
+
+    if(!checkUser)
+    {
+        throw new ApiError(401,"unauthorize access")
+    }
+
+    // const checkEmailUsedByAnotherUser = await User.findOne({ 
+    //     email: newEmail, 
+    //     _id: { $ne: checkUser._id } 
+    // });
+
+    
+
+    // if(checkEmailUsedByAnotherUser)
+    // {
+    //     throw new ApiError(409,"email is being used by another user");
+    // }
+
+    
+
+    const user=await User.findById(checkUser._id).select("-password -refreshToken")
+
+    if(!user)
+    {
+        throw new ApiError(401,"user not found");
+    }
+
+    // user.email=newEmail.trim();
+    user.fullName=fullName.trim();
+
+    await user.save()
+
+    res.status(200).json(
+        new ApiResponse(200,user," fullname updated successfully")
+    )
+    
+})
+
+const updateUserEmail=asyncHandler(async(req,res)=>
+{
+    const{email}=req.body;
+
+    if(!(email))
+    {
+        throw new ApiError(400,"email  is required ")
+    }
+
+    const checkUser=req?.user;
+
+    if(!checkUser)
+    {
+        throw new ApiError(401,"unauthorize access")
+    }
+
+    const checkEmailUsedByAnotherUser = await User.findOne({ 
+        email: email, 
+        _id: { $ne: checkUser._id } 
+    });
+
+    
+
+    if(checkEmailUsedByAnotherUser)
+    {
+        throw new ApiError(409,"email is being used by another user");
+    }
+
+    
+
+    const user=await User.findById(checkUser._id).select("-password -refreshToken")
+
+    if(!user)
+    {
+        throw new ApiError(401,"user not found");
+    }
+
+    user.email=email.trim();
+    // user.fullName=newFullName.trim();
+
+    await user.save()
+
+    res.status(200).json(
+        new ApiResponse(200,user,"email  updated successfully")
+    )
+    
+})
+
+
+const updateUsername=asyncHandler(async(req,res)=>
+{
+    const{username}=req.body;
+
+    console.log("username is ::",username);
+
+    if(!username)
+    {
+        throw new ApiError(400,"username is required ")
+    }
+
+    const checkUser=req?.user;
+
+    if(!checkUser)
+    {
+        throw new ApiError(401,"unauthorize access")
+    }
+
+    const checkUserNameUsedByAnotherUser = await User.findOne({ 
+        username: username, 
+        _id: { $ne: checkUser._id } 
+    });
+
+    
+
+    if(checkUserNameUsedByAnotherUser)
+    {
+        throw new ApiError(409,"username is being used by another user");
+    }
+
+    
+
+    const user=await User.findById(checkUser._id).select("-password -refreshToken")
+
+    if(!user)
+    {
+        throw new ApiError(401,"user not found");
+    }
+
+    user.username=username.trim();
+    // user.fullName=newFullName.trim();
+
+    await user.save()
+
+    res.status(200).json(
+        new ApiResponse(200,user,"username updated successfully")
+    )
+    
+})
+
 const updateAvatar=asyncHandler(async(req,res)=>
 {
     const avatarLocalpath=req.file?.path
@@ -502,9 +650,12 @@ const getUserChannelProfile=asyncHandler(async(req,res)=>
 
 const changePassword=asyncHandler(async(req,res)=>
 {
-    const {newPassword,oldPassword}=req.body;
+    let {newPassword,oldPassword}=req.body;
 
-    console.log("Passwords are::",newPassword,oldPassword,req._id);
+    console.log("req id is ",)
+
+
+    console.log("Passwords are::",newPassword,oldPassword,req.user._id);
 
     if(!newPassword || !oldPassword ) throw new ApiError(401,"old and new password is required");
 
@@ -620,6 +771,9 @@ export {
     changePassword,
     clearWatchHistory,
     addWatchHistory,
-    getWatchHistory
+    getWatchHistory,
+    updateUsername,
+    updateUserEmail,
+    updateFullname
 
 }

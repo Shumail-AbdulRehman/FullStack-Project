@@ -8,8 +8,12 @@ import {
   Settings,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function SideBar() {
+
+  const userData=useSelector((state)=> state.auth.userData);
+
   return (
     <div className="h-screen w-auto bg-[#212121] text-white flex flex-col ">
       <ul className="space-y-2 text-lg font-medium">
@@ -32,10 +36,10 @@ function SideBar() {
         </li>
         </Link>
         
-        <li className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838]">
+        <Link to={`/channel/${userData?._id}`} className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838]">
           <Video className="w-6 h-6" />
           <span>My Content</span>
-        </li>
+        </Link>
         <li className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838]">
           <Users className="w-6 h-6" />
           <span>Subscribers</span>

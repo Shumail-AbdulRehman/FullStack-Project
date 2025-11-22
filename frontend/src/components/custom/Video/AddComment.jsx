@@ -14,10 +14,12 @@ function AddComment({ videoId }) {
         { content: newComment },
         { withCredentials: true }
       );
+
+      console.log("new commnet is::",res.data.data);
       return res.data.data;
     },
     onSuccess: (newComment) => {
-      queryClient.setQueryData(["comment", videoId], (old) => [newComment, ...(old || [])]);
+      queryClient.invalidateQueries(["comment",videoId]);
     },
   });
 
