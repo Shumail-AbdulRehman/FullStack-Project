@@ -188,61 +188,66 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
     }
 });
 
-
 const getLikedVideos = asyncHandler(async (req, res) => {
-    const userId=req.user?._id
-    const allLikedVideos= await Like.aggregate([
+    const userId = req.user?._id;
+
+    const allLikedVideos = await Like.aggregate([
         {
-            $match:{
-                likedBy:new mongoose.Types.ObjectId(userId),
-                video:{$ne:null}
+            $match: {
+                likedBy: new mongoose.Types.ObjectId(userId),
+                video: { $ne: null }
             }
         },
         {
-            $lookup:{
-                from:"videos",
-                localField:"video",
-                foreignField:"_id",
-                as:"video",
-                pipeline:[
-                            {
-                                $match:{
-                                    isPublished:true
-                                }
-                            },
-                             {
-                                $project:
-                                    {
-                                    videoFile:1,
-                                    thumbnail:1,
-                                    owner:1,
-                                    title:1,
-                                    duration:1,
-                                    views:1,
-                                    isPublished:1,
-                                }
-                            }
-                        ]
-                    }
-        }
-        ,
-        { $unwind: "$video" }
-    ])
+            $lookup: {
+                from: "videos",
+                localField: "video",
+                foreignField: "_id",
+                as: "video",
+                pipeline: [
+                    {
+                        $match: { isPublished: true }
+                    },
+                    {
+                        $project: {
+                            videoFile: 1,
+                            thumbnail: 1,
+                            owner: 1,
+                            title: 1,
+                            duration: 1,
+                            views: 1,
+                            isPublished: 1
+                        }
+                    },
 
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner"
+                        }
+                    },
+                    { $unwind: "$owner" }
+                ]
+            }
+        },
+        {
+            $unwind: "$video"
+        }
+    ]);
 
     if (allLikedVideos.length === 0) {
-    return res.status(200).json(
-        new ApiResponse(200, [], "No liked videos found")
+        return res.status(200).json(
+            new ApiResponse(200, [], "No liked videos found")
+        );
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, allLikedVideos, "all liked videos sent successfully")
     );
-}
+});
 
-
-    res.status(200)
-    .json(
-        new ApiResponse(200,allLikedVideos,"all liked videos sent successfully")
-    )
-
-})
 
 const getLikesCount= asyncHandler(async(req,res)=>
 {

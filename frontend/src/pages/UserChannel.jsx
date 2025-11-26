@@ -9,38 +9,32 @@ import SideBar from '@/components/custom/SideBar';
 import ChannelMeta from '@/components/custom/Channel/ChannelMeta';
 
 function UserChannel() {
-    const { channelId } = useParams();
-    const [selectedOption, setSelectedOption] = useState("Videos");
+  const { channelId } = useParams();
+  const [selectedOption, setSelectedOption] = useState("Videos");
 
-//     console.log("channel ID is :::", channelId)
-
-    return (
-        <div className="flex bg-gray-100 min-h-screen">
-            <aside className="w-64 hidden md:block">
-                <SideBar />
-            </aside>
-
-            <main className="flex-1">
-                <div className="bg-white shadow-sm mb-4">
-                    <ChannelMeta channelId={channelId} />
-                </div>
-
-                <div className="bg-white shadow-sm mb-4">
-                    <ChannelNavbar
-                        selectedOption={selectedOption}
-                        setSelectedOption={setSelectedOption}
-                    />
-                </div>
-
-                <div className="px-4 md:px-8">
-                    {selectedOption === "Videos" && <Videos channelId={channelId} />}
-                    {selectedOption === "Playlist" && <Playlist channelId={channelId} />}
-                    {selectedOption === "Subscribed" && <Subscribed channelId={channelId} />}
-                    {selectedOption === "Tweets" && <Tweets channelId={channelId} />}
-                </div>
-            </main>
+  return (
+    <div className="flex bg-black min-h-screen">
+      <aside className="w-64 hidden md:block">
+        <SideBar />
+      </aside>
+      
+      <main className="flex-1">
+        <ChannelMeta channelId={channelId} />
+        
+        <ChannelNavbar
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+        />
+        
+        <div className="px-4 md:px-8 py-6">
+          {selectedOption === "Videos" && <Videos channelId={channelId} />}
+          {selectedOption === "Playlist" && <Playlist channelId={channelId} />}
+          {selectedOption === "Subscribed" && <Subscribed channelId={channelId} />}
+          {selectedOption === "Tweets" && <Tweets channelId={channelId} />}
         </div>
-    )
+      </main>
+    </div>
+  );
 }
 
-export default UserChannel
+export default UserChannel;

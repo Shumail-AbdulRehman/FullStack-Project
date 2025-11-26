@@ -111,7 +111,8 @@ const getVideoById = asyncHandler(async (req, res) => {
         const video=await Video.aggregate([
             {
                 $match:{
-                _id: new mongoose.Types.ObjectId(videoId)                  
+                _id: new mongoose.Types.ObjectId(videoId)  ,
+                isPublished:true                
             }
             },
             {
@@ -265,8 +266,31 @@ const getChannelVideos=asyncHandler(async(req,res)=>{
     console.log("channelId is:=> ",channelId);
     if(!channelId) throw new ApiError(400,"channelId is required");
 
-    const channelVideos= await Video.find({ owner: channelId });
-    console.log("channel Videos are these => :::: ",channelVideos);
+    // const channelVideos= await Video.find({ owner: channelId });
+    // console.log("channel Videos are these => :::: ",channelVideos);
+
+    const channelVideos=await Video.aggregate([
+        {
+            $match:{
+                owner:new mongoose.Types.ObjectId(channelId),
+                isPublished:true
+            }
+        },
+        {
+            $lookup:{
+                from:"users",
+                localField:"owner",
+                foreignField:"_id",
+                as:"owner",
+               
+            },
+    
+        },
+        {
+            $unwind:"$owner"
+        }
+
+    ])
 
     res.status(200).json(
         new ApiResponse(200,channelVideos,"channel Vidoes sent successfully")

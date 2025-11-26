@@ -57,7 +57,7 @@ else
     <div className='flex w-auto h-auto'>
         <div>
             {userVideos.map((video)=> (
-            <Link key={video._id} to={`/video/${video._id}`}>   
+            <Link key={video._id} to={`/video/${video._id}/${video.owner._id}`}>   
             <VideoCard {...video}/>
             </Link>
         ))}

@@ -37,15 +37,40 @@ const createTweet = asyncHandler(async (req, res) => {
 const getUserTweets = asyncHandler(async (req, res) => {
     // const userId=req.user._id
     const {channelId}=req.params;
-    const userTweets=await Tweet.find({
-        owner:channelId
-    }).sort({createdAt:-1});
+    // const userTweets=await Tweet.find({
+    //     owner:channelId
+    // }).sort({createdAt:-1});
 
-    if(!userTweets.length)
-    {
-       return  res.status(200)
-        .json(new ApiResponse(200,[],"no tweets found"))
-    }
+    const userTweets=await Tweet.aggregate([
+        {
+            $match:{
+                owner:new mongoose.Types.ObjectId(channelId)
+            }
+        },
+        {
+            $lookup:{
+                from:"users",
+                localField:"owner",
+                foreignField:"_id",
+                as:"owner"
+            }
+        },
+        {
+            $unwind:"$owner"
+        },
+        {
+  $sort: { createdAt: -1 }
+}
+
+    ])
+
+    // if(!userTweets.length)
+    // {
+    //    return  res.status(200)
+    //     .json(new ApiResponse(200,[],"no tweets found"))
+    // }
+
+    console.log("user tweets::",userTweets);
 
     res.status(200)
     .json(

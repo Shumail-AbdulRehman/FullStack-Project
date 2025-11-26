@@ -5,7 +5,7 @@ import axios from "axios";
 
 function PostTweetCard({ channelId }) {
   const queryClient = useQueryClient();
-
+  
   const { mutate: tweetMutate } = useMutation({
     mutationFn: async (content) => {
       const res = await axios.post(
@@ -27,7 +27,7 @@ function PostTweetCard({ channelId }) {
   });
 
   const { handleSubmit, register, reset } = useForm();
-
+  
   const onSubmit = (data) => {
     tweetMutate(data.content);
     reset();
@@ -36,22 +36,32 @@ function PostTweetCard({ channelId }) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-md mx-auto bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow duration-300"
+      className="bg-zinc-950 border-b border-zinc-800 p-4"
     >
-      <textarea
-        {...register("content", { required: true })}
-        placeholder="What's happening?"
-        rows={3}
-        className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-      />
-
-      <div className="flex justify-end mt-3">
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-600 transition-colors"
-        >
-          Post
-        </button>
+      <div className="flex gap-3">
+        <div className="flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center">
+            <span className="text-white font-semibold text-sm">U</span>
+          </div>
+        </div>
+        
+        <div className="flex-1">
+          <textarea
+            {...register("content", { required: true })}
+            placeholder="What's happening?"
+            rows={3}
+            className="w-full bg-transparent text-gray-100 placeholder-gray-500 text-sm resize-none outline-none mb-3"
+          />
+          
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-full transition-colors"
+            >
+              Post
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   );

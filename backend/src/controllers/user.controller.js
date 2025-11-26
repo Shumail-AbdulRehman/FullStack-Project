@@ -688,7 +688,7 @@ delete userSafe.refreshToken;
 const getWatchHistory=asyncHandler(async(req,res)=>
 {
 
-    
+    console.log("got request here::::")
     const getUserWatchHistory=await WatchHistory.aggregate([
         {
             $match:{
@@ -705,12 +705,42 @@ const getWatchHistory=asyncHandler(async(req,res)=>
                 from:"videos",
                 localField: "video",
                 foreignField: "_id",
-                as:"video"
-            }
+                as:"video",
+                pipeline:[
+                    {
+                        $match:{
+                            isPublished:true
+                        }
+                    },
+                    {
+                        $lookup:{
+                            from :"users",
+                            localField:"owner",
+                            foreignField:"_id",
+                            as:"owner"
+                        }
+                    },
+                    {
+                        $unwind:"$owner"
+                    }
+                ]
+            },
+            
         },
         {
             $unwind:"$video"
-        }
+        },
+        // {
+        //     $lookup:{
+        //         from:"users",
+        //         localField:"user",
+        //         foreignField:"_id",
+        //         as:"user"
+        //     }
+        // },
+        // {
+        //     $unwind:"$user"
+        // }
     ]);
 
     res.status(200).json(

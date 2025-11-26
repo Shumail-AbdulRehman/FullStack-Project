@@ -10,11 +10,15 @@ function WatchHistory() {
   const queryClient = useQueryClient();
 
   const { data: getWatchHistory } = useQuery({
-    queryKey: ["watchHistory", userData._id],
+    queryKey: ["watchHistory", userData?._id],
     queryFn: async () => {
       const res = await axios.get(`http://localhost:8000/api/v1/users/watch-history`, { withCredentials: true });
+      console.log("watch history::",res.data.data);
       return res.data.data;
-    }
+    },
+   onError: (err) => {
+    console.error("Dashboard query failed:", err);
+  },
   });
 
   const { mutate: clearHistory } = useMutation({
@@ -26,7 +30,7 @@ function WatchHistory() {
 
   const handleClearAll = () => {
     clearHistory();
-    queryClient.invalidateQueries(["watchHistory", userData._id]);
+    queryClient.invalidateQueries(["watchHistory", userData?._id]);
   };
 
   return (
@@ -55,7 +59,7 @@ function WatchHistory() {
             {getWatchHistory.map((item) => (
 
                  <Link to={`/video/${item.video._id}/${item._id}`}>
-                    <VideoCard key={item._id} {...item.video} />
+                    <VideoCard key={item._id} {...item.user } {...item.video} />
 
                 </Link>
             ))}

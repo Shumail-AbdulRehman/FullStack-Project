@@ -4,7 +4,7 @@ import axios from 'axios';
 
 function ChannelMeta({ channelId }) {
   const queryClient = useQueryClient();
-
+  
   const { data: channelData, isLoading } = useQuery({
     queryKey: ["channelData", channelId],
     queryFn: async () => {
@@ -24,8 +24,7 @@ function ChannelMeta({ channelId }) {
         {},
         { withCredentials: true }
       );
-
-      console.log("subscription::",res.data.data);
+      console.log("subscription::", res.data.data);
       return res.data.data;
     },
     onSuccess: () => {
@@ -33,57 +32,64 @@ function ChannelMeta({ channelId }) {
     },
   });
 
-  console.log("channelData is::",channelData);
+  console.log("channelData is::", channelData);
 
   const toggleSubscription = () => {
     subscriptionMutate();
   };
 
   if (isLoading)
-    return <p className="text-center py-10 text-gray-500">Loading channel info...</p>;
+    return <p className="text-center py-10 text-gray-400">Loading channel info...</p>;
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="relative h-40 w-full bg-gray-200">
+    <div className="w-full bg-black">
+      {/* Cover Image */}
+      <div className="relative h-48 w-full bg-zinc-900">
         {channelData?.coverImage ? (
           <img src={channelData.coverImage} alt="Cover" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
+          <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-gray-500">
             No Cover Image
           </div>
         )}
-
-        <div className="absolute -bottom-12 left-6">
-          <img
-            src={channelData?.avatar || 'https://via.placeholder.com/100'}
-            alt="Avatar"
-            className="w-24 h-24 rounded-full border-4 border-white object-cover"
-          />
-        </div>
       </div>
 
-      <div className="mt-16 px-6 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{channelData?.username}</h1>
-          <p className="text-gray-500 mt-1">
-            Subscribers: <span className="font-medium">{channelData?.subscribersCount}</span>
-          </p>
-          <p className="text-gray-500 mt-1">
-            Subscribed To: <span className="font-medium">{channelData?.channelSubscribedTo}</span>
-          </p>
-        </div>
+      {/* Channel Info */}
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex items-start gap-6 -mt-12 pb-6">
+          {/* Avatar */}
+          <div className="relative">
+            <img
+              src={channelData?.avatar || 'https://via.placeholder.com/100'}
+              alt="Avatar"
+              className="w-32 h-32 rounded-full border-4 border-black object-cover"
+            />
+          </div>
 
-        <div className="mt-4 sm:mt-0">
-          <button
-            onClick={toggleSubscription}
-            className={
-              channelData?.isSubscribed
-                ? "bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-semibold hover:bg-gray-300 transition"
-                : "bg-red-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-700 transition"
-            }
-          >
-            {channelData?.isSubscribed ? "Subscribed" : "Subscribe"}
-          </button>
+          {/* Channel Details */}
+          <div className="flex-1 pt-16">
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold text-white">{channelData?.username}</h1>
+                <p className="text-sm text-gray-400 mt-1">@{channelData?.username?.toLowerCase()}</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  {channelData?.subscribersCount || 0} Subscribers • {channelData?.channelSubscribedTo || 0} Subscribed
+                </p>
+              </div>
+
+              {/* Subscribe Button */}
+              <button
+                onClick={toggleSubscription}
+                className={`px-6 py-2 rounded-full font-medium text-sm transition-colors ${
+                  channelData?.isSubscribed
+                    ? "bg-zinc-800 text-white hover:bg-zinc-700"
+                    : "bg-purple-600 text-white hover:bg-purple-700"
+                }`}
+              >
+                {channelData?.isSubscribed ? "Subscribed" : "Subscribe"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

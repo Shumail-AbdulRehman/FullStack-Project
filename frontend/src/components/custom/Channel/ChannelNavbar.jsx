@@ -3,37 +3,29 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-function ChannelNavbar({setSelectedOption,selectedOption}) {
+function ChannelNavbar({ setSelectedOption, selectedOption }) {
   const options = ["Videos", "Playlist", "Tweets"];
-  const userData=useSelector((state)=> state.auth.userData);
+  const userData = useSelector((state) => state.auth.userData);
 
   return (
-    <div className="w-full bg-black text-white py-2 flex justify-center gap-3">
-      {options.map((option) => (
-        <Button
-          key={option}
-          onClick={() => setSelectedOption(option)}
-          variant={selectedOption === option ? "default" : "secondary"}
-          className={`text-sm md:text-base px-4 py-2 rounded-md transition-all duration-200 ${
-            selectedOption === option
-              ? "bg-indigo-600 text-white"
-              : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-          }`}
-        >
-          {option}
-
-
-        </Button>
-
-        
-      ))}
-
-      {/* <Link to={`/channel/${userData?._id}`}>
-
-      <div className='text-red h-auto w-auto text-xl bg-black'>
-        My channel
+    <div className="w-full bg-black border-b border-zinc-800">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex gap-6 text-gray-400">
+          {options.map((option) => (
+            <button
+              key={option}
+              onClick={() => setSelectedOption(option)}
+              className={`py-3 text-xl px-10 font-medium  transition-colors border-b-2 ${
+                selectedOption === option
+                  ? "text-white border-white"
+                  : "border-transparent hover:text-gray-300"
+              }`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
       </div>
-      </Link> */}
     </div>
   );
 }
