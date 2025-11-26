@@ -1,39 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import LoadingSpinner from './LoadingSpinner';
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "./LoadingSpinner";
 
-function AuthLayout({children,authentication=true}) {
+function AuthLayout({ children, authentication = true }) {
+  const navigate = useNavigate();
 
-    const navigate=useNavigate();
-    const isAuthenticated=useSelector((state)=> state.auth.isAuthenticated);
-    const [loading,setLoading]=useState(false);
+  const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
-    useEffect(()=>
-    {
-        setLoading(true);
-        if(authentication && isAuthenticated !== authentication){
-            navigate("/login")
-        } else if(!authentication && isAuthenticated !== authentication){
-            navigate("/")
-        }
-        setLoading(false)
+  useEffect(() => {
+    if (loading) return; 
 
-    },[isAuthenticated,authentication,navigate])
-
-    if(loading)
-    {
-        return <LoadingSpinner/>
+    if (authentication && !isAuthenticated) {
+      navigate("/login");
     }
-    else
-    {
-        return (
-            <div>
-                {children}
-            </div>
-        )
+
+    if (!authentication && isAuthenticated) {
+      navigate("/");
     }
-  
+  }, [isAuthenticated, authentication, navigate, loading]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  return <div>{children}</div>;
 }
 
-export default AuthLayout
+export default AuthLayout;

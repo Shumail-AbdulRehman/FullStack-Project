@@ -14,7 +14,7 @@ function LikedVideos() {
 
 
     const {data:getUserLikedVideos}=useQuery({
-        queryKey:["likedVideos",userData._id],
+        queryKey:["likedVideos",userData?._id],
         queryFn:async()=>
         {
             const res=await axios.get(`http://localhost:8000/api/v1/likes/videos`,{withCredentials:true});

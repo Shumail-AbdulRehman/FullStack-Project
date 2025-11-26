@@ -18,6 +18,7 @@ import UserChannel from './pages/UserChannel'
 import Setting from './pages/Setting'
 import WatchHistory from './pages/WatchHistory'
 import LikedVideos from './pages/LikedVideos'
+import Dashboard from './pages/Dashboard'
 
 const router= createBrowserRouter([
   {
@@ -87,6 +88,13 @@ const router= createBrowserRouter([
         element:
         <AuthLayout>
           <LikedVideos/>
+        </AuthLayout>
+      },
+      {
+        path:"/user/dashboard",
+        element:
+        <AuthLayout>
+          <Dashboard/>
         </AuthLayout>
       }
       

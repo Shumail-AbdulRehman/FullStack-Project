@@ -40,10 +40,13 @@ function SideBar() {
           <Video className="w-6 h-6" />
           <span>My Content</span>
         </Link>
+        <Link to="/user/dashboard">
         <li className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838]">
           <Users className="w-6 h-6" />
-          <span>Subscribers</span>
+          <span>Dashboard</span>
         </li>
+        </Link>
+        
       </ul>
 
       <div className="border-t border-gray-700 my-5"></div>

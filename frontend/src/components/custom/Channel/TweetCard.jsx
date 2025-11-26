@@ -2,19 +2,15 @@ import React from "react";
 
 function TweetCard({ content }) {
   return (
-    <div className="max-w-md mx-auto border rounded-lg p-4 bg-white shadow-sm">
-      <div className="flex items-start gap-3">
+    <div className="max-w-md mx-auto border border-gray-200 rounded-xl p-5 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <div className="flex flex-col gap-3">
         
-        <div className="flex-1">
-          {/* <div className="flex items-center gap-2">
-            <span className="font-bold text-gray-800">Shumail</span>
-            <span className="text-gray-500 text-sm">@shumail123</span>
-          </div> */}
+        <p className="text-gray-800 text-base leading-relaxed">{content}</p>
 
-          <p className="mt-1 text-gray-800">{content}</p>
-
-          {/* Bottom actions (like, reply, share) */}
-         
+        <div className="flex items-center justify-between text-gray-400 text-sm mt-2">
+          {/* <span className="hover:text-blue-500 cursor-pointer transition-colors">Reply</span> */}
+          <span className="hover:text-red-500 cursor-pointer transition-colors">Like</span>
+          {/* <span className="hover:text-green-500 cursor-pointer transition-colors">Share</span> */}
         </div>
       </div>
     </div>

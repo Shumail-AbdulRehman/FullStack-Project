@@ -8,6 +8,31 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 const getChannelStats = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
+
+  const userVideosAndLikeCountOfEachVideo=await Video.aggregate([
+    {
+      $match:{
+        owner:new mongoose.Types.ObjectId(userId)
+      }
+    },
+    {
+      $lookup:{
+        from:"likes",
+        localField:"_id",
+        foreignField:"video",
+        as:"videoLikeCount"
+      }
+    },
+    {
+     
+      $addFields: {
+      likeCount: { $size: "$videoLikeCount" } 
+    
+    }
+  }
+
+  ])
+
   const userVideos = await Video.find({ owner: userId });
 
   const userVideosCount = userVideos.length;
@@ -29,10 +54,12 @@ const getChannelStats = asyncHandler(async (req, res) => {
   ]);
   const totalVideoViews = userVideoViews[0]?.totalViews || 0;
 
+  console.log("totalVideoViews",totalVideoViews);
+
   res.status(200).json(
     new ApiResponse(
       200,
-      { userVideosCount, totalLikesOnVideos, totalChannelSubscribers, totalVideoViews },
+      { userVideosCount, totalLikesOnVideos, totalChannelSubscribers,totalVideoViews ,userVideosAndLikeCountOfEachVideo   },
       "data fetched successfully"
     )
   );
