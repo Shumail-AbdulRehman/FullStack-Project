@@ -1,18 +1,11 @@
-import React from "react";
-import {
-  Heart,
-  History,
-  Video,
-  Users,
-  LifeBuoy,
-  Settings,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React from 'react';
+import { Heart, History, Video, Users, LifeBuoy, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function SideBar() {
   const userData = useSelector((state) => state.auth.userData);
-  
+
   return (
     <div className="h-screen w-auto bg-[#212121] text-white flex flex-col sticky top-0">
       <ul className="space-y-2 text-lg font-medium">
@@ -21,7 +14,7 @@ function SideBar() {
             <span className="font-semibold">Home</span>
           </li>
         </Link>
-        <Link to='/user/liked-videos'>
+        <Link to="/user/liked-videos">
           <li className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838]">
             <Heart className="w-6 h-6" />
             <span>Liked Videos</span>
@@ -33,7 +26,10 @@ function SideBar() {
             <span>History</span>
           </li>
         </Link>
-        <Link to={`/channel/${userData?._id}`} className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838]">
+        <Link
+          to={`/channel/${userData?._id}`}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838]"
+        >
           <Video className="w-6 h-6" />
           <span>My Content</span>
         </Link>

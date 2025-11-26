@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { Search } from 'lucide-react'
-import { Button } from '../ui/button'
-import { useSelector } from 'react-redux'
-import LogoutBtn from './LogoutBtn'
+import React, { useEffect, useState } from 'react';
+import { Search } from 'lucide-react';
+import { Button } from '../ui/button';
+import { useSelector } from 'react-redux';
+import LogoutBtn from './LogoutBtn';
 
 function Navbar() {
-
-  const isAuthenticated=(useSelector((state)=> state.auth.isAuthenticated))
-// const isAuthenticated=useSelector((state)=>  state.auth.isAuthenticated)
-console.log("is authenticated",isAuthenticated)
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  // const isAuthenticated=useSelector((state)=>  state.auth.isAuthenticated)
+  console.log('is authenticated', isAuthenticated);
 
   // useEffect(()=>
   // {
   //   console.log(isAuthenticated)
   // },[isAuthenticated])
- return (
+  return (
     <div className="flex items-center justify-between px-4 py-6 bg-[#212121] border-b-1 border-gray-400 text-white shadow-md">
       <div className="text-xl font-bold cursor-pointer">MyTube</div>
 
@@ -30,10 +29,14 @@ console.log("is authenticated",isAuthenticated)
       </div>
 
       <div>
-        {isAuthenticated ? <LogoutBtn /> : <Button className="bg-blue-600 hover:bg-blue-700">Login</Button>}
+        {isAuthenticated ? (
+          <LogoutBtn />
+        ) : (
+          <Button className="bg-blue-600 hover:bg-blue-700">Login</Button>
+        )}
       </div>
     </div>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

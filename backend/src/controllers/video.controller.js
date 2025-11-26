@@ -1,158 +1,180 @@
-import mongoose, {isValidObjectId} from "mongoose"
-import {Video} from "../models/video.model.js"
-import {ApiError} from "../utils/ApiError.js"
-import {ApiResponse} from "../utils/ApiResponse.js"
-import {asyncHandler} from "../utils/asyncHandler.js"
-import {uploadOnCloudinary} from "../utils/cloudinary.js"
-import { deleteImageByUrl } from "../utils/deleteImageFromCloudinary.js"
-import { Like } from "../models/like.model.js"
-import { Subscription } from "../models/subscription.model.js"
+import mongoose, { isValidObjectId } from "mongoose";
+import { Video } from "../models/video.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteImageByUrl } from "../utils/deleteImageFromCloudinary.js";
+import { Like } from "../models/like.model.js";
+import { Subscription } from "../models/subscription.model.js";
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10 } = req.query
+    const { page = 1, limit = 10 } = req.query;
 
-    const options={
-        page:parseInt(page),
-        limit:parseInt(limit)
-    }
+    const options = {
+        page: parseInt(page),
+        limit: parseInt(limit),
+    };
 
-    const pipeline=[
+    const pipeline = [
         {
-            $lookup:{
-                from:"users",
-                localField:"owner",
-                foreignField:"_id",
-                as:"owner"
-            }   
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+            },
         },
         {
-            $unwind:"$owner"
+            $unwind: "$owner",
         },
         {
-            $match:{
-                isPublished:true
-            }
+            $match: {
+                isPublished: true,
+            },
         },
         {
-            $project:{
-                title:1,
-                description:1,
-                videoFile:1,
-                "owner.username":1,
-                views:1,
-                duration:1,
-                thumbnail:1,
-                createdAt:1,
-                "owner.avatar":1,
-                "owner._id":1
-            }
+            $project: {
+                title: 1,
+                description: 1,
+                videoFile: 1,
+                "owner.username": 1,
+                views: 1,
+                duration: 1,
+                thumbnail: 1,
+                createdAt: 1,
+                "owner.avatar": 1,
+                "owner._id": 1,
+            },
         },
         {
-            $sort:{
-                createdAt:-1
-            }
-        }
-    ]
-    const aggregate= Video.aggregate(pipeline)
+            $sort: {
+                createdAt: -1,
+            },
+        },
+    ];
+    const aggregate = Video.aggregate(pipeline);
 
-    const result=await Video.aggregatePaginate(aggregate,options)
+    const result = await Video.aggregatePaginate(aggregate, options);
 
     res.status(200).json(
-        new ApiResponse(200,result,"videos sent successfullt")
-    )
-
-
-
-
-
-})
+        new ApiResponse(200, result, "videos sent successfullt")
+    );
+});
 
 const publishAVideo = asyncHandler(async (req, res) => {
-    const { title, description,videoLink,videoDuration} = req.body
+    const { title, description, videoLink, videoDuration } = req.body;
 
-    if(!(title.trim() && description.trim() && videoLink.trim() && videoDuration.trim())) throw new ApiError(400,"title , description , video link and video duration is required")
-        console.log(videoDuration)
-    const userId=req.user._id
-    const uploadThumbnail=await uploadOnCloudinary(req.file?.path)
-    const thumbnailUrl=uploadThumbnail?.secure_url || null
-    
+    if (
+        !(
+            title.trim() &&
+            description.trim() &&
+            videoLink.trim() &&
+            videoDuration.trim()
+        )
+    )
+        throw new ApiError(
+            400,
+            "title , description , video link and video duration is required"
+        );
+    console.log(videoDuration);
+    const userId = req.user._id;
+    const uploadThumbnail = await uploadOnCloudinary(req.file?.path);
+    const thumbnailUrl = uploadThumbnail?.secure_url || null;
 
-    if(!thumbnailUrl) throw new ApiError(404,"thumbnail not found")
-    
-    const publishUserVideo=await Video.create({
+    if (!thumbnailUrl) throw new ApiError(404, "thumbnail not found");
+
+    const publishUserVideo = await Video.create({
         title,
         description,
-        owner:userId,
-        videoFile:videoLink,
-        thumbnail:thumbnailUrl,
-        duration:videoDuration
-    })
+        owner: userId,
+        videoFile: videoLink,
+        thumbnail: thumbnailUrl,
+        duration: videoDuration,
+    });
 
-    if(!publishUserVideo) throw new ApiError(500,"something went wrong while publishing user video")
-    
-    res.status(201).json
-    (
-        new ApiResponse(201,publishUserVideo,"published user video successfully")
-    )
-    
+    if (!publishUserVideo)
+        throw new ApiError(
+            500,
+            "something went wrong while publishing user video"
+        );
 
-
-
-})
+    res.status(201).json(
+        new ApiResponse(
+            201,
+            publishUserVideo,
+            "published user video successfully"
+        )
+    );
+});
 
 const getVideoById = asyncHandler(async (req, res) => {
-    const { videoId,channelId } = req.params
-    
-    if(!videoId || !channelId) throw new ApiError(400,"video id and channelId is required")
-    
+    const { videoId, channelId } = req.params;
+
+    if (!videoId || !channelId)
+        throw new ApiError(400, "video id and channelId is required");
+
     // const video=await Video.findById(videoId)
 
     //after this :=>
 
-        const video=await Video.aggregate([
-            {
-                $match:{
-                _id: new mongoose.Types.ObjectId(videoId)  ,
-                isPublished:true                
-            }
+    const video = await Video.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(videoId),
+                isPublished: true,
             },
-            {
-                $lookup:{
-                from:"users",
-                localField:"owner",
-                foreignField:"_id",
-                as:"owner"
-                }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
             },
-            {
-                $project:{
-                title:1,
-                description:1,
-                videoFile:1,
-                "owner.username":1,
-                views:1,
-                duration:1,
-                thumbnail:1,
-                createdAt:1,
-                "owner.avatar":1,
-                "owner._id":1
+        },
+        {
+            $project: {
+                title: 1,
+                description: 1,
+                videoFile: 1,
+                "owner.username": 1,
+                views: 1,
+                duration: 1,
+                thumbnail: 1,
+                createdAt: 1,
+                "owner.avatar": 1,
+                "owner._id": 1,
             },
-            },
-            {
-                $unwind:"$owner"
-            }
-        ])
+        },
+        {
+            $unwind: "$owner",
+        },
+    ]);
 
-    if (!video || video.length === 0) throw new ApiError(404,"video not found");
+    if (!video || video.length === 0)
+        throw new ApiError(404, "video not found");
 
-    const isLiked = await Like.findOne({ video: videoId, likedBy: req.user._id }) ? true : false;
-    const isSubscribed = await Subscription.findOne({ subscriber: req.user._id, channel: channelId }) ? true : false;
+    const isLiked = (await Like.findOne({
+        video: videoId,
+        likedBy: req.user._id,
+    }))
+        ? true
+        : false;
+    const isSubscribed = (await Subscription.findOne({
+        subscriber: req.user._id,
+        channel: channelId,
+    }))
+        ? true
+        : false;
 
-
-    
     res.status(200).json(
-        new ApiResponse(200,{video,isSubscribed,isLiked},"video fetched successfully")
-    )
-})
+        new ApiResponse(
+            200,
+            { video, isSubscribed, isLiked },
+            "video fetched successfully"
+        )
+    );
+});
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     const { title, description } = req.body;
@@ -180,9 +202,15 @@ const updateVideo = asyncHandler(async (req, res) => {
         await deleteImageByUrl(userVideo.thumbnail, "image");
     }
 
-    const updatedVideo = await Video.findByIdAndUpdate(videoId, updateData, { new: true });
+    const updatedVideo = await Video.findByIdAndUpdate(videoId, updateData, {
+        new: true,
+    });
 
-    if (!updatedVideo) throw new ApiError(500, "something went wrong while updating the video");
+    if (!updatedVideo)
+        throw new ApiError(
+            500,
+            "something went wrong while updating the video"
+        );
 
     res.status(200).json(
         new ApiResponse(200, updatedVideo, "video updated successfully")
@@ -190,112 +218,132 @@ const updateVideo = asyncHandler(async (req, res) => {
 });
 
 const deleteVideo = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
-    
-    if(!videoId) throw new ApiError(400,"video id is required")
-    
-    const video=await Video.findById(videoId)
-    
-    if(!video) throw new ApiError(404,"video not found")
-    const oldVideoUrl=video?.videoFile
-    const oldThumbnailUrl=video?.thumbnail
-    if(req.user._id.toString() !== video.owner.toString()) throw new ApiError(401,"unauthorize access")
+    const { videoId } = req.params;
 
-    const deleteVideo=await Video.findByIdAndDelete(videoId)
+    if (!videoId) throw new ApiError(400, "video id is required");
 
-    if(!deleteVideo) throw new ApiError(500,"soemthing wnet wrong while deleting video")
-    const videoDeletedFromCloudinary=await deleteImageByUrl(oldVideoUrl,"video")
+    const video = await Video.findById(videoId);
 
-    if(videoDeletedFromCloudinary?.result !== "ok") console.log(videoDeletedFromCloudinary,"something went wrong while deleting videoFile")
-    const thumbnailDeletedFromCloudinary=await deleteImageByUrl(oldThumbnailUrl,"image")
+    if (!video) throw new ApiError(404, "video not found");
+    const oldVideoUrl = video?.videoFile;
+    const oldThumbnailUrl = video?.thumbnail;
+    if (req.user._id.toString() !== video.owner.toString())
+        throw new ApiError(401, "unauthorize access");
 
-    if(thumbnailDeletedFromCloudinary?.result !=="ok") console.log(thumbnailDeletedFromCloudinary,"something wnet wring while deleting thumbnail in deleteVideo controller")
+    const deleteVideo = await Video.findByIdAndDelete(videoId);
+
+    if (!deleteVideo)
+        throw new ApiError(500, "soemthing wnet wrong while deleting video");
+    const videoDeletedFromCloudinary = await deleteImageByUrl(
+        oldVideoUrl,
+        "video"
+    );
+
+    if (videoDeletedFromCloudinary?.result !== "ok")
+        console.log(
+            videoDeletedFromCloudinary,
+            "something went wrong while deleting videoFile"
+        );
+    const thumbnailDeletedFromCloudinary = await deleteImageByUrl(
+        oldThumbnailUrl,
+        "image"
+    );
+
+    if (thumbnailDeletedFromCloudinary?.result !== "ok")
+        console.log(
+            thumbnailDeletedFromCloudinary,
+            "something wnet wring while deleting thumbnail in deleteVideo controller"
+        );
     res.status(200).json(
-        new ApiResponse(200,true,"video deleted successfully")
-    )
-    
-})
+        new ApiResponse(200, true, "video deleted successfully")
+    );
+});
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
+    const { videoId } = req.params;
 
-    if(!videoId) throw new ApiError(400,"video id is required")
+    if (!videoId) throw new ApiError(400, "video id is required");
 
-    const video=await Video.findById(videoId)
-    if(!video) throw new ApiError(404,"video not found")
+    const video = await Video.findById(videoId);
+    if (!video) throw new ApiError(404, "video not found");
 
-    if(video.owner.toString() !== req.user._id.toString()) throw new ApiError(401,"unauthorize access")
-    
-    const updatePublishStatus=await Video.findByIdAndUpdate(videoId,
+    if (video.owner.toString() !== req.user._id.toString())
+        throw new ApiError(401, "unauthorize access");
+
+    const updatePublishStatus = await Video.findByIdAndUpdate(
+        videoId,
         {
-            isPublished:!video.isPublished
+            isPublished: !video.isPublished,
         },
         {
-            new:true
+            new: true,
         }
-    )
-
-    res.status(200).json(
-        new ApiResponse(200,updatePublishStatus,"publish status updated successfully")
-    )
-})
-
-const incrementViewCount =asyncHandler(async(req,res)=>
-{
-    const {videoId}=req.params;
-
-        if(!videoId) throw new ApiError(400,"video id is required");
-
-        const updatedVideo = await Video.findByIdAndUpdate(
-            videoId,
-            { $inc: { views: 1 } }, 
-            { new: true } 
     );
 
-    if(!updatedVideo) throw new ApiError(404,"video not found while updating");
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            updatePublishStatus,
+            "publish status updated successfully"
+        )
+    );
+});
+
+const incrementViewCount = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
+
+    if (!videoId) throw new ApiError(400, "video id is required");
+
+    const updatedVideo = await Video.findByIdAndUpdate(
+        videoId,
+        { $inc: { views: 1 } },
+        { new: true }
+    );
+
+    if (!updatedVideo)
+        throw new ApiError(404, "video not found while updating");
 
     res.status(200).json(
-        new ApiResponse(200,updatedVideo,"video view count incremented by one")
+        new ApiResponse(
+            200,
+            updatedVideo,
+            "video view count incremented by one"
+        )
     );
-    
-}) 
+});
 
-const getChannelVideos=asyncHandler(async(req,res)=>{
-
-    const {channelId}=req.params;
-    console.log("channelId is:=> ",channelId);
-    if(!channelId) throw new ApiError(400,"channelId is required");
+const getChannelVideos = asyncHandler(async (req, res) => {
+    const { channelId } = req.params;
+    console.log("channelId is:=> ", channelId);
+    if (!channelId) throw new ApiError(400, "channelId is required");
 
     // const channelVideos= await Video.find({ owner: channelId });
     // console.log("channel Videos are these => :::: ",channelVideos);
 
-    const channelVideos=await Video.aggregate([
+    const channelVideos = await Video.aggregate([
         {
-            $match:{
-                owner:new mongoose.Types.ObjectId(channelId),
-                isPublished:true
-            }
-        },
-        {
-            $lookup:{
-                from:"users",
-                localField:"owner",
-                foreignField:"_id",
-                as:"owner",
-               
+            $match: {
+                owner: new mongoose.Types.ObjectId(channelId),
+                isPublished: true,
             },
-    
         },
         {
-            $unwind:"$owner"
-        }
-
-    ])
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+            },
+        },
+        {
+            $unwind: "$owner",
+        },
+    ]);
 
     res.status(200).json(
-        new ApiResponse(200,channelVideos,"channel Vidoes sent successfully")
+        new ApiResponse(200, channelVideos, "channel Vidoes sent successfully")
     );
-})
+});
 
 export {
     getAllVideos,
@@ -305,9 +353,5 @@ export {
     deleteVideo,
     togglePublishStatus,
     incrementViewCount,
-    getChannelVideos
-}
-
-
-
-
+    getChannelVideos,
+};

@@ -19,7 +19,7 @@ function Video() {
   const [editingContent, setEditingContent] = useState('');
 
   const { data: video, isLoading: videoLoading } = useQuery({
-    queryKey: ["video", videoId],
+    queryKey: ['video', videoId],
     queryFn: async () => {
       const res = await axios.get(
         `http://localhost:8000/api/v1/videos/${videoId}/${channelId}`,
@@ -30,7 +30,7 @@ function Video() {
   });
 
   const { data: comments, isLoading: commentsLoading } = useQuery({
-    queryKey: ["comment", videoId],
+    queryKey: ['comment', videoId],
     queryFn: async () => {
       const res = await axios.get(
         `http://localhost:8000/api/v1/comments/${videoId}`,
@@ -42,11 +42,14 @@ function Video() {
 
   const { mutate: deleteUserComment } = useMutation({
     mutationFn: async (comment) => {
-      await axios.delete(`http://localhost:8000/api/v1/comments/c/${comment._id}`, {
-        withCredentials: true
-      });
+      await axios.delete(
+        `http://localhost:8000/api/v1/comments/c/${comment._id}`,
+        {
+          withCredentials: true,
+        }
+      );
     },
-    onSuccess: () => queryClient.invalidateQueries(["comment", videoId])
+    onSuccess: () => queryClient.invalidateQueries(['comment', videoId]),
   });
 
   const deleteComment = (comment) => {
@@ -55,20 +58,20 @@ function Video() {
 
   const { mutate: updateUserComment } = useMutation({
     mutationFn: async ({ commentId, content }) => {
-      console.log("commentId is::",commentId)
+      console.log('commentId is::', commentId);
       const res = await axios.patch(
         `http://localhost:8000/api/v1/comments/c/${commentId}`,
-        { newContent:content },
+        { newContent: content },
         { withCredentials: true }
       );
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["comment", videoId]);
+      queryClient.invalidateQueries(['comment', videoId]);
       setEditingCommentId(null);
       setEditingContent('');
     },
-    onError: (err) => console.log("update comment error:", err)
+    onError: (err) => console.log('update comment error:', err),
   });
 
   const startEditing = (comment) => {

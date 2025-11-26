@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 function ChannelNavbar({ setSelectedOption, selectedOption }) {
-  const options = ["Videos", "Playlist", "Tweets"];
+  const options = ['Videos', 'Playlist', 'Tweets'];
   const userData = useSelector((state) => state.auth.userData);
 
   return (
@@ -17,8 +17,8 @@ function ChannelNavbar({ setSelectedOption, selectedOption }) {
               onClick={() => setSelectedOption(option)}
               className={`py-3 text-xl px-10 font-medium  transition-colors border-b-2 ${
                 selectedOption === option
-                  ? "text-white border-white"
-                  : "border-transparent hover:text-gray-300"
+                  ? 'text-white border-white'
+                  : 'border-transparent hover:text-gray-300'
               }`}
             >
               {option}

@@ -1,68 +1,72 @@
 import { Router } from "express";
 import {
-        generateNewAccessToken,
-        getCurrentUser,
-        registerUser, 
-        updateAvatar,
-        updateCoverImage,
-        updateUserEmailAndFullName, 
-        userLogin,
-        userLogOut,
-        getWatchHistory,
-        getUserChannelProfile,
-        changePassword,
-        addWatchHistory,
-        clearWatchHistory,
-        updateUsername,
-        updateUserEmail,
-        updateFullname
-
-    } from "../controllers/user.controller.js";
+    generateNewAccessToken,
+    getCurrentUser,
+    registerUser,
+    updateAvatar,
+    updateCoverImage,
+    updateUserEmailAndFullName,
+    userLogin,
+    userLogOut,
+    getWatchHistory,
+    getUserChannelProfile,
+    changePassword,
+    addWatchHistory,
+    clearWatchHistory,
+    updateUsername,
+    updateUserEmail,
+    updateFullname,
+} from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
+const router = Router();
 
+router.route("/update-username").patch(verifyJwt, updateUsername);
+router.route("/change-password").patch(verifyJwt, changePassword);
+router.route("/update-email").patch(verifyJwt, updateUserEmail);
+router.route("/update-fullname").patch(verifyJwt, updateFullname);
 
-const router=Router()
+router.route("/register").post(
+    upload.fields([
+        {
+            name: "avatar",
+            maxCount: 1,
+        },
+        {
+            name: "coverImage",
+            maxCount: 1,
+        },
+    ]),
+    registerUser
+);
 
-router.route("/update-username").patch(verifyJwt,updateUsername);
-router.route("/change-password").patch(verifyJwt,changePassword);
-router.route("/update-email").patch(verifyJwt,updateUserEmail)
-router.route("/update-fullname").patch(verifyJwt,updateFullname)
+router.route("/login").post(upload.none(), userLogin);
 
-router.route("/register").post(upload.fields([
-    {
-        name:"avatar",
-        maxCount:1
-    },
-    {
-        name:"coverImage",
-        maxCount:1
-    }
-]),registerUser)
+router.route("/logout").post(verifyJwt, userLogOut);
 
+router.route("/refreshtoken").post(generateNewAccessToken);
 
+router.route("/current-user").get(verifyJwt, getCurrentUser);
 
-router.route("/login").post(upload.none(),userLogin)
+router.route("/update-details").patch(verifyJwt, updateUserEmailAndFullName);
 
-router.route("/logout").post(verifyJwt,userLogOut)
+router
+    .route("/update-avatar")
+    .patch(verifyJwt, upload.single("avatar"), updateAvatar);
 
-router.route("/refreshtoken").post(generateNewAccessToken)
+router
+    .route("/update-cover-image")
+    .patch(verifyJwt, upload.single("coverImage"), updateCoverImage);
 
-router.route("/current-user").get(verifyJwt,getCurrentUser)
+router.route("/watch-history").get(verifyJwt, getWatchHistory);
 
-router.route("/update-details").patch(verifyJwt,updateUserEmailAndFullName)
+router.route("/add-watch-history/:videoId").post(verifyJwt, addWatchHistory);
 
-router.route("/update-avatar").patch(verifyJwt,upload.single("avatar"),updateAvatar)
+router.route("/clear-watch-history").delete(verifyJwt, clearWatchHistory);
 
-router.route("/update-cover-image").patch(verifyJwt,upload.single("coverImage"),updateCoverImage)
-
-router.route("/watch-history").get(verifyJwt,getWatchHistory)
-
-router.route("/add-watch-history/:videoId").post(verifyJwt,addWatchHistory)
-
-router.route("/clear-watch-history").delete(verifyJwt,clearWatchHistory)
-
-router.route("/channel-profile/:channelId").get(verifyJwt,getUserChannelProfile)
+router
+    .route("/channel-profile/:channelId")
+    .get(verifyJwt, getUserChannelProfile);
 
 export default router;

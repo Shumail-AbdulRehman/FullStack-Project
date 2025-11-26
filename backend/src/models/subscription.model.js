@@ -1,17 +1,20 @@
-import mongoose, {Schema} from "mongoose"
+import mongoose, { Schema } from "mongoose";
 
-const subscriptionSchema = new Schema({
-    subscriber: {
-        type: Schema.Types.ObjectId,
-        ref: "User"
+const subscriptionSchema = new Schema(
+    {
+        subscriber: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        },
+        channel: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        },
     },
-    channel: {
-        type: Schema.Types.ObjectId, 
-        ref: "User"
-    }
-}, {timestamps: true})
+    { timestamps: true }
+);
 
 // chai aur code, ducky,
-// shumail,arham,asnan 
+// shumail,arham,asnan
 
-export const Subscription = mongoose.model("Subscription", subscriptionSchema)
+export const Subscription = mongoose.model("Subscription", subscriptionSchema);

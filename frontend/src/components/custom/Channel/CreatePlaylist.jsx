@@ -7,13 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import VideoCard from '../VideoCard';
 
 function CreatePlaylist({ channelId, userVideos }) {
-
   const [open, setOpen] = useState(false);
 
   const { register, handleSubmit, watch, setValue, reset } = useForm({
@@ -44,7 +43,6 @@ function CreatePlaylist({ channelId, userVideos }) {
     console.log('Playlist Name:', data.playlistName);
     console.log('Selected Video IDs:', data.selectedVideos);
 
-    
     setOpen(false);
 
     // Reset form
@@ -54,7 +52,6 @@ function CreatePlaylist({ channelId, userVideos }) {
   return (
     <div className="flex justify-center items-center h-full">
       <Dialog open={open} onOpenChange={setOpen}>
-        
         <DialogTrigger asChild>
           <Button
             onClick={() => setOpen(true)}
@@ -66,17 +63,20 @@ function CreatePlaylist({ channelId, userVideos }) {
 
         <DialogContent className="max-w-3xl w-full rounded-lg p-6 bg-white shadow-lg">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-semibold">Create Playlist</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold">
+              Create Playlist
+            </DialogTitle>
             <DialogDescription className="text-gray-500 text-sm mt-1">
               Click on videos to select them and give your playlist a name.
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 flex flex-col gap-4">
-
             {/* Playlist Name */}
             <div className="flex flex-col">
-              <label className="mb-1 text-gray-700 font-medium">Playlist Name</label>
+              <label className="mb-1 text-gray-700 font-medium">
+                Playlist Name
+              </label>
               <Input
                 {...register('playlistName', { required: true })}
                 placeholder="Enter playlist name"

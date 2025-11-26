@@ -1,36 +1,35 @@
 import express, { urlencoded } from "express";
-import cors from "cors"
+import cors from "cors";
 import cookieParser from "cookie-parser";
 
-const app=express()
-app.use(cors({
-  origin: "http://localhost:5173",  
-  credentials: true,                
-}));
-app.use(express.json({limit:"16kb"}))
-app.use(urlencoded({extended:true}))
-app.use(express.static("public"))
-app.use(cookieParser())
+const app = express();
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+    })
+);
+app.use(express.json({ limit: "16kb" }));
+app.use(urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use(cookieParser());
 
-
-import tweetRouter from "./routes/tweet.route.js"
-import subscriptionRouter from "./routes/subscription.route.js"
-import videoRouter from "./routes/video.route.js"
-import commentRouter from "./routes/comment.route.js"
-import likeRouter from "./routes/like.route.js"
-import playlistRouter from "./routes/playlist.route.js"
-import dashboardRouter from "./routes/dashboard.route.js"
+import tweetRouter from "./routes/tweet.route.js";
+import subscriptionRouter from "./routes/subscription.route.js";
+import videoRouter from "./routes/video.route.js";
+import commentRouter from "./routes/comment.route.js";
+import likeRouter from "./routes/like.route.js";
+import playlistRouter from "./routes/playlist.route.js";
+import dashboardRouter from "./routes/dashboard.route.js";
 import userRoutes from "./routes/user.route.js";
 
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/tweets", tweetRouter);
+app.use("/api/v1/subscriptions", subscriptionRouter);
+app.use("/api/v1/videos", videoRouter);
+app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1/likes", likeRouter);
+app.use("/api/v1/playlist", playlistRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
-app.use("/api/v1/users",userRoutes)
-app.use("/api/v1/tweets", tweetRouter)
-app.use("/api/v1/subscriptions", subscriptionRouter)
-app.use("/api/v1/videos", videoRouter)
-app.use("/api/v1/comments", commentRouter)
-app.use("/api/v1/likes", likeRouter)
-app.use("/api/v1/playlist", playlistRouter)
-app.use("/api/v1/dashboard", dashboardRouter)
-
-
-export default app
+export default app;

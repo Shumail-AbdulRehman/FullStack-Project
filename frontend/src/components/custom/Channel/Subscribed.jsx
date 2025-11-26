@@ -1,11 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 function Subscribed() {
-  return (
-    <div>
-      this is subscribed section
-    </div>
-  )
+  return <div>this is subscribed section</div>;
 }
 
-export default Subscribed
+export default Subscribed;

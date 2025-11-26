@@ -1,11 +1,11 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 
 function PostTweetCard({ channelId }) {
   const queryClient = useQueryClient();
-  
+
   const { mutate: tweetMutate } = useMutation({
     mutationFn: async (content) => {
       const res = await axios.post(
@@ -16,18 +16,18 @@ function PostTweetCard({ channelId }) {
       return res.data.data;
     },
     onSuccess: (newTweet) => {
-      queryClient.setQueryData(["tweets", channelId], (old) => [
+      queryClient.setQueryData(['tweets', channelId], (old) => [
         newTweet,
         ...(old || []),
       ]);
     },
     onError: (error) => {
-      console.log("Error while tweeting:", error.response?.data?.message);
+      console.log('Error while tweeting:', error.response?.data?.message);
     },
   });
 
   const { handleSubmit, register, reset } = useForm();
-  
+
   const onSubmit = (data) => {
     tweetMutate(data.content);
     reset();
@@ -44,15 +44,15 @@ function PostTweetCard({ channelId }) {
             <span className="text-white font-semibold text-sm">U</span>
           </div>
         </div>
-        
+
         <div className="flex-1">
           <textarea
-            {...register("content", { required: true })}
+            {...register('content', { required: true })}
             placeholder="What's happening?"
             rows={3}
             className="w-full bg-transparent text-gray-100 placeholder-gray-500 text-sm resize-none outline-none mb-3"
           />
-          
+
           <div className="flex justify-end">
             <button
               type="submit"

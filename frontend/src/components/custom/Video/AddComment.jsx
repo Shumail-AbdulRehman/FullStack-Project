@@ -15,11 +15,11 @@ function AddComment({ videoId }) {
         { withCredentials: true }
       );
 
-      console.log("new commnet is::",res.data.data);
+      console.log('new commnet is::', res.data.data);
       return res.data.data;
     },
     onSuccess: (newComment) => {
-      queryClient.invalidateQueries(["comment",videoId]);
+      queryClient.invalidateQueries(['comment', videoId]);
     },
   });
 
