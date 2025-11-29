@@ -7,6 +7,9 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { deleteImageByUrl } from "../utils/deleteImageFromCloudinary.js";
 import { Like } from "../models/like.model.js";
 import { Subscription } from "../models/subscription.model.js";
+import { client } from "../index.js";
+import { Notification } from "../models/notification.model.js";
+
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
 
@@ -98,6 +101,20 @@ const publishAVideo = asyncHandler(async (req, res) => {
             "something went wrong while publishing user video"
         );
 
+        const subscribersList=await Subscription.find({
+            channel:userId
+        })
+
+        console.log("subscription::",subscribersList);
+
+        const firstJob=JSON.stringify({video:publishUserVideo,user:req.user,subscribersList:subscribersList})
+        const job=JSON.stringify({videoId:publishUserVideo._id,channelId:userId,videoTitle:publishUserVideo.title})
+
+        await client.lPush("liveNotificationQueue",firstJob);
+        const jobPushed=await client.lPush("videoQueue",job);
+
+        console.log("job pushed to videoQueue",jobPushed);
+
     res.status(201).json(
         new ApiResponse(
             201,
@@ -175,6 +192,7 @@ const getVideoById = asyncHandler(async (req, res) => {
         )
     );
 });
+
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     const { title, description } = req.body;
@@ -345,6 +363,84 @@ const getChannelVideos = asyncHandler(async (req, res) => {
     );
 });
 
+const getUserNotification=asyncHandler(async(req,res)=>
+{
+    const userId=req.user._id;
+
+    console.log("userId is ::",userId);
+
+    // const notifications=await Notification.aggregate([
+    //     {
+    //         $match:{
+    //             user:new mongoose.Types.ObjectId(userId)
+    //         }
+    //     },
+    //     {
+    //         $lookup:{
+    //             from:"videos",
+    //             localField:"video",
+    //             foreignField:"_id",
+    //             as:"video",
+    //             pipeline:[
+    //                 {
+    //                     $lookup:{
+    //                         from:"users",
+    //                         localField:"owner",
+    //                         foreignField:"_id",
+    //                         as:"owner"
+    //                     }
+    //                 },
+    //                 {
+    //                     $unwind:"$owner"
+    //                 }
+    //             ]
+    //         }
+    //     },
+    //     {
+    //         $unwind:"$video"
+    //     }
+    // ]);
+
+    const notifications=await Notification.aggregate([
+        {
+            $match:{
+                user:new mongoose.Types.ObjectId(userId)
+            }
+        },
+        {
+            $lookup:{
+                from:"videos",
+                localField:"video",
+                foreignField:"_id",
+                as:"video",
+                pipeline:[
+                    {
+                        $lookup:{
+                            from:"users",
+                            localField:"owner",
+                            foreignField:"_id",
+                            as:"owner"
+                        }
+                    },
+                    {
+                        $unwind:"$owner"
+                    }
+                ]
+            }
+        },
+        {
+           $unwind: "$video"
+
+        }
+    ])
+
+    console.log("notiifcations are:::",notifications)
+
+    res.status(200).json(
+        new ApiResponse(200,notifications,"fetched notiifcations successfully")
+    )
+})
+
 export {
     getAllVideos,
     publishAVideo,
@@ -354,4 +450,5 @@ export {
     togglePublishStatus,
     incrementViewCount,
     getChannelVideos,
+    getUserNotification
 };

@@ -17,6 +17,31 @@ function App() {
   const [userData, setUserData] = useState(null);
   const dispatch = useDispatch();
 
+ useEffect(() => {
+  if (!userData) return; 
+
+  const ws = new WebSocket("ws://localhost:8080");
+
+  ws.onopen = () => {
+    console.log("Connected to WebSocket server");
+    ws.send(JSON.stringify({ userId: userData._id }));
+  };
+
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    console.log("Received notification:", data);
+    // setNotifications((prev) => [data, ...prev]); 
+  };
+
+  ws.onclose = () => {
+    console.log("WebSocket connection closed");
+  };
+
+  return () => ws.close(); 
+}, [userData]); 
+
+
+
   useEffect(() => {
     if (userData) {
       console.log('app.jsx userdata is :::', userData);

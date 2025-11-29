@@ -1,0 +1,22 @@
+import mongoose,{Schema} from "mongoose";
+
+const notifcationSchema=new Schema(
+    {
+        video:{
+            type:Schema.Types.ObjectId,
+            ref:"Video",
+            required:true
+        },
+        user:{
+            type:Schema.Types.ObjectId,
+            ref:"User",
+            required:true
+
+        },
+        
+    }
+)
+
+export const Notification=mongoose.model("Notification",notifcationSchema);
+
+

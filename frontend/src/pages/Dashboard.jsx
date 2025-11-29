@@ -121,12 +121,10 @@ function Dashboard() {
 
   return (
     <div className="flex bg-black min-h-screen">
-      {/* Sidebar */}
       <aside className="w-64 hidden md:block">
         <SideBar />
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 text-white p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
           <div className="border border-gray-700 rounded-xl p-6 bg-gray-900 shadow-lg">

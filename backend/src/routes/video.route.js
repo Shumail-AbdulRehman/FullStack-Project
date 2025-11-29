@@ -8,6 +8,7 @@ import {
     updateVideo,
     incrementViewCount,
     getChannelVideos,
+    getUserNotification,
 } from "../controllers/video.controller.js";
 
 import { verifyJwt as verifyJWT } from "../middlewares/auth.middleware.js";
@@ -17,7 +18,7 @@ import { getSignature } from "../controllers/signVideoUpload.controller.js";
 const router = Router();
 
 router.use(verifyJWT);
-
+router.get("/get-notifications",getUserNotification);
 router.get("/get-signature", getSignature);
 
 router.patch("/incrementViewsCount/:videoId", incrementViewCount);

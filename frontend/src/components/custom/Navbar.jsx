@@ -3,10 +3,23 @@ import { Search } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useSelector } from 'react-redux';
 import LogoutBtn from './LogoutBtn';
-
+import { Link } from 'react-router-dom';
+import NotificationBell from './Notification/NotificationBell';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 function Navbar() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   // const isAuthenticated=useSelector((state)=>  state.auth.isAuthenticated)
+
+  const {data:notifications}=useQuery({
+    queryKey:["notifications"],
+    queryFn:async()=>
+    {
+      const res= await axios.get(`http://localhost:8000/api/v1/videos/get-notifications`,{withCredentials:true})
+      console.log("noti::",res.data.data);
+      return res.data.data;
+    }
+  })
   console.log('is authenticated', isAuthenticated);
 
   // useEffect(()=>
@@ -34,6 +47,21 @@ function Navbar() {
         ) : (
           <Button className="bg-blue-600 hover:bg-blue-700">Login</Button>
         )}
+      </div>
+
+      <div>
+
+        {notifications&&(
+                  <NotificationBell notifications={notifications} />
+
+        )}
+
+
+
+        {/* <Link to="/get-notifications">
+                <Button>Notifications</Button>
+
+        </Link> */}
       </div>
     </div>
   );

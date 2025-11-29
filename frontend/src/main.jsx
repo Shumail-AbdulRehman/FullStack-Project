@@ -19,6 +19,7 @@ import Setting from './pages/Setting';
 import WatchHistory from './pages/WatchHistory';
 import LikedVideos from './pages/LikedVideos';
 import Dashboard from './pages/Dashboard';
+import Notification from './pages/Notification';
 
 const router = createBrowserRouter([
   {
@@ -105,6 +106,14 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
+      {
+        path:'/get-notifications',
+        element:(
+          <AuthLayout>
+            <Notification/>
+          </AuthLayout>
+        )
+      }
     ],
   },
 ]);
