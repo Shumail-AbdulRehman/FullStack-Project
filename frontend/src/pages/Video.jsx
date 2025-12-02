@@ -9,6 +9,7 @@ import VideoComment from '@/components/custom/Video/VideoComment';
 import AddComment from '@/components/custom/Video/AddComment';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
+import LoadingSpinner from '@/components/custom/LoadingSpinner';
 
 function Video() {
   const queryClient = useQueryClient();
@@ -25,6 +26,7 @@ function Video() {
         `http://localhost:8000/api/v1/videos/${videoId}/${channelId}`,
         { withCredentials: true }
       );
+      console.log("vidoe LIked::",res.data.data);
       return res.data.data;
     },
   });
@@ -84,7 +86,7 @@ function Video() {
   };
 
   if (videoLoading || commentsLoading) {
-    return <h1 className="text-white text-xl p-10">Loading…</h1>;
+    return <LoadingSpinner/>
   }
 
   return (

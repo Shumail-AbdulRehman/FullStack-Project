@@ -5,11 +5,12 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import SideBar from '@/components/custom/SideBar';
 import { Link } from 'react-router-dom';
+import LoadingSpinner from '@/components/custom/LoadingSpinner';
 function WatchHistory() {
   const userData = useSelector((state) => state.auth.userData);
   const queryClient = useQueryClient();
 
-  const { data: getWatchHistory } = useQuery({
+  const { data: getWatchHistory,isPending:getHistoryPending } = useQuery({
     queryKey: ['watchHistory', userData?._id],
     queryFn: async () => {
       const res = await axios.get(
@@ -24,7 +25,7 @@ function WatchHistory() {
     },
   });
 
-  const { mutate: clearHistory } = useMutation({
+  const { mutate: clearHistory,isPending:clearHistoryPending } = useMutation({
     mutationFn: async () => {
       const res = await axios.delete(
         `http://localhost:8000/api/v1/users/clear-watch-history`,
@@ -39,9 +40,14 @@ function WatchHistory() {
     queryClient.invalidateQueries(['watchHistory', userData?._id]);
   };
 
+  if(clearHistoryPending||getHistoryPending)
+  {
+    return <LoadingSpinner/>
+  }
+
   return (
-    <div className="min-h-screen bg-[#121212] text-white flex">
-      <aside className="w-60 flex-shrink-0 border-r border-gray-800">
+    <div className="min-h-screen bg-zinc-950 text-white flex">
+      <aside className="w-75 flex-shrink-0 border-r border-gray-800">
         <SideBar />
       </aside>
 

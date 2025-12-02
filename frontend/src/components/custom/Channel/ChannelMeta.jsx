@@ -44,7 +44,7 @@ function ChannelMeta({ channelId }) {
     );
 
   return (
-    <div className="w-full bg-black">
+    <div className="w-full bg-zinc-950">
       <div className="relative h-48 w-full bg-zinc-900">
         {channelData?.coverImage ? (
           <img
@@ -75,10 +75,10 @@ function ChannelMeta({ channelId }) {
                 <h1 className="text-2xl font-semibold text-white">
                   {channelData?.username}
                 </h1>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-xl text-gray-300 mt-1">
                   @{channelData?.username?.toLowerCase()}
                 </p>
-                <p className="text-sm text-gray-400 mt-2">
+                <p className="text-lg text-gray-400 mt-2">
                   {channelData?.subscribersCount || 0} Subscribers •{' '}
                   {channelData?.channelSubscribedTo || 0} Subscribed
                 </p>
@@ -86,10 +86,10 @@ function ChannelMeta({ channelId }) {
 
               <button
                 onClick={toggleSubscription}
-                className={`px-6 py-2 rounded-full font-medium text-sm transition-colors ${
+                className={`px-6 py-2 rounded-full font-medium text-xl transition-colors ${
                   channelData?.isSubscribed
-                    ? 'bg-zinc-800 text-white hover:bg-zinc-700'
-                    : 'bg-purple-600 text-white hover:bg-purple-700'
+                    ? 'bg-white text-black hover:bg-gray-300'
+                    : 'bg-red-700 text-white hover:bg-red-800'
                 }`}
               >
                 {channelData?.isSubscribed ? 'Subscribed' : 'Subscribe'}

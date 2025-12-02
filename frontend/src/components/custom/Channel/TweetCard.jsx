@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useQueryClient } from '@tanstack/react-query';
 
 function timeAgo(date) {
   const now = new Date();
@@ -30,10 +33,44 @@ function TweetCard({
   content,
   owner,
   createdAt,
-  likesCount = 425,
+  likeCount = 0,
   commentsCount = 87,
+  _id,
+  isLiked
 }) {
-  const [isLiked, setIsLiked] = useState(false);
+  // const [isLiked, setIsLiked] = useState(false);
+  const [likingTweet,setLikingTweet]=useState(isLiked);
+  const userData=useSelector((state)=> state.auth.userData);
+  const queryClient=useQueryClient();
+  const channelId=owner?._id;
+
+
+
+  const likeTweet=async(tweetId)=>
+  {
+    try {
+      const res=await axios.post(`http://localhost:8000/api/v1/likes/toggle/t/${tweetId}`,{},{withCredentials:true});
+      console.log("tweet like toggle::",res.data.data);
+      setLikingTweet((prev)=> !prev);
+            queryClient.invalidateQueries(['tweets', channelId]);
+
+
+
+    } catch (error) {
+      console.log("error ::",error);
+    }
+  }
+
+  const deleteTweet=async(tweetId)=>
+  {
+    try {
+      const res=await axios.delete(`http://localhost:8000/api/v1/tweets/${tweetId}`,{withCredentials:true});
+      console.log("tweet delete res is ::",res);
+      queryClient.invalidateQueries(['tweets', channelId]);
+    } catch (error) {
+      console.log("error is::",error);
+    }
+  }
 
   return (
     <div className="bg-black border-b w-full border-zinc-800 p-4 hover:bg-zinc-950 transition-colors">
@@ -68,22 +105,28 @@ function TweetCard({
             {content}
           </p>
 
-          <div className="flex items-center gap-1">
+          <div className="flex  items-center gap-4">
             <button
-              onClick={() => setIsLiked(!isLiked)}
+
+              onClick={()=> likeTweet(_id)}
+              // onClick={() => setIsLiked(!isLiked)}
               className="flex items-center gap-1 hover:text-pink-500 transition-colors group p-1"
             >
               <Heart
-                size={16}
-                className={`group-hover:fill-pink-500 ${isLiked ? 'fill-pink-500 text-pink-500' : 'text-gray-500'}`}
+                size={30}
+                className={`group-hover:fill-pink-500 ${likingTweet ? 'fill-pink-500 text-pink-500' : 'text-gray-300'}`}
               />
-              <span className="text-xs text-gray-500">{likesCount}</span>
+              <span className="text-sm text-gray-300">{likeCount}</span>
             </button>
 
-            <button className="flex items-center gap-1 hover:text-blue-400 transition-colors p-1 ml-3">
+            {userData && (
+              userData?._id == owner?._id ? <button onClick={()=> deleteTweet(_id)} className='text-white p-2 rounded-2xl hover:bg-red-700 bg-red-600 text-lg'>Delete Tweet</button>:null
+            )}
+
+            {/* <button className="flex items-center gap-1 hover:text-blue-400 transition-colors p-1 ml-3">
               <MessageCircle size={16} className="text-gray-500" />
               <span className="text-xs text-gray-500">{commentsCount}</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

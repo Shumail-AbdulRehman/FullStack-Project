@@ -43,7 +43,7 @@ function VideoCard({
   owner,
 }) {
   return (
-    <div className="bg-zinc-900 text-white w-full max-w-[420px] cursor-pointer rounded-lg overflow-hidden hover:bg-zinc-800 transition-colors duration-200">
+    <div className="bg-zinc-950 text-white w-full max-w-[420px] cursor-pointer rounded-lg overflow-hidden hover:bg-zinc-800 transition-colors duration-200">
       <div className="relative">
         {thumbnail && (
           <img
@@ -76,13 +76,13 @@ function VideoCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <h2 className="font-medium text-base leading-snug line-clamp-2 text-gray-100 mb-1.5">
+            <h2 className="font-medium  leading-snug line-clamp-2 text-xl text-white mb-1.5">
               {title}
             </h2>
-            <p className="text-sm text-gray-400">
+            <p className="text-lg text-gray-200">
               {owner?.username ?? 'Unknown'}
             </p>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className=" text-lg text-gray-200 mt-0.5">
               {views ?? 0} views • {timeAgo(createdAt)}
             </p>
           </div>

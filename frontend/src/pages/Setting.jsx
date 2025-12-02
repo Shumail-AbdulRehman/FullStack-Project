@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import SideBar from '@/components/custom/SideBar';
 
 import { useForm } from 'react-hook-form';
+import LoadingSpinner from '@/components/custom/LoadingSpinner';
 
 export default function SettingsPage() {
   //   const userData = useSelector((state) => state.auth.userData);
@@ -90,7 +91,7 @@ export default function SettingsPage() {
     setOpenDialog(null);
   };
 
-  const { mutate: updateEmail } = useMutation({
+  const { mutate: updateEmail,isPending:emailPending } = useMutation({
     mutationFn: async (data) => {
       console.log('data in username is ::', data);
       const res = await axios.patch(
@@ -119,7 +120,7 @@ export default function SettingsPage() {
     setOpenDialog(null);
   };
 
-  const { mutate: updateUsername } = useMutation({
+  const { mutate: updateUsername,isPending:usernamePending } = useMutation({
     mutationFn: async (data) => {
       console.log('data in username is ::', data);
       const res = await axios.patch(
@@ -150,7 +151,7 @@ export default function SettingsPage() {
   };
 
   // update-username
-  const { mutate: changeUserPassword } = useMutation({
+  const { mutate: changeUserPassword ,isPending:passwordPending} = useMutation({
     mutationFn: async (data) => {
       const res = await axios.patch(
         `http://localhost:8000/api/v1/users/change-password`,
@@ -183,7 +184,7 @@ export default function SettingsPage() {
     setOpenDialog(null);
   };
 
-  const { mutate: updateAvatar } = useMutation({
+  const { mutate: updateAvatar ,isPending:avatarPending} = useMutation({
     mutationFn: async (data) => {
       const res = await axios.patch(
         `http://localhost:8000/api/v1/users/update-avatar`,
@@ -216,7 +217,7 @@ export default function SettingsPage() {
   };
 
   //   const res=await axios.patch(`http://localhost:8000/api/v1/users/change-password`,{oldPassword:data.old,newPassword:data.new},{withCredentials:true});
-  const { mutate: updateCoverImage } = useMutation({
+  const { mutate: updateCoverImage,isPending:coverImagePending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.patch(
         `http://localhost:8000/api/v1/users/update-cover-image`,
@@ -248,13 +249,19 @@ export default function SettingsPage() {
     setOpenDialog(null);
   };
 
+
+  if(emailPending || usernamePending || avatarPending || coverImagePending)
+  {
+    return <LoadingSpinner/>
+  }
+
   return (
-    <div className="flex bg-black min-h-screen text-white">
+    <div className="flex bg-zinc-950 min-h-screen text-white">
       <div className="hidden md:block w-64 border-r border-gray-800">
         <SideBar />
       </div>
 
-      <div className="flex-1 px-6 md:px-10 py-10 space-y-14 bg-gradient-to-b from-black via-gray-950 to-black">
+      <div className="flex-1 px-6 md:px-10 py-10 space-y-14 bg-zinc-950">
         <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
           Account Settings
         </h1>

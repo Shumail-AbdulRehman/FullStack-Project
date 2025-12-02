@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { Trash2, Pencil } from 'lucide-react';
+import { Trash2, Pencil, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -10,11 +10,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import SideBar from '@/components/custom/SideBar';
+import LoadingSpinner from '@/components/custom/LoadingSpinner';
 
 function Dashboard() {
   const userData = useSelector((state) => state.auth.userData);
@@ -22,9 +22,8 @@ function Dashboard() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
-  const { data: dashboardData } = useQuery({
+  const { data: dashboardData,isPending:dashboardPending } = useQuery({
     queryKey: ['DashboardData', userData?._id],
     queryFn: async () => {
       const res = await axios.get(
@@ -38,7 +37,7 @@ function Dashboard() {
     },
   });
 
-  const { mutate: toggelPublishVideo } = useMutation({
+  const { mutate: toggelPublishVideo,isPending:publishVideoPending } = useMutation({
     mutationFn: async (id) => {
       const res = await axios.patch(
         `http://localhost:8000/api/v1/videos/toggle/publish/${id}`,
@@ -53,7 +52,7 @@ function Dashboard() {
     },
   });
 
-  const { mutate: deleteVideo } = useMutation({
+  const { mutate: deleteVideo, isPending: deleteVideoPending } = useMutation({
     mutationFn: async (id) => {
       const res = await axios.delete(
         `http://localhost:8000/api/v1/videos/${id}/${userData?._id}`,
@@ -69,21 +68,20 @@ function Dashboard() {
 
   const handleDelete = (id) => deleteVideo(id);
   const handleTogglePublish = (id, currentState) => toggelPublishVideo(id);
+  
   const handleEdit = (video) => {
     setSelectedVideo(video);
     setThumbnailPreview(video.thumbnail);
-    reset({ title: video.title, description: video.description });
-    setIsModalOpen(true);
+    reset({ 
+      title: video.title, 
+      description: video.description 
+    });
+    setIsModalOpen(true); // ✅ Open modal manually
   };
 
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      title: selectedVideo?.title || '',
-      description: selectedVideo?.description || '',
-    },
-  });
+  const { register, handleSubmit, reset } = useForm();
 
-  const { mutate: updateVideo } = useMutation({
+  const { mutate: updateVideo, isPending: updateVideoPending } = useMutation({
     mutationFn: async ({ formData, videoId }) => {
       const res = await axios.patch(
         `http://localhost:8000/api/v1/videos/${videoId}/${userData?._id}`,
@@ -92,18 +90,20 @@ function Dashboard() {
       );
       return res.data.data;
     },
-    onMutate: () => setIsUpdating(true),
     onSuccess: () => {
       queryClient.invalidateQueries(['DashboardData', userData._id]);
-      setIsUpdating(false);
       setIsModalOpen(false);
+      setSelectedVideo(null);
+      setThumbnailPreview(null);
+      reset();
     },
-    onError: () => setIsUpdating(false),
   });
 
   const onSubmit = (data) => {
     const formData = new FormData();
-    if (data.thumbnail[0]) formData.append('thumbnail', data.thumbnail[0]);
+    if (data.thumbnail?.[0]) {
+      formData.append('thumbnail', data.thumbnail[0]);
+    }
     formData.append('title', data.title);
     formData.append('description', data.description);
     updateVideo({ formData, videoId: selectedVideo._id });
@@ -119,9 +119,13 @@ function Dashboard() {
     }
   }, [selectedVideo, reset]);
 
+  if (deleteVideoPending||dashboardPending|| publishVideoPending) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <div className="flex bg-black min-h-screen">
-      <aside className="w-64 hidden md:block">
+    <div className="flex bg-zinc-950 min-h-screen">
+      <aside className="w-75 hidden md:block">
         <SideBar />
       </aside>
 
@@ -208,89 +212,13 @@ function Dashboard() {
                           {new Date(video.createdAt).toLocaleDateString()}
                         </td>
                         <td className="p-3 text-right flex items-center justify-end gap-4">
-                          <Dialog
-                            open={isModalOpen}
-                            onOpenChange={setIsModalOpen}
+                          {/* ✅ Remove DialogTrigger, use regular button */}
+                          <button
+                            onClick={() => handleEdit(video)}
+                            className="hover:text-yellow-400 transition"
                           >
-                            <DialogTrigger asChild>
-                              <button
-                                onClick={() => handleEdit(video)}
-                                className="hover:text-yellow-400 transition"
-                              >
-                                <Pencil size={20} />
-                              </button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-lg">
-                              <DialogHeader>
-                                <DialogTitle>Edit Video</DialogTitle>
-                                <DialogDescription>
-                                  Update your video details below.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <form
-                                onSubmit={handleSubmit(onSubmit)}
-                                className="space-y-4"
-                              >
-                                <div>
-                                  <label className="block text-gray-300 mb-1">
-                                    Thumbnail
-                                  </label>
-                                  <div className="mb-2">
-                                    {thumbnailPreview && (
-                                      <img
-                                        src={thumbnailPreview}
-                                        alt="Thumbnail Preview"
-                                        className="w-full h-40 object-cover rounded-md border border-gray-400"
-                                      />
-                                    )}
-                                  </div>
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    {...register('thumbnail', {
-                                      required: true,
-                                    })}
-                                    onChange={(e) => {
-                                      const file = e.target.files[0];
-                                      if (file)
-                                        setThumbnailPreview(
-                                          URL.createObjectURL(file)
-                                        );
-                                    }}
-                                    className="w-full text-black"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="block text-gray-300 mb-1">
-                                    Title
-                                  </label>
-                                  <Input
-                                    {...register('title', { required: true })}
-                                    className="w-full text-black"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="block text-gray-300 mb-1">
-                                    Description
-                                  </label>
-                                  <textarea
-                                    {...register('description', {
-                                      required: true,
-                                    })}
-                                    className="w-full text-black p-2 rounded-md"
-                                    rows={4}
-                                  />
-                                </div>
-                                <Button
-                                  type="submit"
-                                  className="w-full"
-                                  disabled={isUpdating}
-                                >
-                                  {isUpdating ? 'Updating...' : 'Update'}
-                                </Button>
-                              </form>
-                            </DialogContent>
-                          </Dialog>
+                            <Pencil size={20} />
+                          </button>
                           <button
                             onClick={() => handleDelete(video._id)}
                             className="hover:text-red-500 transition"
@@ -304,7 +232,7 @@ function Dashboard() {
                 ) : (
                   <tr>
                     <td
-                      colSpan="7"
+                      colSpan="6"
                       className="text-center py-10 text-gray-400 text-lg"
                     >
                       No videos uploaded yet.
@@ -316,6 +244,71 @@ function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* ✅ Move Dialog outside the table */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Video</DialogTitle>
+            <DialogDescription>
+              Update your video details below.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label className="block text-gray-300 mb-1">Thumbnail</label>
+              <div className="mb-2">
+                {thumbnailPreview && (
+                  <img
+                    src={thumbnailPreview}
+                    alt="Thumbnail Preview"
+                    className="w-full h-40 object-cover rounded-md border border-gray-400"
+                  />
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                {...register('thumbnail')} // ✅ Removed required: true
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) setThumbnailPreview(URL.createObjectURL(file));
+                }}
+                className="w-full text-black"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-300 mb-1">Title</label>
+              <Input
+                {...register('title', { required: true })}
+                className="w-full text-black"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-300 mb-1">Description</label>
+              <textarea
+                {...register('description', { required: true })}
+                className="w-full text-black p-2 rounded-md"
+                rows={4}
+              />
+            </div>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={updateVideoPending}
+            >
+              {updateVideoPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Update'
+              )}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

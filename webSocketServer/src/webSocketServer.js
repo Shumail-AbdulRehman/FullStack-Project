@@ -22,18 +22,24 @@ wss.on("connection", (ws) => {
     }
   });
 });
-
 const sendNotification = (data) => {
-    console.log("data is:::",data);
-    data.subscribersList.map((sub)=>
-    {
-        const ws=onlineUsers.get(sub.subscriber)
-
-        if(ws && ws.readyState=== WebSocket.OPEN)
-        {
-            ws.send(JSON.stringify({video:data.video,owner:data.user}))
+  console.log("data is:::", data);
+  
+  data.subscribersList.forEach((sub) => {  // Use forEach instead of map since you're not returning anything
+    const ws = onlineUsers.get(sub.subscriber.toString());  // Convert ObjectId to string
+    
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      const notificationData = {
+        video: {
+          ...data.video,
+          owner: data.user
         }
-    }) 
+      };
+      
+      ws.send(JSON.stringify(notificationData));
+      console.log("Notification sent to:", sub.subscriber);
+    }
+  });
 };
 
 while (true) {

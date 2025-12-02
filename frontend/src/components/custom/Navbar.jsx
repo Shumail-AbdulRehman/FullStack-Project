@@ -1,67 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useSelector } from 'react-redux';
 import LogoutBtn from './LogoutBtn';
-import { Link } from 'react-router-dom';
 import NotificationBell from './Notification/NotificationBell';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-function Navbar() {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  // const isAuthenticated=useSelector((state)=>  state.auth.isAuthenticated)
+import { useNavigate } from 'react-router-dom';
 
-  const {data:notifications}=useQuery({
-    queryKey:["notifications"],
-    queryFn:async()=>
-    {
-      const res= await axios.get(`http://localhost:8000/api/v1/videos/get-notifications`,{withCredentials:true})
-      console.log("noti::",res.data.data);
+function Navbar() {
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const [query, setQuery] = useState("");
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      navigate(`/search?q=${query}`);
+    }
+  };
+
+  const { data: notifications } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/videos/get-notifications`,
+        { withCredentials: true }
+      );
       return res.data.data;
     }
-  })
-  console.log('is authenticated', isAuthenticated);
+  });
 
-  // useEffect(()=>
-  // {
-  //   console.log(isAuthenticated)
-  // },[isAuthenticated])
   return (
-    <div className="flex items-center justify-between px-4 py-6 bg-[#212121] border-b-1 border-gray-400 text-white shadow-md">
-      <div className="text-xl font-bold cursor-pointer">MyTube</div>
+    <div className="flex items-center justify-between px-6 py-4 bg-zinc-950 rounded-lg shadow-md h-25">
+      {/* Logo */}
+      <div className="text-2xl font-bold cursor-pointer text-white flex-shrink-0">
+        MyTube
+      </div>
 
-      <div className="relative flex-1 max-w-xl mx-6">
+      {/* Search Bar */}
+      <div className="relative border-black flex-1 max-w-xl mx-6">
         <input
           type="text"
-          id="search"
-          name="search"
+          value={query}
           placeholder="Search"
-          className="w-full border border-gray-600 bg-[#121212] text-white pl-10 pr-4 py-2 rounded-full shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-400 outline-none transition"
+          onKeyDown={handleKeyDown}
+          onChange={(e) => setQuery(e.target.value)}
+          className="w-full border border-gray-600 bg-white text-black font-normal pl-12 pr-4 py-3 rounded-full shadow-sm  outline-none transition"
         />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black w-6 h-6" />
       </div>
 
-      <div>
+      {/* Right Actions: Combined Bell + Auth */}
+      <div className="flex items-center gap-4">
+        {/* Notification Bell */}
+        {notifications && (
+         <div className="relative">
+  <NotificationBell notifications={notifications} />
+</div>
+
+        )}
+
+        {/* Auth Button */}
         {isAuthenticated ? (
-          <LogoutBtn />
+          <button className="flex items-center px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full transition text-white font-medium">
+            Logout
+          </button>
         ) : (
-          <Button className="bg-blue-600 hover:bg-blue-700">Login</Button>
+          <Button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-lg font-medium transition">
+            Login
+          </Button>
         )}
-      </div>
-
-      <div>
-
-        {notifications&&(
-                  <NotificationBell notifications={notifications} />
-
-        )}
-
-
-
-        {/* <Link to="/get-notifications">
-                <Button>Notifications</Button>
-
-        </Link> */}
       </div>
     </div>
   );

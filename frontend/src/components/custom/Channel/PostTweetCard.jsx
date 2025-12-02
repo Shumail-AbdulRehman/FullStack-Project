@@ -16,10 +16,12 @@ function PostTweetCard({ channelId }) {
       return res.data.data;
     },
     onSuccess: (newTweet) => {
-      queryClient.setQueryData(['tweets', channelId], (old) => [
-        newTweet,
-        ...(old || []),
-      ]);
+      // queryClient.setQueryData(['tweets', channelId], (old) => [
+      //   newTweet,
+      //   ...(old || []),
+      // ]);
+
+      queryClient.invalidateQueries(['tweets', channelId]);
     },
     onError: (error) => {
       console.log('Error while tweeting:', error.response?.data?.message);
@@ -40,9 +42,9 @@ function PostTweetCard({ channelId }) {
     >
       <div className="flex gap-3">
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center">
+          {/* <div className="w-10 h-10 rounded-full bg-zinc-950 flex items-center justify-center">
             <span className="text-white font-semibold text-sm">U</span>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex-1">
@@ -50,7 +52,7 @@ function PostTweetCard({ channelId }) {
             {...register('content', { required: true })}
             placeholder="What's happening?"
             rows={3}
-            className="w-full bg-transparent text-gray-100 placeholder-gray-500 text-sm resize-none outline-none mb-3"
+            className="w-full  bg-white text-black text-2xl  border-6 p-10 rounded-xl  resize-none outline-none mb-3"
           />
 
           <div className="flex justify-end">

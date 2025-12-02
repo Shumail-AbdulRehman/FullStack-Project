@@ -13,8 +13,8 @@ function UserChannel() {
   const [selectedOption, setSelectedOption] = useState('Videos');
 
   return (
-    <div className="flex bg-black min-h-screen">
-      <aside className="w-64 hidden md:block">
+    <div className="flex bg-zinc-950 min-h-screen">
+      <aside className="w-75 hidden md:block">
         <SideBar />
       </aside>
 

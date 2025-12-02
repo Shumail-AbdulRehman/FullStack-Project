@@ -20,6 +20,7 @@ import WatchHistory from './pages/WatchHistory';
 import LikedVideos from './pages/LikedVideos';
 import Dashboard from './pages/Dashboard';
 import Notification from './pages/Notification';
+import SearchResults from './pages/SearchResults';
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,12 @@ const router = createBrowserRouter([
           <AuthLayout>
             <Notification/>
           </AuthLayout>
+        )
+      },
+      {
+        path:'/search',
+        element:(
+          <SearchResults/>
         )
       }
     ],

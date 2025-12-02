@@ -66,6 +66,34 @@ const getUserTweets = asyncHandler(async (req, res) => {
         },
     ]);
 
+
+    // const userLikedTweets=await Tweet.aggregate(
+    //     [
+    //         {
+    //             $match:{
+    //             owner: new mongoose.Types.ObjectId(channelId),
+    //             }
+    //         },
+    //         {
+    //             $lookup:{
+    //                 from:"likes",
+    //                 localField:"_id",
+    //                 foreignField:"tweet",
+    //                 as:"likedTweets",
+    //                 pipeline:[
+    //                     {
+    //                         $match:{
+    //                             likedBy:new mongoose.Types.ObjectId(req.user._id)
+    //                         }
+    //                     }
+    //                 ]
+    //             }
+    //         }
+    //     ]
+    // );
+
+    // console.log("likedTweets of user are::",userLikedTweets);
+
     // if(!userTweets.length)
     // {
     //    return  res.status(200)
@@ -78,6 +106,86 @@ const getUserTweets = asyncHandler(async (req, res) => {
         new ApiResponse(200, userTweets, "user tweets fetched successfully")
     );
 });
+
+
+const getChannelTweetsWithLikes=asyncHandler(async(req,res)=>
+{
+    const {channelId}=req.params;
+    const currentUserId=req.user._id;
+
+     const tweets = await Tweet.aggregate([
+    {
+        $match: {
+            owner: new mongoose.Types.ObjectId(channelId),
+        },
+    },
+
+    // 1) Check if CURRENT USER liked this tweet
+    {
+        $lookup: {
+            from: "likes",
+            let: { tweetId: "$_id" },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $and: [
+                                { $eq: ["$tweet", "$$tweetId"] },
+                                { $eq: ["$likedBy", new mongoose.Types.ObjectId(currentUserId)] }
+                            ]
+                        }
+                    }
+                }
+            ],
+            as: "myLike"
+        }
+    },
+
+    // 2) Count TOTAL likes of this tweet
+    {
+        $lookup: {
+            from: "likes",
+            localField: "_id",
+            foreignField: "tweet",
+            as: "allLikes"
+        }
+    },
+
+    // 3) Add fields
+    {
+        $addFields: {
+            isLiked: { $gt: [{ $size: "$myLike" }, 0] },
+            likeCount: { $size: "$allLikes" }
+        }
+    },
+
+    // 4) Clean up
+    {
+        $project: {
+            myLike: 0,
+            allLikes: 0
+        }
+    },
+    {
+        $lookup:{
+            from:"users",
+            localField:"owner",
+            foreignField:"_id",
+            as:"owner"
+        }
+    },
+    {
+        $unwind:"$owner"
+    }
+]);
+
+        console.log("Tweets likkekekek are ::",tweets);
+
+        res.status(200).json(
+            new ApiResponse(200,tweets,"tweets sent sucessfully")
+        )
+
+})
 
 const updateTweet = asyncHandler(async (req, res) => {
     const { tweetId, newContent } = req.body;
@@ -122,6 +230,8 @@ const updateTweet = asyncHandler(async (req, res) => {
 const deleteTweet = asyncHandler(async (req, res) => {
     const { tweetId } = req.params;
 
+    console.log("tweet id is ::",tweetId);
+
     if (!tweetId) {
         throw new ApiError(401, "tweet id is required");
     }
@@ -145,4 +255,4 @@ const deleteTweet = asyncHandler(async (req, res) => {
     );
 });
 
-export { createTweet, getUserTweets, updateTweet, deleteTweet };
+export { createTweet, getUserTweets, updateTweet, deleteTweet,getChannelTweetsWithLikes };

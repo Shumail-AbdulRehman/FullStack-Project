@@ -23,6 +23,7 @@ function VideoListing() {
     }
     (async () => {
       try {
+        setLoading(true)
         const fetchVideos = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/v1/videos/`,
           { withCredentials: true }
@@ -32,6 +33,8 @@ function VideoListing() {
         dispatch(getVideos(fetchVideos.data.data.docs));
       } catch (error) {
         console.log(error);
+      }finally{
+        setLoading(false)
       }
     })();
     setLoading(false);
@@ -56,7 +59,7 @@ function VideoListing() {
           <SideBar />
         </div>
 
-        <div className="col-span-6 bg-[#212121] flex flex-wrap gap-3 p-4">
+        <div className="col-span-6 bg-zinc-950 flex flex-wrap gap-3 p-4 pl-20">
           {videos?.map((video) => (
             <Link key={video._id} to={`/video/${video._id}/${video.owner._id}`}>
               <VideoCard key={video._id} {...video} />

@@ -27,10 +27,10 @@ export default function NotificationBell({ notifications = [] }) {
       {/* Bell */}
       <button
         onClick={() => setOpen((s) => !s)}
-        className="relative p-2 rounded-full hover:bg-gray-200 transition"
+        className="relative p-2 rounded-full  hover:bg-gray-700 transition"
         aria-label="Notifications"
       >
-        <Bell className="w-6 h-6 text-black" />
+        <Bell className="w-7 h-7 text-white" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-600 w-3 h-3 rounded-full" />
         )}
@@ -40,7 +40,7 @@ export default function NotificationBell({ notifications = [] }) {
       {open &&
         createPortal(
           <div
-            className="absolute right-0 mt-2 w-80 bg-white border rounded shadow-lg z-[1000]"
+            className="absolute right-0 mt-2 w-fit h-auto bg-zinc-800  rounded shadow-lg z-[1000]"
             style={{
               top: wrapperRef.current?.getBoundingClientRect().bottom + window.scrollY,
               left:

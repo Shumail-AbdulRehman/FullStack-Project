@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import TweetCard from './TweetCard';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import LoadingSpinner from '../LoadingSpinner';
 
 function Tweets({ channelId }) {
   const userData = useSelector((state) => state.auth.userData);
@@ -26,11 +27,11 @@ function Tweets({ channelId }) {
     staleTime: 1000 * 60,
   });
 
+  console.log("tweets data is ::",tweetData);
+
   if (isLoading) {
     return (
-      <div className="text-center text-gray-400 text-lg py-10 bg-black min-h-screen">
-        Loading tweets...
-      </div>
+      <LoadingSpinner/>
     );
   }
 

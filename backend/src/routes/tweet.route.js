@@ -4,6 +4,7 @@ import {
     deleteTweet,
     getUserTweets,
     updateTweet,
+    getChannelTweetsWithLikes
 } from "../controllers/tweet.controller.js";
 
 import { verifyJwt as verifyJWT } from "../middlewares/auth.middleware.js";
@@ -11,7 +12,7 @@ const router = Router();
 router.use(verifyJWT);
 
 router.route("/:channelId").post(createTweet);
-router.route("/user/:channelId").get(getUserTweets);
+router.route("/user/:channelId").get(getChannelTweetsWithLikes);
 router.route("/:tweetId").patch(updateTweet).delete(deleteTweet);
 
 export default router;

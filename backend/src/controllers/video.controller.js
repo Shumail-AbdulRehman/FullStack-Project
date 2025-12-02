@@ -401,43 +401,102 @@ const getUserNotification=asyncHandler(async(req,res)=>
     //     }
     // ]);
 
-    const notifications=await Notification.aggregate([
-        {
-            $match:{
-                user:new mongoose.Types.ObjectId(userId)
-            }
-        },
-        {
-            $lookup:{
-                from:"videos",
-                localField:"video",
-                foreignField:"_id",
-                as:"video",
-                pipeline:[
-                    {
-                        $lookup:{
-                            from:"users",
-                            localField:"owner",
-                            foreignField:"_id",
-                            as:"owner"
-                        }
-                    },
-                    {
-                        $unwind:"$owner"
-                    }
-                ]
-            }
-        },
-        {
-           $unwind: "$video"
-
+   const notifications = await Notification.aggregate([
+    {
+        $match: {
+            user: new mongoose.Types.ObjectId(userId)
         }
-    ])
-
+    },
+    {
+        $lookup: {
+            from: "videos",
+            localField: "video",
+            foreignField: "_id",
+            as: "video",
+            pipeline: [
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "owner",
+                        foreignField: "_id",
+                        as: "owner"
+                    }
+                },
+                {
+                    $unwind: "$owner"
+                }
+            ]
+        }
+    },
+    {
+        $unwind: "$video"
+    },
+    {
+        $sort: {
+            "video.createdAt": -1  
+        }
+    }
+]);
     console.log("notiifcations are:::",notifications)
 
     res.status(200).json(
         new ApiResponse(200,notifications,"fetched notiifcations successfully")
+    )
+})
+
+
+
+const searchVideos=asyncHandler(async(req,res)=>
+{
+    const query=req.query.q;
+
+    const videos=await Video.find(
+        {
+            $text: {
+                $search:query
+            }
+        }
+    ).sort({
+        score: {
+            $meta: "textScore"
+
+        }
+    });
+
+
+    const searchVideos=await Video.aggregate([
+        {
+            $match:{
+                $text:{
+                    $search:query
+                }
+            }
+        },
+        {
+    $addFields: {
+      score: { $meta: "textScore" }
+    }
+  },
+        {
+            $lookup:{
+                from:"users",
+                localField:"owner",
+                foreignField:"_id",
+                as:"owner"
+            }
+        },
+        {
+            $unwind:"$owner"
+        },
+        {
+           $sort: {
+      score: -1 
+    }
+        }
+    ])
+
+    res.status(200).json(
+        new ApiResponse(200,searchVideos,"search result")
     )
 })
 
@@ -450,5 +509,6 @@ export {
     togglePublishStatus,
     incrementViewCount,
     getChannelVideos,
-    getUserNotification
+    getUserNotification,
+    searchVideos
 };

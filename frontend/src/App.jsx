@@ -10,16 +10,25 @@ import { Outlet } from 'react-router-dom';
 import LoadingSpinner from './components/custom/LoadingSpinner';
 import VideoMeta from './components/custom/Video/VideoMeta';
 import Video from './pages/Video';
+import { useQueryClient } from '@tanstack/react-query';
 
 function App() {
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
   const dispatch = useDispatch();
+  const queryClient=useQueryClient();
+
+  const addNotification = (newNotification) => {
+  queryClient.setQueryData(["notifications"], (oldData) => {
+    if (!oldData) return [newNotification];
+    
+    return [newNotification, ...oldData];
+  });
+};
 
  useEffect(() => {
   if (!userData) return; 
-
   const ws = new WebSocket("ws://localhost:8080");
 
   ws.onopen = () => {
@@ -30,6 +39,7 @@ function App() {
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
     console.log("Received notification:", data);
+      addNotification(data);
     // setNotifications((prev) => [data, ...prev]); 
   };
 
@@ -40,7 +50,7 @@ function App() {
   return () => ws.close(); 
 }, [userData]); 
 
-
+  
 
   useEffect(() => {
     if (userData) {

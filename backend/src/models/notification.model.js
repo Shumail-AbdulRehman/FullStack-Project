@@ -14,6 +14,9 @@ const notifcationSchema=new Schema(
 
         },
         
+    },
+    {
+        timestamps:true
     }
 )
 
