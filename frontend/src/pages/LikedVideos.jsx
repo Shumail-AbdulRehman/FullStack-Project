@@ -5,11 +5,12 @@ import { useSelector } from 'react-redux';
 import VideoCard from '@/components/custom/VideoCard';
 import SideBar from '@/components/custom/SideBar';
 import { Link } from 'react-router-dom';
+import LoadingSpinner from '@/components/custom/LoadingSpinner';
 
 function LikedVideos() {
   const userData = useSelector((state) => state.auth.userData);
 
-  const { data: getUserLikedVideos } = useQuery({
+  const { data: getUserLikedVideos,isPending:likeVideosPending } = useQuery({
     queryKey: ['likedVideos', userData?._id],
     queryFn: async () => {
       const res = await axios.get(`http://localhost:8000/api/v1/likes/videos`, {
@@ -19,6 +20,11 @@ function LikedVideos() {
       return res.data.data;
     },
   });
+
+  if(likeVideosPending)
+  {
+    return <LoadingSpinner/>
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex">

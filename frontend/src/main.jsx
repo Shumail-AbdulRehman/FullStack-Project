@@ -13,13 +13,11 @@ import Login from './pages/Login';
 import SignUp from './pages/Signup';
 import Video from './pages/Video';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Videos from './components/custom/Channel/Videos';
 import UserChannel from './pages/UserChannel';
 import Setting from './pages/Setting';
 import WatchHistory from './pages/WatchHistory';
 import LikedVideos from './pages/LikedVideos';
 import Dashboard from './pages/Dashboard';
-import Notification from './pages/Notification';
 import SearchResults from './pages/SearchResults';
 
 const router = createBrowserRouter([
@@ -35,14 +33,14 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
-      {
-        path: '/video/upload-video',
-        element: (
-          <AuthLayout>
-            <VideoUploadPage />
-          </AuthLayout>
-        ),
-      },
+      // {
+      //   path: '/video/upload-video',
+      //   element: (
+      //     <AuthLayout>
+      //       <VideoUploadPage />
+      //     </AuthLayout>
+      //   ),
+      // },
       {
         path: '/login',
         element: (
