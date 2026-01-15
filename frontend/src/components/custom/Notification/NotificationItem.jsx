@@ -20,7 +20,6 @@ export default function NotificationItem({ notification, onMarkRead = () => {}, 
       }}
     >
       <div className="w-12 h-12 rounded-lg bg-gray-900 flex-shrink-0 overflow-hidden flex items-center justify-center">
-        {/* thumbnail or icon */}
         <div className="text-white text-sm font-semibold">{(type || "").slice(0,2).toUpperCase()}</div>
       </div>
 

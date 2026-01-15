@@ -17,10 +17,10 @@ function VideoListing() {
 
   useEffect(() => {
     setLoading(true);
-    if (videos.length !== 0) {
-      setLoading(false);
-      return;
-    }
+    // if (videos.length !== 0) {
+    //   setLoading(false);
+    //   return;
+    // }
     (async () => {
       try {
         setLoading(true)

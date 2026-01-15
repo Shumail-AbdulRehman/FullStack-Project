@@ -161,12 +161,15 @@ const getVideoById = asyncHandler(async (req, res) => {
                 createdAt: 1,
                 "owner.avatar": 1,
                 "owner._id": 1,
+                isPublished:1
             },
         },
         {
             $unwind: "$owner",
         },
     ]);
+
+    console.log("Video by ID info :::", video);
 
     if (!video || video.length === 0)
         throw new ApiError(404, "video not found");

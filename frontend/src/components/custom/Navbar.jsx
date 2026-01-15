@@ -32,12 +32,10 @@
 
     return (
       <div className="flex items-center justify-between px-6 py-4 bg-zinc-900 rounded-lg shadow-md h-25">
-        {/* Logo */}
         <div className="text-2xl font-bold cursor-pointer text-white flex-shrink-0">
           MyTube
         </div>
 
-        {/* Search Bar */}
         <div className="relative border-black flex-1 max-w-xl mx-6">
           <input
             type="text"
@@ -50,9 +48,7 @@
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black w-6 h-6" />
         </div>
 
-        {/* Right Actions: Combined Bell + Auth */}
         <div className="flex items-center gap-4">
-          {/* Notification Bell */}
           {notifications && (
           <div className="relative">
     <NotificationBell notifications={notifications} />
@@ -60,9 +56,8 @@
 
           )}
 
-          {/* Auth Button */}
           {isAuthenticated ? (
-            <button className="flex items-center px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full transition text-white font-medium">
+            <button className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-full transition text-white font-medium">
               Logout
             </button>
           ) : (

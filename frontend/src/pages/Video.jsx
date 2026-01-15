@@ -2,7 +2,7 @@ import SideBar from '@/components/custom/SideBar';
 import VideoMeta from '@/components/custom/Video/VideoMeta';
 import VideoPlayer from '@/components/custom/Video/VideoPlayer';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import VideosSuggestion from '@/components/custom/Video/VideosSuggestion';
 import VideoComment from '@/components/custom/Video/VideoComment';
@@ -15,20 +15,20 @@ function Video() {
   const queryClient = useQueryClient();
   const { videoId, channelId } = useParams();
   const userData = useSelector((state) => state.auth.userData);
-
+  
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingContent, setEditingContent] = useState('');
 
-  const { data: video, isLoading: videoLoading } = useQuery({
+  const { data: video, isLoading: videoLoading, isError, error } = useQuery({
     queryKey: ['video', videoId],
     queryFn: async () => {
       const res = await axios.get(
         `http://localhost:8000/api/v1/videos/${videoId}/${channelId}`,
         { withCredentials: true }
       );
-      console.log("vidoe LIked::",res.data.data);
       return res.data.data;
     },
+    retry: false, 
   });
 
   const { data: comments, isLoading: commentsLoading } = useQuery({
@@ -46,9 +46,7 @@ function Video() {
     mutationFn: async (comment) => {
       await axios.delete(
         `http://localhost:8000/api/v1/comments/c/${comment._id}`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
     },
     onSuccess: () => queryClient.invalidateQueries(['comment', videoId]),
@@ -60,7 +58,6 @@ function Video() {
 
   const { mutate: updateUserComment } = useMutation({
     mutationFn: async ({ commentId, content }) => {
-      console.log('commentId is::', commentId);
       const res = await axios.patch(
         `http://localhost:8000/api/v1/comments/c/${commentId}`,
         { newContent: content },
@@ -87,6 +84,32 @@ function Video() {
 
   if (videoLoading || commentsLoading) {
     return <LoadingSpinner/>
+  }
+
+  if (isError) {
+    return (
+      <div className="grid grid-cols-6 gap-4 px-4 py-3 h-screen bg-zinc-950 text-white">
+        
+        <div className="col-span-1 border-r border-zinc-800">
+          <SideBar />
+        </div>
+
+        <div className="col-span-5 flex flex-col items-center justify-center">
+          <div className="text-center space-y-3 p-8 bg-zinc-900/50 rounded-2xl border border-zinc-800">
+            <h1 className="text-3xl font-bold text-red-500">Video Unavailable</h1>
+            <p className="text-zinc-400 text-lg">
+              This video is private, deleted, or does not exist.
+            </p>
+           
+            
+           
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (!video || !video.video || !video.video[0]) {
+    return <h1>No video data found</h1>;
   }
 
   return (

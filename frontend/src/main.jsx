@@ -8,7 +8,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { RouterProvider } from 'react-router-dom';
 import VideoListing from './pages/VideoListing';
 import AuthLayout from './components/custom/AuthLayout';
-import VideoUploadPage from './pages/VideoUploadPage';
+// import VideoUploadPage from './pages/VideoUploadPage';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
 import Video from './pages/Video';

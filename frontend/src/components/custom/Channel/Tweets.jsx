@@ -20,43 +20,39 @@ function Tweets({ channelId }) {
         `http://localhost:8000/api/v1/tweets/user/${channelId}`,
         { withCredentials: true }
       );
-      console.log('tweet data is :::', res.data.data);
       return res.data.data;
     },
     enabled: !!channelId,
     staleTime: 1000 * 60,
   });
 
-  console.log("tweets data is ::",tweetData);
-
   if (isLoading) {
-    return (
-      <LoadingSpinner/>
-    );
+    return <LoadingSpinner />;
   }
 
   if (isError) {
     return (
-      <div className="text-center text-red-500 text-lg py-10 bg-black min-h-screen">
-        Failed to load tweets.
+      <div className="text-center text-red-500 text-lg py-10 bg-[#0f0f0f] w-full">
+        Failed to load posts.
       </div>
     );
   }
 
   return (
-    <div className="bg-black min-h-screen w-full">
-      <div className="w-full border-b border-zinc-800">
+    <div className="bg-[#0f0f0f] w-full flex justify-center">
+      <div className="w-full max-w-[850px] p-4">
+        
         {userData?._id === channelId && <PostTweetCard channelId={channelId} />}
-      </div>
 
-      <div className="w-full">
-        {tweetData.length > 0 ? (
-          tweetData.map((tweet) => <TweetCard key={tweet._id} {...tweet} />)
-        ) : (
-          <div className="text-center text-gray-500 text-lg py-10">
-            No Tweets found!
-          </div>
-        )}
+        <div className="w-full mt-4">
+          {tweetData.length > 0 ? (
+            tweetData.map((tweet) => <TweetCard key={tweet._id} {...tweet} />)
+          ) : (
+            <div className="text-center text-zinc-500 text-sm py-10">
+              This channel hasn't posted any updates yet.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, History, Video, Users, Settings } from 'lucide-react';
+import { Heart, History, Video, Users, Settings, Home } from 'lucide-react'; // Added Home here
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -16,10 +16,12 @@ function SideBar() {
       <ul className="space-y-2 text-lg font-medium">
         <Link to="/">
           <li
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer ${
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
               isActive("/") ? "bg-[#383838]" : ""
             }`}
           >
+            {/* Added Home Icon */}
+            <Home className="w-6 h-6" />
             <span className="font-semibold">Home</span>
           </li>
         </Link>
