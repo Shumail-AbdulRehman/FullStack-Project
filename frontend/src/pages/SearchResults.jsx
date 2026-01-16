@@ -1,46 +1,75 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import VideoCard from '@/components/custom/VideoCard';
 import SideBar from '@/components/custom/SideBar';
 import HorizontalVideoCard from '@/components/custom/HorizontalVideoCard';
+import LoadingSpinner from '@/components/custom/LoadingSpinner';
+
 export default function SearchResults() {
   const [videos, setVideos] = useState([]);
   const [params] = useSearchParams();
   const q = params.get('q');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!q) return;
 
+    setLoading(true);
     axios
       .get(`http://localhost:8000/api/v1/videos/search?q=${q}`, {
         withCredentials: true,
       })
       .then((res) => {
-        console.log('search result is ::', res.data.data);
         setVideos(res.data.data);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [q]);
 
+  if (loading) return <LoadingSpinner />;
+
+  if (videos.length === 0) {
+    return (
+      <div className="flex bg-[#0f0f0f] min-h-screen text-white">
+        <aside className="hidden md:block w-60 border-r border-zinc-800">
+          <SideBar />
+        </aside>
+
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-semibold">No results found</h1>
+            <p className="text-zinc-400 text-sm">
+              Try different keywords
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex bg-zinc-950 min-h-screen">
-      <aside className="w-100 border-r h-screen sticky top-0">
+    <div className="flex bg-[#0f0f0f] min-h-screen text-white">
+      {/* Sidebar */}
+      <aside className="hidden md:block w-60 border-r border-zinc-800 sticky top-0 h-screen">
         <SideBar />
       </aside>
 
-      <main className="flex-1 px-6 py-6 overflow-y-auto">
-        <h2 className="text-xl text-white font-semibold mb-5">
-          Search results for: <span className="text-white font-bold">{q}</span>
+      {/* Content */}
+      <main className="flex-1 px-4 py-6">
+        <h2 className="text-base font-medium mb-4 text-zinc-200">
+          Search results for{' '}
+          <span className="font-semibold text-white">"{q}"</span>
         </h2>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           {videos.map((video) => (
             <Link
               key={video._id}
               to={`/video/${video._id}/${video.owner._id}`}
-              className="block w-full"
+              className="block"
             >
-              <div className="flex hover:scale-[1.02] transition-transform duration-200">
+              <div className="hover:bg-zinc-900 transition-colors rounded-lg p-2">
                 <HorizontalVideoCard {...video} />
               </div>
             </Link>

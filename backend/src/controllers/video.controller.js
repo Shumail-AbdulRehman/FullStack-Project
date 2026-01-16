@@ -472,35 +472,35 @@ const searchVideos = asyncHandler(async (req, res) => {
     });
 
     const searchVideos = await Video.aggregate([
-        {
-            $match: {
-                $text: {
-                    $search: query,
-                },
-            },
-        },
-        {
-            $addFields: {
-                score: { $meta: "textScore" },
-            },
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "owner",
-                foreignField: "_id",
-                as: "owner",
-            },
-        },
-        {
-            $unwind: "$owner",
-        },
-        {
-            $sort: {
-                score: -1,
-            },
-        },
-    ]);
+  {
+    $match: {
+      $text: { $search: query },
+      isPublished: true
+    }
+  },
+  {
+    $addFields: {
+      score: { $meta: "textScore" }
+    }
+  },
+  {
+    $lookup: {
+      from: "users",
+      localField: "owner",
+      foreignField: "_id",
+      as: "owner"
+    }
+  },
+  {
+    $unwind: "$owner"
+  },
+  {
+    $sort: {
+      score: -1
+    }
+  }
+]);
+
 
     res.status(200).json(new ApiResponse(200, searchVideos, "search result"));
 });
