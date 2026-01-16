@@ -14,8 +14,28 @@ VideoTube is a **production-ready video sharing platform** that demonstrates pro
 - **Modern Frontend**: React 19 with Redux state management and React Query for data fetching
 
 ---
-
-
+## 🏗️ System Architecture
+The application uses a hybrid architecture to ensure scalability and responsiveness.
+```mermaid
+graph TD
+    User[Client / React] -->|HTTP Request| API[Express API Server]
+    User <-->|WebSocket| WS[WebSocket Server]
+    subgraph DataLayer[Data Layer]
+        DB[(MongoDB)]
+    end
+    subgraph AsyncProcessing[Async Processing]
+        Queue[Redis Queue]
+        Worker[Background Worker]
+        Redis[Redis Pub/Sub]
+    end
+    API -->|Read/Write| DB
+    Worker -->|Read/Write| DB
+    API -->|Add Job| Queue
+    Queue -->|Process Job| Worker
+    Worker -->|Pub/Sub Event| Redis
+    Redis -->|Trigger| WS
+    API -->|Uploads| Cloud[Cloudinary]
+```
 ## 📦 Tech Stack
 
 ### Backend
