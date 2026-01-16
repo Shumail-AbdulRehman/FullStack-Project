@@ -15,50 +15,6 @@ VideoTube is a **production-ready video sharing platform** that demonstrates pro
 
 ---
 
-# 📹 VideoTube - Scalable Video Sharing Platform
-
-![NodeJS](https://img.shields.io/badge/Node.js-v16+-green)
-![React](https://img.shields.io/badge/React-19-blue)
-![MongoDB](https://img.shields.io/badge/MongoDB-Aggregation-green)
-![Redis](https://img.shields.io/badge/Redis-Queue%20%26%20Caching-red)
-![License](https://img.shields.io/badge/license-MIT-blue)
-
-A production-grade, full-stack video sharing platform inspired by YouTube. VideoTube goes beyond simple CRUD by implementing **event-driven architecture** for real-time notifications, background processing, and complex data aggregation.
-
----
-
-## 🎯 Project Highlights
-
-VideoTube demonstrates **Senior-level backend patterns**:
-* **Microservices approach**: Decoupled API, Worker, and WebSocket services.
-* **Event-Driven Architecture**: Uses Redis Message Queues (BullMQ) to handle heavy tasks asynchronously.
-* **Real-Time Communication**: Custom WebSocket server for instant user notifications.
-* **Complex Aggregations**: MongoDB aggregation pipelines for watch history and dashboard analytics.
-
----
-
-## 🏗️ System Architecture
-
-The application uses a hybrid architecture to ensure scalability and responsiveness.
-
-```mermaid
-graph TD
-    User[Client / React] -->|HTTP Request| API[Express API Server]
-    User <-->|WebSocket| WS[WebSocket Server]
-    
-    subgraph Data Layer
-    API -->|Read/Write| DB[(MongoDB)]
-    Worker -->|Read/Write| DB
-    end
-    
-    subgraph Async Processing
-    API -->|Add Job| Queue[Redis Queue]
-    Queue -->|Process Job| Worker[Background Worker]
-    Worker -->|Pub/Sub Event| Redis[Redis Pub/Sub]
-    Redis -->|Trigger| WS
-    end
-    
-    API -->|Uploads| Cloud[Cloudinary]
 
 ## 📦 Tech Stack
 
