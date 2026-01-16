@@ -252,64 +252,113 @@ redis-server
 ```
 
 ---
+# 📡 API Documentation
 
-## 📡 API Endpoints
+This project exposes a RESTful API. Below are the available endpoints.
 
-### Authentication (`/api/v1/users`)
-- `POST /register` - Register new user
-- `POST /login` - User login
-- `POST /logout` - User logout
-- `POST /refreshtoken` - Refresh access token
-- `GET /current-user` - Get authenticated user
-- `PATCH /profile` - Update user profile
-- `PATCH /avatar` - Update avatar
-- `PATCH /cover-image` - Update cover image
-- `GET /:username` - Get user profile
-- `GET /:username/channels` - Get user channels
-
-### Videos (`/api/v1/videos`)
-- `GET /` - Get all videos (paginated)
-- `GET /:videoId` - Get single video
-- `POST /` - Upload new video
-- `PATCH /:videoId` - Update video metadata
-- `DELETE /:videoId` - Delete video
-- `PATCH /:videoId/publish` - Publish video
-- `GET /user/:userId` - Get user's videos
-
-### Comments (`/api/v1/comments`)
-- `POST /` - Add comment to video
-- `GET /:videoId` - Get video comments
-- `PATCH /:commentId` - Update comment
-- `DELETE /:commentId` - Delete comment
-
-### Likes (`/api/v1/likes`)
-- `POST /toggle/v/:videoId` - Toggle video like
-- `POST /toggle/c/:commentId` - Toggle comment like
-- `GET /videos/all/:videoId` - Get video likes count
-
-### Subscriptions (`/api/v1/subscriptions`)
-- `POST /c/:channelId` - Subscribe to channel
-- `GET /c/:channelId` - Get channel subscribers
-- `GET /u/:subscriberId` - Get user subscriptions
-
-### Playlists (`/api/v1/playlist`)
-- `POST /` - Create playlist
-- `GET /user/:userId` - Get user playlists
-- `PATCH /:playlistId` - Update playlist
-- `DELETE /:playlistId` - Delete playlist
-- `POST /:playlistId/videos/:videoId` - Add video to playlist
-
-### Tweets (`/api/v1/tweets`)
-- `POST /` - Post tweet
-- `GET /user/:userId` - Get user tweets
-- `PATCH /:tweetId` - Update tweet
-- `DELETE /:tweetId` - Delete tweet
-
-### Dashboard (`/api/v1/dashboard`)
-- `GET /stats` - Get channel statistics
-- `GET /videos` - Get creator's videos with analytics
+**Base URL:** `/api/v1`
 
 ---
+
+## 👤 User Management
+**Prefix:** `/users`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/register` | Register a new user (Multipart: `avatar`, `coverImage`) |
+| `POST` | `/login` | Login user |
+| `POST` | `/logout` | Logout user |
+| `POST` | `/refreshtoken` | Refresh access token |
+| `PATCH` | `/change-password` | Change user password |
+| `GET` | `/current-user` | Get logged-in user details |
+| `PATCH` | `/update-details` | Update account details (email & name) |
+| `PATCH` | `/update-username` | Update username |
+| `PATCH` | `/update-email` | Update email address |
+| `PATCH` | `/update-fullname` | Update full name |
+| `PATCH` | `/update-avatar` | Update avatar image |
+| `PATCH` | `/update-cover-image` | Update cover image |
+| `GET` | `/channel-profile/:channelId` | Get user channel profile |
+| `GET` | `/watch-history` | Get user watch history |
+| `POST` | `/add-watch-history/:videoId` | Add video to watch history |
+| `DELETE` | `/clear-watch-history` | Clear watch history |
+
+## 📹 Video Management
+**Prefix:** `/videos`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/` | Get all videos |
+| `POST` | `/` | Publish a video (Multipart: `thumbnail`, `videoFile`) |
+| `GET` | `/:videoId/:channelId` | Get a specific video |
+| `PATCH` | `/:videoId/:channelId` | Update video details |
+| `DELETE` | `/:videoId/:channelId` | Delete a video |
+| `GET` | `/c/:channelId` | Get all videos by a channel |
+| `PATCH` | `/toggle/publish/:videoId` | Toggle publish status |
+| `PATCH` | `/incrementViewsCount/:videoId` | Increment view count |
+| `GET` | `/search` | Search videos |
+| `GET` | `/get-notifications` | Get user notifications |
+| `GET` | `/get-signature` | Get upload signature |
+
+## 🐦 Tweets
+**Prefix:** `/tweets`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/:channelId` | Create a tweet |
+| `GET` | `/user/:channelId` | Get user tweets |
+| `PATCH` | `/:tweetId` | Update a tweet |
+| `DELETE` | `/:tweetId` | Delete a tweet |
+
+## 💬 Comments
+**Prefix:** `/comments`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/:videoId` | Get video comments |
+| `POST` | `/:videoId` | Add a comment |
+| `DELETE` | `/c/:commentId` | Delete a comment |
+| `PATCH` | `/c/:commentId` | Update a comment |
+
+## 👍 Likes
+**Prefix:** `/likes`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/toggle/v/:videoId` | Toggle video like |
+| `POST` | `/toggle/c/:commentId` | Toggle comment like |
+| `POST` | `/toggle/t/:tweetId` | Toggle tweet like |
+| `GET` | `/videos` | Get all liked videos |
+| `GET` | `/v/:videoId` | Get video like count |
+
+## ⏯️ Playlists
+**Prefix:** `/playlist`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/` | Create a playlist |
+| `GET` | `/:playlistId` | Get playlist by ID |
+| `PATCH` | `/:playlistId` | Update playlist |
+| `DELETE` | `/:playlistId` | Delete playlist |
+| `PATCH` | `/add/:videoId/:playlistId` | Add video to playlist |
+| `PATCH` | `/remove/:videoId/:playlistId` | Remove video from playlist |
+| `GET` | `/user/:userId` | Get user playlists |
+
+## 🔔 Subscriptions
+**Prefix:** `/subscriptions`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/c/:channelId` | Toggle subscription |
+| `GET` | `/c/:channelId` | Get channel subscribers |
+| `GET` | `/u/:subscriberId` | Get subscribed channels |
+
+## 📊 Dashboard
+**Prefix:** `/dashboard`
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/stats` | Get channel statistics |
+| `GET` | `/videos` | Get channel videos |
 
 ## 🔄 Real-Time Features
 
