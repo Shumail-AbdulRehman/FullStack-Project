@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { Image as ImageIcon } from 'lucide-react'; // Visual only
 
 function PostTweetCard({ channelId }) {
   const queryClient = useQueryClient();

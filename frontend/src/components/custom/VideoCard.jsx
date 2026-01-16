@@ -43,13 +43,13 @@ function VideoCard({
   owner,
 }) {
   return (
-    <div className="bg-zinc-950 text-white w-full max-w-[420px] cursor-pointer rounded-lg overflow-hidden hover:bg-zinc-800 transition-colors duration-200">
+    <div className="bg-zinc-950 text-white w-full  cursor-pointer rounded-lg overflow-hidden hover:bg-zinc-800 transition-colors duration-200">
       <div className="relative">
         {thumbnail && (
           <img
             src={thumbnail}
             alt={title || 'thumbnail'}
-            className="w-full h-60 object-cover"
+            className="w-120 h-60 object-cover"
           />
         )}
         {duration && (

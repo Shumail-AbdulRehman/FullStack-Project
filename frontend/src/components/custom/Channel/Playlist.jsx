@@ -18,28 +18,22 @@ function Playlist() {
         `http://localhost:8000/api/v1/videos/c/${userData?._id}`,
         { withCredentials: true }
       );
-      console.log('uservidoes::', res.data.data);
+      // console.log('uservidoes::', res.data.data);
       return res.data.data;
     },
   });
 
-  // Sample playlists data (replace with actual API call later)
-  const playlists = [
+ 
+
+  const {data:playlists=[]}=useQuery({
+    queryKey:['playlists',userData?._id],
+    queryFn:async()=>
     {
-      _id: '1',
-      name: 'Favorites',
-      videoCount: 12,
-      thumbnail: 'https://images.unsplash.com/photo-1614149162883-504ce0624267?w=400&h=225&fit=crop&q=80',
-      updatedAt: new Date('2024-01-15'),
-    },
-    {
-      _id: '2',
-      name: 'Watch Later',
-      videoCount: 8,
-      thumbnail: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=225&fit=crop',
-      updatedAt: new Date('2024-01-10'),
-    },
-  ];
+      const res=await axios.get(`http://localhost:8000/api/v1/playlist/user/${userData?._id}`,{withCredentials:true});
+      console.log("playlist data is::",res.data.data);
+      return res.data.data;
+    }
+  })
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -64,14 +58,12 @@ function Playlist() {
                 </p>
               </div>
             </div>
-            <CreatePlaylist userVideos={userVideos} channelId={userData._id} />
+            <CreatePlaylist userVideos={userVideos} channelId={userData?._id} />
           </div>
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats Bar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors">
             <div className="flex items-center gap-3">
@@ -80,12 +72,12 @@ function Playlist() {
               </div>
               <div>
                 <p className="text-zinc-400 text-sm">Total Playlists</p>
-                <p className="text-2xl font-bold text-white">{playlists.length}</p>
+                <p className="text-2xl font-bold text-white">{playlists?.length}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors">
+          {/* <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-600/20 rounded-lg">
                 <FolderOpen size={24} className="text-purple-500" />
@@ -93,11 +85,11 @@ function Playlist() {
               <div>
                 <p className="text-zinc-400 text-sm">Total Videos</p>
                 <p className="text-2xl font-bold text-white">
-                  {playlists.reduce((acc, p) => acc + p.videoCount, 0)}
+                  {playlists?.reduce((acc, p) => acc + p.videoCount, 0)}
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors">
             <div className="flex items-center gap-3">
@@ -113,19 +105,19 @@ function Playlist() {
         </div>
 
         {/* Playlists Grid */}
-        {playlists.length > 0 ? (
+        {playlists?.length > 0 ? (
           <div>
             <h2 className="text-2xl font-bold mb-6 text-white">Your Playlists</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {playlists.map((playlist) => (
+              {playlists?.map((playlist) => (
                 <div
-                  key={playlist._id}
+                  key={playlist?._id}
                   className="group cursor-pointer bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 transition-all duration-300 hover:shadow-xl hover:shadow-blue-900/20 transform hover:scale-[1.02]"
                 >
                   {/* Thumbnail */}
                   <div className="relative aspect-video overflow-hidden bg-zinc-800">
                     <img
-                      src={playlist.thumbnail}
+                      src={playlist.videos[0].thumbnail}
                       alt={playlist.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />

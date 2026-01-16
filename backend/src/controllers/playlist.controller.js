@@ -5,17 +5,25 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const createPlaylist = asyncHandler(async (req, res) => {
-    const { name, description } = req.body;
+    const { name, description,selectedVideos } = req.body;
     const userId = req.user._id;
 
-    if (!(name?.trim() && description?.trim())) {
-        throw new ApiError(400, "name and description is required");
+    if (!(name?.trim() && description?.trim()) && selectedVideos?.trim()) {
+        throw new ApiError(400, "name and description and selected videos is required");
     }
+
+    const videoObjectIds = selectedVideos.map(id => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error("Invalid video ID");
+  }
+  return new mongoose.Types.ObjectId(id);
+});
 
     const createdUserPlaylist = await Playlist.create({
         name: name,
         description: description,
         owner: userId,
+        videos:videoObjectIds
     });
 
     if (!createdUserPlaylist)
@@ -38,7 +46,48 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 
     if (!userId?.trim()) throw new ApiError(400, "userId is required");
 
-    const userPlaylists = await Playlist.find({ owner: userId });
+
+
+
+
+    const userPlaylists = await Playlist.aggregate([
+    {
+        $match: {
+            owner: new mongoose.Types.ObjectId(userId)
+        }
+    },
+    {
+        $lookup: {
+            from: "videos",
+            localField: "videos",
+            foreignField: "_id",
+            as: "videos"
+        }
+    },
+    {
+        $addFields: {
+            videos: {
+                $filter: {
+                    input: "$videos",
+                    as: "video",
+                    cond: { $eq: ["$$video.isPublished", true] }
+                }
+            }
+        }
+    },
+    {
+        $match: {
+            videos: { $not: { $size: 0 } } 
+        }
+    }
+]);
+    
+
+   
+
+
+    console.log("user playlists are::",userPlaylists);
+
 
     if (userPlaylists.length === 0)
         return res

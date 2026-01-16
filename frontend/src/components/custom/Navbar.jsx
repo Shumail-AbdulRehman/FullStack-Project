@@ -57,11 +57,9 @@
           )}
 
           {isAuthenticated ? (
-            <button className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-full transition text-white font-medium">
-              Logout
-            </button>
+            <LogoutBtn/>
           ) : (
-            <Button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-lg font-medium transition">
+            <Button className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-full text-lg font-medium transition">
               Login
             </Button>
           )}
