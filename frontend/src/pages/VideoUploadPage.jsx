@@ -40,8 +40,8 @@
 //   const FileInput = ({ label, icon, accept, preview, setPreview, name, color }) => (
 //     <div className="space-y-2">
 //       <label className="flex items-center gap-2 text-zinc-300 font-semibold">{icon}{label}</label>
-//       <input type="file" accept={accept} {...register(name, { required: true })} 
-//         onChange={e => e.target.files[0] && setPreview(URL.createObjectURL(e.target.files[0]))} 
+//       <input type="file" accept={accept} {...register(name, { required: true })}
+//         onChange={e => e.target.files[0] && setPreview(URL.createObjectURL(e.target.files[0]))}
 //         className={`block w-full text-sm text-zinc-400 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-${color}-600 file:text-white hover:file:bg-${color}-700 cursor-pointer border-2 border-dashed border-zinc-700 rounded-xl p-4 hover:border-${color}-600 transition-all bg-zinc-800`} />
 //       {preview && (accept.includes('video') ? <video src={preview} controls className="w-full h-48 rounded-lg object-cover border border-zinc-700 bg-black"/> : <img src={preview} className="w-full h-48 rounded-lg object-cover border border-zinc-700"/>)}
 //     </div>
@@ -64,17 +64,17 @@
 
 //           <div className="space-y-2">
 //             <label className="flex items-center gap-2 text-zinc-300 font-semibold"><Type size={20} className="text-purple-500"/>Video Title</label>
-//             <input type="text" placeholder="Enter an engaging title..." {...register('title', { required: true, maxLength: 100 })} 
+//             <input type="text" placeholder="Enter an engaging title..." {...register('title', { required: true, maxLength: 100 })}
 //               className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-4 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all hover:border-zinc-600"/>
 //           </div>
 
 //           <div className="space-y-2">
 //             <label className="flex items-center gap-2 text-zinc-300 font-semibold"><FileText size={20} className="text-yellow-500"/>Description</label>
-//             <textarea placeholder="Tell viewers about your video..." {...register('description', { required: true })} 
+//             <textarea placeholder="Tell viewers about your video..." {...register('description', { required: true })}
 //               className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-4 h-32 text-white placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent transition-all hover:border-zinc-600"/>
 //           </div>
 
-//           <button type="submit" disabled={loading} 
+//           <button type="submit" disabled={loading}
 //             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-bold text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg hover:shadow-blue-900/50 transform hover:scale-[1.01] active:scale-[0.99]">
 //             {loading ? <><Loader2 className="animate-spin" size={24}/>Uploading...</> : <><Upload size={24}/>Upload Video</>}
 //           </button>

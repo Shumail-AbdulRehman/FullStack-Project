@@ -1,25 +1,21 @@
-import mongoose,{Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const notifcationSchema=new Schema(
+const notifcationSchema = new Schema(
     {
-        video:{
-            type:Schema.Types.ObjectId,
-            ref:"Video",
-            required:true
+        video: {
+            type: Schema.Types.ObjectId,
+            ref: "Video",
+            required: true,
         },
-        user:{
-            type:Schema.Types.ObjectId,
-            ref:"User",
-            required:true
-
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
         },
-        
     },
     {
-        timestamps:true
+        timestamps: true,
     }
-)
+);
 
-export const Notification=mongoose.model("Notification",notifcationSchema);
-
-
+export const Notification = mongoose.model("Notification", notifcationSchema);

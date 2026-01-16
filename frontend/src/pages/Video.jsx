@@ -15,7 +15,7 @@ function Video() {
   const queryClient = useQueryClient();
   const { videoId, channelId } = useParams();
   const userData = useSelector((state) => state.auth.userData);
-  
+
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingContent, setEditingContent] = useState('');
 
@@ -31,7 +31,11 @@ function Video() {
     return () => window.removeEventListener('click', handleGlobalClick);
   }, []);
 
-  const { data: video, isLoading: videoLoading, isError } = useQuery({
+  const {
+    data: video,
+    isLoading: videoLoading,
+    isError,
+  } = useQuery({
     queryKey: ['video', videoId],
     queryFn: async () => {
       const res = await axios.get(
@@ -40,7 +44,7 @@ function Video() {
       );
       return res.data.data;
     },
-    retry: false, 
+    retry: false,
   });
 
   const { data: comments, isLoading: commentsLoading } = useQuery({
@@ -102,8 +106,8 @@ function Video() {
 
   const requestDelete = (e, commentId) => {
     e.stopPropagation();
-    setActiveMenuId(null); 
-    setDeleteModalId(commentId); 
+    setActiveMenuId(null);
+    setDeleteModalId(commentId);
   };
 
   const confirmDelete = () => {
@@ -144,12 +148,13 @@ function Video() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] lg:grid-cols-[240px_1fr_350px] gap-6 px-4 py-6 bg-[#0f0f0f] min-h-screen relative">
-      
       {deleteModalId && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-[2px] animate-in fade-in duration-200">
           <div className="bg-[#212121] w-full max-w-sm rounded-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.5)] border border-white/5 flex flex-col gap-4 transform scale-100 transition-all">
             <div>
-              <h3 className="text-lg font-bold text-white mb-1">Delete comment?</h3>
+              <h3 className="text-lg font-bold text-white mb-1">
+                Delete comment?
+              </h3>
               <p className="text-zinc-400 text-sm">
                 This will permanently delete your comment and cannot be undone.
               </p>
@@ -206,8 +211,11 @@ function Video() {
                   <div key={comment._id} className="w-full group relative">
                     {editingCommentId === comment._id ? (
                       <div className="flex gap-4 py-2 w-full pl-2">
-                         <img
-                          src={comment.owner?.avatar || 'https://ui-avatars.com/api/?rounded=true&size=64'}
+                        <img
+                          src={
+                            comment.owner?.avatar ||
+                            'https://ui-avatars.com/api/?rounded=true&size=64'
+                          }
                           alt={comment.owner?.username}
                           className="w-10 h-10 rounded-full object-cover opacity-50"
                         />
@@ -221,17 +229,23 @@ function Video() {
                           />
                           <div className="flex justify-end gap-2">
                             <button
-                              onClick={(e) => { e.stopPropagation(); setEditingCommentId(null); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingCommentId(null);
+                              }}
                               className="px-4 py-2 text-sm font-medium rounded-full text-white hover:bg-zinc-700 transition-colors"
                             >
                               Cancel
                             </button>
                             <button
-                              onClick={(e) => { e.stopPropagation(); submitEdit(); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                submitEdit();
+                              }}
                               disabled={!editingContent.trim()}
                               className={`px-4 py-2 text-sm font-medium rounded-full text-black transition-colors ${
-                                editingContent.trim() 
-                                  ? 'bg-[#3ea6ff] hover:bg-[#65b8ff]' 
+                                editingContent.trim()
+                                  ? 'bg-[#3ea6ff] hover:bg-[#65b8ff]'
                                   : 'bg-zinc-700 text-zinc-500 cursor-not-allowed'
                               }`}
                             >
@@ -243,20 +257,28 @@ function Video() {
                     ) : (
                       <div className="flex gap-4 items-start w-full">
                         <img
-                          src={comment.owner?.avatar || 'https://ui-avatars.com/api/?rounded=true&size=64'}
+                          src={
+                            comment.owner?.avatar ||
+                            'https://ui-avatars.com/api/?rounded=true&size=64'
+                          }
                           alt={comment.owner?.username}
                           className="w-10 h-10 rounded-full object-cover cursor-pointer hover:opacity-90 mt-1"
                         />
-                        
+
                         <div className="flex flex-col gap-1 w-full relative">
                           <div className="flex items-baseline gap-2">
                             <span className="text-[13px] font-bold text-white cursor-pointer hover:underline">
                               @{comment.owner?.username}
                             </span>
                             <span className="text-[12px] text-zinc-400">
-                              {new Date(comment.createdAt).toLocaleDateString(undefined, {
-                                year: 'numeric', month: 'short', day: 'numeric' 
-                              })}
+                              {new Date(comment.createdAt).toLocaleDateString(
+                                undefined,
+                                {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                }
+                              )}
                             </span>
                           </div>
 
@@ -269,8 +291,8 @@ function Video() {
                               <button
                                 onClick={(e) => toggleMenu(e, comment._id)}
                                 className={`p-1.5 rounded-full transition-colors ${
-                                  activeMenuId === comment._id 
-                                    ? 'bg-zinc-800 text-white' 
+                                  activeMenuId === comment._id
+                                    ? 'bg-zinc-800 text-white'
                                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                                 }`}
                               >
@@ -278,19 +300,23 @@ function Video() {
                               </button>
 
                               {activeMenuId === comment._id && (
-                                <div 
+                                <div
                                   className="absolute right-0 top-full mt-1 z-10 w-32 bg-[#282828] rounded-xl shadow-xl border border-zinc-700 py-2 overflow-hidden"
-                                  onClick={(e) => e.stopPropagation()} 
+                                  onClick={(e) => e.stopPropagation()}
                                 >
                                   <div className="flex flex-col">
                                     <button
-                                      onClick={(e) => handleStartEdit(comment, e)}
+                                      onClick={(e) =>
+                                        handleStartEdit(comment, e)
+                                      }
                                       className="w-full text-left px-4 py-2 hover:bg-zinc-700 flex items-center gap-3 text-zinc-200 text-sm transition-colors"
                                     >
                                       <Pencil size={16} /> Edit
                                     </button>
                                     <button
-                                      onClick={(e) => requestDelete(e, comment._id)}
+                                      onClick={(e) =>
+                                        requestDelete(e, comment._id)
+                                      }
                                       className="w-full text-left px-4 py-2 hover:bg-zinc-700 flex items-center gap-3 text-zinc-200 text-sm transition-colors"
                                     >
                                       <Trash2 size={16} /> Delete
@@ -318,11 +344,10 @@ function Video() {
       <div className="hidden lg:block w-full">
         <VideosSuggestion {...video} />
       </div>
-      
+
       <div className="lg:hidden w-full mt-4">
         <VideosSuggestion {...video} />
       </div>
-
     </div>
   );
 }

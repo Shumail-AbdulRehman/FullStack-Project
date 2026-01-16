@@ -41,7 +41,6 @@ function Tweets({ channelId }) {
   return (
     <div className="bg-[#0f0f0f] w-full flex justify-center">
       <div className="w-full max-w-[850px] p-4">
-        
         {userData?._id === channelId && <PostTweetCard channelId={channelId} />}
 
         <div className="w-full mt-4">

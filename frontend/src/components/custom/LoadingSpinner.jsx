@@ -11,25 +11,21 @@ const LoadingSpinner = ({ size = 80, text = 'Loading...' }) => {
         animate={{ rotate: 360 }}
         transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
       >
-        <Loader2 
-          size={size} 
-          className="text-blue-500" 
-          strokeWidth={2.5}
-        />
+        <Loader2 size={size} className="text-blue-500" strokeWidth={2.5} />
       </motion.div>
 
       {/* Pulsing Ring Effect */}
       <motion.div
         className="absolute border-4 border-blue-500/30 rounded-full"
         style={{ width: size + 20, height: size + 20 }}
-        animate={{ 
+        animate={{
           scale: [1, 1.2, 1],
-          opacity: [0.5, 0.2, 0.5]
+          opacity: [0.5, 0.2, 0.5],
         }}
         transition={{
           repeat: Infinity,
           duration: 2,
-          ease: 'easeInOut'
+          ease: 'easeInOut',
         }}
       />
 
@@ -57,13 +53,13 @@ const LoadingSpinner = ({ size = 80, text = 'Loading...' }) => {
             className="w-2 h-2 bg-blue-500 rounded-full"
             animate={{
               y: [0, -10, 0],
-              opacity: [0.5, 1, 0.5]
+              opacity: [0.5, 1, 0.5],
             }}
             transition={{
               repeat: Infinity,
               duration: 1,
               delay: index * 0.2,
-              ease: 'easeInOut'
+              ease: 'easeInOut',
             }}
           />
         ))}

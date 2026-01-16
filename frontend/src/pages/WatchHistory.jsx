@@ -10,7 +10,7 @@ function WatchHistory() {
   const userData = useSelector((state) => state.auth.userData);
   const queryClient = useQueryClient();
 
-  const { data: getWatchHistory,isPending:getHistoryPending } = useQuery({
+  const { data: getWatchHistory, isPending: getHistoryPending } = useQuery({
     queryKey: ['watchHistory', userData?._id],
     queryFn: async () => {
       const res = await axios.get(
@@ -25,7 +25,7 @@ function WatchHistory() {
     },
   });
 
-  const { mutate: clearHistory,isPending:clearHistoryPending } = useMutation({
+  const { mutate: clearHistory, isPending: clearHistoryPending } = useMutation({
     mutationFn: async () => {
       const res = await axios.delete(
         `http://localhost:8000/api/v1/users/clear-watch-history`,
@@ -40,9 +40,8 @@ function WatchHistory() {
     queryClient.invalidateQueries(['watchHistory', userData?._id]);
   };
 
-  if(clearHistoryPending||getHistoryPending)
-  {
-    return <LoadingSpinner/>
+  if (clearHistoryPending || getHistoryPending) {
+    return <LoadingSpinner />;
   }
 
   return (

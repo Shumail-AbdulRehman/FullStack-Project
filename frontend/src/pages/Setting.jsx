@@ -91,7 +91,7 @@ export default function SettingsPage() {
     setOpenDialog(null);
   };
 
-  const { mutate: updateEmail,isPending:emailPending } = useMutation({
+  const { mutate: updateEmail, isPending: emailPending } = useMutation({
     mutationFn: async (data) => {
       console.log('data in username is ::', data);
       const res = await axios.patch(
@@ -120,7 +120,7 @@ export default function SettingsPage() {
     setOpenDialog(null);
   };
 
-  const { mutate: updateUsername,isPending:usernamePending } = useMutation({
+  const { mutate: updateUsername, isPending: usernamePending } = useMutation({
     mutationFn: async (data) => {
       console.log('data in username is ::', data);
       const res = await axios.patch(
@@ -151,26 +151,27 @@ export default function SettingsPage() {
   };
 
   // update-username
-  const { mutate: changeUserPassword ,isPending:passwordPending} = useMutation({
-    mutationFn: async (data) => {
-      const res = await axios.patch(
-        `http://localhost:8000/api/v1/users/change-password`,
-        { oldPassword: data.old, newPassword: data.new },
-        { withCredentials: true }
-      );
+  const { mutate: changeUserPassword, isPending: passwordPending } =
+    useMutation({
+      mutationFn: async (data) => {
+        const res = await axios.patch(
+          `http://localhost:8000/api/v1/users/change-password`,
+          { oldPassword: data.old, newPassword: data.new },
+          { withCredentials: true }
+        );
 
-      return res.data;
-    },
-    onSuccess: (res) => {
-      console.log('response is ::', res);
-      alert(res.message);
-      queryClient.invalidateQueries(['currentUser']);
-    },
-    onError: (err) => {
-      alert(err.response.data.message);
-      console.log('error while password is ::', err);
-    },
-  });
+        return res.data;
+      },
+      onSuccess: (res) => {
+        console.log('response is ::', res);
+        alert(res.message);
+        queryClient.invalidateQueries(['currentUser']);
+      },
+      onError: (err) => {
+        alert(err.response.data.message);
+        console.log('error while password is ::', err);
+      },
+    });
 
   const handlePasswordUpdate = (data) => {
     if (data.new !== data.confirm) {
@@ -184,7 +185,7 @@ export default function SettingsPage() {
     setOpenDialog(null);
   };
 
-  const { mutate: updateAvatar ,isPending:avatarPending} = useMutation({
+  const { mutate: updateAvatar, isPending: avatarPending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.patch(
         `http://localhost:8000/api/v1/users/update-avatar`,
@@ -217,26 +218,27 @@ export default function SettingsPage() {
   };
 
   //   const res=await axios.patch(`http://localhost:8000/api/v1/users/change-password`,{oldPassword:data.old,newPassword:data.new},{withCredentials:true});
-  const { mutate: updateCoverImage,isPending:coverImagePending } = useMutation({
-    mutationFn: async (data) => {
-      const res = await axios.patch(
-        `http://localhost:8000/api/v1/users/update-cover-image`,
-        data,
-        { withCredentials: true }
-      );
+  const { mutate: updateCoverImage, isPending: coverImagePending } =
+    useMutation({
+      mutationFn: async (data) => {
+        const res = await axios.patch(
+          `http://localhost:8000/api/v1/users/update-cover-image`,
+          data,
+          { withCredentials: true }
+        );
 
-      return res.data;
-    },
-    onSuccess: (res) => {
-      console.log('response is ::', res);
-      alert(res.message);
-      queryClient.invalidateQueries(['currentUser']);
-    },
-    onError: (err) => {
-      alert(err.response.data.message);
-      console.log('error while password is ::', err);
-    },
-  });
+        return res.data;
+      },
+      onSuccess: (res) => {
+        console.log('response is ::', res);
+        alert(res.message);
+        queryClient.invalidateQueries(['currentUser']);
+      },
+      onError: (err) => {
+        alert(err.response.data.message);
+        console.log('error while password is ::', err);
+      },
+    });
 
   const handleCoverUpload = (data) => {
     console.log('Cover file:', data.cover[0]);
@@ -249,10 +251,8 @@ export default function SettingsPage() {
     setOpenDialog(null);
   };
 
-
-  if(emailPending || usernamePending || avatarPending || coverImagePending)
-  {
-    return <LoadingSpinner/>
+  if (emailPending || usernamePending || avatarPending || coverImagePending) {
+    return <LoadingSpinner />;
   }
 
   return (

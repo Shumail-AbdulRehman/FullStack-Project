@@ -17,40 +17,38 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
   const dispatch = useDispatch();
-  const queryClient=useQueryClient();
+  const queryClient = useQueryClient();
 
   const addNotification = (newNotification) => {
-  queryClient.setQueryData(["notifications"], (oldData) => {
-    if (!oldData) return [newNotification];
-    
-    return [newNotification, ...oldData];
-  });
-};
+    queryClient.setQueryData(['notifications'], (oldData) => {
+      if (!oldData) return [newNotification];
 
- useEffect(() => {
-  if (!userData) return; 
-  const ws = new WebSocket("ws://localhost:8080");
-
-  ws.onopen = () => {
-    console.log("Connected to WebSocket server");
-    ws.send(JSON.stringify({ userId: userData._id }));
+      return [newNotification, ...oldData];
+    });
   };
 
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    console.log("Received notification:", data);
+  useEffect(() => {
+    if (!userData) return;
+    const ws = new WebSocket('ws://localhost:8080');
+
+    ws.onopen = () => {
+      console.log('Connected to WebSocket server');
+      ws.send(JSON.stringify({ userId: userData._id }));
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log('Received notification:', data);
       addNotification(data);
-    // setNotifications((prev) => [data, ...prev]); 
-  };
+      // setNotifications((prev) => [data, ...prev]);
+    };
 
-  ws.onclose = () => {
-    console.log("WebSocket connection closed");
-  };
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
 
-  return () => ws.close(); 
-}, [userData]); 
-
-  
+    return () => ws.close();
+  }, [userData]);
 
   useEffect(() => {
     if (userData) {

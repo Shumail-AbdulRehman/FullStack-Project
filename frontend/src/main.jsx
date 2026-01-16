@@ -106,19 +106,17 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path:'/get-notifications',
-        element:(
+        path: '/get-notifications',
+        element: (
           <AuthLayout>
-            <Notification/>
+            <Notification />
           </AuthLayout>
-        )
+        ),
       },
       {
-        path:'/search',
-        element:(
-          <SearchResults/>
-        )
-      }
+        path: '/search',
+        element: <SearchResults />,
+      },
     ],
   },
 ]);

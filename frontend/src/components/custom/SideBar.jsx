@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 function SideBar() {
   const userData = useSelector((state) => state.auth.userData);
-  const location = useLocation(); 
+  const location = useLocation();
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -17,7 +17,7 @@ function SideBar() {
         <Link to="/">
           <li
             className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive("/") ? "bg-[#383838]" : ""
+              isActive('/') ? 'bg-[#383838]' : ''
             }`}
           >
             {/* Added Home Icon */}
@@ -28,7 +28,7 @@ function SideBar() {
         <Link to="/user/liked-videos">
           <li
             className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive("/user/liked-videos") ? "bg-[#383838]" : ""
+              isActive('/user/liked-videos') ? 'bg-[#383838]' : ''
             }`}
           >
             <Heart className="w-6 h-6" />
@@ -38,7 +38,7 @@ function SideBar() {
         <Link to="/user/watch-history">
           <li
             className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive("/user/watch-history") ? "bg-[#383838]" : ""
+              isActive('/user/watch-history') ? 'bg-[#383838]' : ''
             }`}
           >
             <History className="w-6 h-6" />
@@ -48,7 +48,7 @@ function SideBar() {
         <Link to={`/channel/${userData?._id}`}>
           <li
             className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive(`/channel/${userData?._id}`) ? "bg-[#383838]" : ""
+              isActive(`/channel/${userData?._id}`) ? 'bg-[#383838]' : ''
             }`}
           >
             <Video className="w-6 h-6" />
@@ -58,7 +58,7 @@ function SideBar() {
         <Link to="/user/dashboard">
           <li
             className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive("/user/dashboard") ? "bg-[#383838]" : ""
+              isActive('/user/dashboard') ? 'bg-[#383838]' : ''
             }`}
           >
             <Users className="w-6 h-6" />
@@ -71,7 +71,7 @@ function SideBar() {
         <Link to="/channel/settings">
           <li
             className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive("/channel/settings") ? "bg-[#383838]" : ""
+              isActive('/channel/settings') ? 'bg-[#383838]' : ''
             }`}
           >
             <Settings className="w-6 h-6" />

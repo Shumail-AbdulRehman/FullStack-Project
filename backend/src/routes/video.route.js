@@ -19,9 +19,9 @@ import { getSignature } from "../controllers/signVideoUpload.controller.js";
 const router = Router();
 
 router.use(verifyJWT);
-router.get("/get-notifications",getUserNotification);
+router.get("/get-notifications", getUserNotification);
 router.get("/get-signature", getSignature);
-router.get("/search",searchVideos);
+router.get("/search", searchVideos);
 
 router.patch("/incrementViewsCount/:videoId", incrementViewCount);
 

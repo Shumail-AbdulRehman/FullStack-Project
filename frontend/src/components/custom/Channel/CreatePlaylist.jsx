@@ -16,8 +16,7 @@ import VideoCard from '../VideoCard';
 import { Plus, ListVideo, Check, X, AlignLeft, Type } from 'lucide-react';
 import { useSelector } from 'react-redux';
 function CreatePlaylist({ channelId, userVideos }) {
-
-  const userData=useSelector((state)=> state.auth.userData);
+  const userData = useSelector((state) => state.auth.userData);
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const { register, handleSubmit, watch, setValue, reset } = useForm({
@@ -49,8 +48,8 @@ function CreatePlaylist({ channelId, userVideos }) {
 
   const onSubmit = async (data) => {
     try {
-      console.log("Submitting playlist...", data);
-      
+      console.log('Submitting playlist...', data);
+
       const res = await axios.post(
         `http://localhost:8000/api/v1/playlist/`,
         {
@@ -60,13 +59,13 @@ function CreatePlaylist({ channelId, userVideos }) {
         },
         { withCredentials: true }
       );
-      queryClient.invalidateQueries(['playlists',userData?._id]);
-      console.log("Playlist created successfully:", res.data);
-      
+      queryClient.invalidateQueries(['playlists', userData?._id]);
+      console.log('Playlist created successfully:', res.data);
+
       setOpen(false);
       reset();
     } catch (error) {
-      console.error("Error creating playlist:", error);
+      console.error('Error creating playlist:', error);
       // Optional: Add toast notification here
     }
   };
@@ -106,7 +105,6 @@ function CreatePlaylist({ channelId, userVideos }) {
 
           {/* Scrollable Content */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 bg-zinc-950">
-            
             {/* Metadata Section */}
             <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 space-y-5">
               {/* Playlist Name */}
@@ -142,12 +140,12 @@ function CreatePlaylist({ channelId, userVideos }) {
                 <label className="text-zinc-300 font-semibold flex items-center gap-2">
                   Select Videos
                 </label>
-                
+
                 {selectedVideos.length > 0 && (
                   <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-5 duration-300">
-                     <span className="text-sm text-zinc-400">
-                        {selectedVideos.length} selected
-                     </span>
+                    <span className="text-sm text-zinc-400">
+                      {selectedVideos.length} selected
+                    </span>
                     <button
                       onClick={() => setValue('selectedVideos', [])}
                       className="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-500 px-3 py-1.5 rounded-full transition-colors font-medium"
@@ -171,7 +169,7 @@ function CreatePlaylist({ channelId, userVideos }) {
                       }`}
                     >
                       <div className="pointer-events-none">
-                         <VideoCard {...video} />
+                        <VideoCard {...video} />
                       </div>
 
                       {/* Selection Overlay */}
@@ -184,28 +182,40 @@ function CreatePlaylist({ channelId, userVideos }) {
                       />
 
                       {/* Checkmark Indicator */}
-                      <div className={`absolute top-2 right-2 transition-all duration-200 transform ${
-                        selectedVideos.includes(video._id) 
-                          ? 'scale-100 opacity-100' 
-                          : 'scale-90 opacity-0 group-hover:opacity-100'
-                      }`}>
-                         <div className={`${
-                           selectedVideos.includes(video._id) 
-                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' 
-                            : 'bg-zinc-800/90 text-zinc-400 backdrop-blur-sm'
-                         } w-8 h-8 rounded-full flex items-center justify-center`}>
-                            {selectedVideos.includes(video._id) ? <Check size={16} strokeWidth={3} /> : <Plus size={18} />}
-                         </div>
+                      <div
+                        className={`absolute top-2 right-2 transition-all duration-200 transform ${
+                          selectedVideos.includes(video._id)
+                            ? 'scale-100 opacity-100'
+                            : 'scale-90 opacity-0 group-hover:opacity-100'
+                        }`}
+                      >
+                        <div
+                          className={`${
+                            selectedVideos.includes(video._id)
+                              ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40'
+                              : 'bg-zinc-800/90 text-zinc-400 backdrop-blur-sm'
+                          } w-8 h-8 rounded-full flex items-center justify-center`}
+                        >
+                          {selectedVideos.includes(video._id) ? (
+                            <Check size={16} strokeWidth={3} />
+                          ) : (
+                            <Plus size={18} />
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))
                 ) : (
                   <div className="col-span-full flex flex-col items-center justify-center py-16 text-zinc-500 border border-dashed border-zinc-800 rounded-lg">
                     <div className="p-4 bg-zinc-900 rounded-full mb-3">
-                       <ListVideo size={32} className="text-zinc-700" />
+                      <ListVideo size={32} className="text-zinc-700" />
                     </div>
-                    <p className="text-lg font-medium text-zinc-400">No videos found</p>
-                    <p className="text-sm text-zinc-600 mt-1">Upload videos to add them to a playlist</p>
+                    <p className="text-lg font-medium text-zinc-400">
+                      No videos found
+                    </p>
+                    <p className="text-sm text-zinc-600 mt-1">
+                      Upload videos to add them to a playlist
+                    </p>
                   </div>
                 )}
               </div>

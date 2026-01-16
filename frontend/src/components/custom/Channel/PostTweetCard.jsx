@@ -38,13 +38,17 @@ function PostTweetCard({ channelId }) {
       <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4">
         <div className="flex-shrink-0">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-800">
-             {userData?.avatar ? (
-                <img src={userData.avatar} alt="User" className="w-full h-full object-cover" />
-             ) : (
-                <div className="w-full h-full flex items-center justify-center text-zinc-500 font-bold">
-                  {userData?.username?.[0]?.toUpperCase() || 'U'}
-                </div>
-             )}
+            {userData?.avatar ? (
+              <img
+                src={userData.avatar}
+                alt="User"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-zinc-500 font-bold">
+                {userData?.username?.[0]?.toUpperCase() || 'U'}
+              </div>
+            )}
           </div>
         </div>
 
@@ -62,7 +66,9 @@ function PostTweetCard({ channelId }) {
             />
           </div>
 
-          <div className={`flex items-center justify-between transition-all duration-200 ${contentValue ? 'opacity-100' : 'opacity-100'}`}>
+          <div
+            className={`flex items-center justify-between transition-all duration-200 ${contentValue ? 'opacity-100' : 'opacity-100'}`}
+          >
             {/* <button type="button" className="p-2 hover:bg-zinc-800 rounded-full text-zinc-400 transition-colors">
                <ImageIcon size={20} />
             </button> */}

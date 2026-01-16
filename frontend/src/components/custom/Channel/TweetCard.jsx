@@ -18,7 +18,8 @@ function timeAgo(date) {
   ];
   for (const interval of intervals) {
     const count = Math.floor(seconds / interval.seconds);
-    if (count >= 1) return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
+    if (count >= 1)
+      return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
   }
   return 'Just now';
 }
@@ -30,7 +31,7 @@ function TweetCard({
   likeCount = 0,
   commentsCount = 0,
   _id,
-  isLiked
+  isLiked,
 }) {
   const [likingTweet, setLikingTweet] = useState(isLiked);
   const userData = useSelector((state) => state.auth.userData);
@@ -39,20 +40,26 @@ function TweetCard({
 
   const likeTweet = async (tweetId) => {
     try {
-      await axios.post(`http://localhost:8000/api/v1/likes/toggle/t/${tweetId}`, {}, { withCredentials: true });
+      await axios.post(
+        `http://localhost:8000/api/v1/likes/toggle/t/${tweetId}`,
+        {},
+        { withCredentials: true }
+      );
       setLikingTweet((prev) => !prev);
       queryClient.invalidateQueries(['tweets', channelId]);
     } catch (error) {
-      console.log("error ::", error);
+      console.log('error ::', error);
     }
   };
 
   const deleteTweet = async (tweetId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/tweets/${tweetId}`, { withCredentials: true });
+      await axios.delete(`http://localhost:8000/api/v1/tweets/${tweetId}`, {
+        withCredentials: true,
+      });
       queryClient.invalidateQueries(['tweets', channelId]);
     } catch (error) {
-      console.log("error is::", error);
+      console.log('error is::', error);
     }
   };
 
@@ -62,7 +69,11 @@ function TweetCard({
         <div className="flex-shrink-0">
           <div className="w-10 h-10 rounded-full bg-zinc-700 overflow-hidden cursor-pointer">
             {owner?.avatar ? (
-              <img src={owner.avatar} alt={owner.username} className="w-full h-full object-cover" />
+              <img
+                src={owner.avatar}
+                alt={owner.username}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <span className="w-full h-full flex items-center justify-center text-white font-semibold text-sm">
                 {owner?.username?.[0]?.toUpperCase()}
@@ -81,15 +92,15 @@ function TweetCard({
                 {createdAt ? timeAgo(createdAt) : 'Just now'}
               </span>
             </div>
-            
+
             {userData?._id === owner?._id && (
-                <button 
-                  onClick={() => deleteTweet(_id)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-zinc-800 rounded-full text-zinc-400 hover:text-red-500"
-                  title="Delete Post"
-                >
-                  <Trash2 size={16} />
-                </button>
+              <button
+                onClick={() => deleteTweet(_id)}
+                className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-zinc-800 rounded-full text-zinc-400 hover:text-red-500"
+                title="Delete Post"
+              >
+                <Trash2 size={16} />
+              </button>
             )}
           </div>
 
@@ -105,9 +116,13 @@ function TweetCard({
               >
                 <ThumbsUp
                   size={18}
-                  className={likingTweet ? 'fill-white text-white' : 'text-zinc-400'}
+                  className={
+                    likingTweet ? 'fill-white text-white' : 'text-zinc-400'
+                  }
                 />
-                <span className={`text-sm ${likingTweet ? 'text-white' : 'text-zinc-400'}`}>
+                <span
+                  className={`text-sm ${likingTweet ? 'text-white' : 'text-zinc-400'}`}
+                >
                   {likeCount}
                 </span>
               </button>
@@ -117,7 +132,6 @@ function TweetCard({
               <MessageSquare size={18} className="text-zinc-400" />
               <span className="text-sm text-zinc-400">{commentsCount}</span>
             </button> */}
-            
           </div>
         </div>
       </div>

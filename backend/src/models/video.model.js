@@ -41,12 +41,10 @@ const videoSchema = mongoose.Schema(
     }
 );
 
-
 videoSchema.index({
-  title: "text",
-  description: "text"
+    title: "text",
+    description: "text",
 });
-
 
 videoSchema.plugin(mongooseAggregatePaginate);
 

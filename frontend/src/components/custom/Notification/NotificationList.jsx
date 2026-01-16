@@ -1,17 +1,24 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Bell, Clock, User } from "lucide-react";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Bell, Clock, User } from 'lucide-react';
 
-export default function NotificationList({ notifications = [], onNotificationClick }) {
-  console.log("notifications are:", notifications);
-  
+export default function NotificationList({
+  notifications = [],
+  onNotificationClick,
+}) {
+  console.log('notifications are:', notifications);
+
   if (notifications.length === 0) {
     return (
       <div className="max-h-96 overflow-y-auto bg-zinc-900 rounded-lg">
         <div className="p-8 text-center flex flex-col items-center justify-center">
           <Bell size={48} className="text-zinc-700 mb-3" />
-          <p className="text-zinc-400 text-lg font-medium">No notifications yet</p>
-          <p className="text-zinc-600 text-sm mt-1">You'll see notifications here when channels upload new videos</p>
+          <p className="text-zinc-400 text-lg font-medium">
+            No notifications yet
+          </p>
+          <p className="text-zinc-600 text-sm mt-1">
+            You'll see notifications here when channels upload new videos
+          </p>
         </div>
       </div>
     );
@@ -20,8 +27,9 @@ export default function NotificationList({ notifications = [], onNotificationCli
   return (
     <div className="max-h-[600px] overflow-y-auto bg-zinc-900 rounded-lg custom-scrollbar">
       {notifications.map((notification, idx) => {
-        const username = notification.video?.owner?.username || "A Channel";
-        const title = notification.video?.title || "New live stream is now live";
+        const username = notification.video?.owner?.username || 'A Channel';
+        const title =
+          notification.video?.title || 'New live stream is now live';
         const videoId = notification.video?._id;
         const ownerId = notification.video?.owner?._id;
         const avatar = notification.video?.owner?.avatar;
@@ -59,10 +67,10 @@ export default function NotificationList({ notifications = [], onNotificationCli
                   <p className="text-xl text-zinc-300 leading-snug">
                     <span className="font-semibold text-white hover:text-blue-400 transition-colors">
                       {username}
-                    </span>{" "}
+                    </span>{' '}
                     uploaded a new video
                   </p>
-                  
+
                   {/* Time Badge */}
                   <div className="flex items-center gap-1 text-md text-zinc-300 flex-shrink-0">
                     <Clock size={12} />
@@ -94,25 +102,25 @@ export default function NotificationList({ notifications = [], onNotificationCli
 }
 
 function timeAgo(date) {
-  if (!date) return "";
+  if (!date) return '';
   const now = new Date();
   const past = new Date(date);
   const seconds = Math.floor((now - past) / 1000);
 
   const intervals = [
-    { label: "year", secs: 31536000 },
-    { label: "month", secs: 2592000 },
-    { label: "week", secs: 604800 },
-    { label: "day", secs: 86400 },
-    { label: "hour", secs: 3600 },
-    { label: "minute", secs: 60 }
+    { label: 'year', secs: 31536000 },
+    { label: 'month', secs: 2592000 },
+    { label: 'week', secs: 604800 },
+    { label: 'day', secs: 86400 },
+    { label: 'hour', secs: 3600 },
+    { label: 'minute', secs: 60 },
   ];
 
   for (let interval of intervals) {
     const value = Math.floor(seconds / interval.secs);
     if (value >= 1) {
-      return `${value}${interval.label[0]}`;  // "5h ago" → "5h"
+      return `${value}${interval.label[0]}`; // "5h ago" → "5h"
     }
   }
-  return "now";
+  return 'now';
 }

@@ -2,16 +2,29 @@ import React, { useState } from 'react';
 import CreatePlaylist from './CreatePlaylist';
 import VideoCard from '../VideoCard';
 import { useSelector } from 'react-redux';
-import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import axios from 'axios';
-import { ListVideo, Plus, FolderOpen, MoreVertical, Trash2, X, AlertTriangle } from 'lucide-react';
+import {
+  ListVideo,
+  Plus,
+  FolderOpen,
+  MoreVertical,
+  Trash2,
+  X,
+  AlertTriangle,
+} from 'lucide-react';
 import LoadingSpinner from '../LoadingSpinner';
 
 function Playlist() {
   const userData = useSelector((state) => state.auth.userData);
   const [activeMenu, setActiveMenu] = useState(null);
   const [playlistToDelete, setPlaylistToDelete] = useState(null);
-  const queryClient=useQueryClient()
+  const queryClient = useQueryClient();
   const { data: userVideos, isLoading } = useQuery({
     queryKey: ['userVidoes', userData?._id],
     queryFn: async () => {
@@ -26,28 +39,32 @@ function Playlist() {
   const { data: playlists = [] } = useQuery({
     queryKey: ['playlists', userData?._id],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:8000/api/v1/playlist/user/${userData?._id}`, { withCredentials: true });
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/playlist/user/${userData?._id}`,
+        { withCredentials: true }
+      );
       return res.data.data;
-    }
+    },
   });
 
   const handleDeletePlaylist = async () => {
     if (!playlistToDelete) return;
     try {
-        console.log("Deleting playlist with ID:", playlistToDelete._id);
-        
-        const res=await axios.delete(`http://localhost:8000/api/v1/playlist/${playlistToDelete._id}`,{withCredentials:true})
+      console.log('Deleting playlist with ID:', playlistToDelete._id);
 
+      const res = await axios.delete(
+        `http://localhost:8000/api/v1/playlist/${playlistToDelete._id}`,
+        { withCredentials: true }
+      );
 
-        console.log("deleted playlist res is ::",res.data);
+      console.log('deleted playlist res is ::', res.data);
 
-        queryClient.invalidateQueries(['playlists', userData?._id]);
-
+      queryClient.invalidateQueries(['playlists', userData?._id]);
     } catch (error) {
-        console.error("Error deleting playlist", error);
+      console.error('Error deleting playlist', error);
     } finally {
-        setPlaylistToDelete(null);
-        setActiveMenu(null);
+      setPlaylistToDelete(null);
+      setActiveMenu(null);
     }
   };
 
@@ -87,7 +104,9 @@ function Playlist() {
               </div>
               <div>
                 <p className="text-zinc-400 text-sm">Total Playlists</p>
-                <p className="text-2xl font-bold text-white">{playlists?.length}</p>
+                <p className="text-2xl font-bold text-white">
+                  {playlists?.length}
+                </p>
               </div>
             </div>
           </div>
@@ -99,7 +118,9 @@ function Playlist() {
               </div>
               <div>
                 <p className="text-zinc-400 text-sm">Available Videos</p>
-                <p className="text-2xl font-bold text-white">{userVideos?.length || 0}</p>
+                <p className="text-2xl font-bold text-white">
+                  {userVideos?.length || 0}
+                </p>
               </div>
             </div>
           </div>
@@ -107,7 +128,9 @@ function Playlist() {
 
         {playlists?.length > 0 ? (
           <div>
-            <h2 className="text-2xl font-bold mb-6 text-white">Your Playlists</h2>
+            <h2 className="text-2xl font-bold mb-6 text-white">
+              Your Playlists
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {playlists?.map((playlist) => (
                 <div
@@ -118,7 +141,9 @@ function Playlist() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setActiveMenu(activeMenu === playlist._id ? null : playlist._id);
+                        setActiveMenu(
+                          activeMenu === playlist._id ? null : playlist._id
+                        );
                       }}
                       className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white transition-colors"
                     >
@@ -144,12 +169,15 @@ function Playlist() {
 
                   <div className="relative aspect-video overflow-hidden bg-zinc-800">
                     <img
-                      src={playlist.videos[0]?.thumbnail || "https://placehold.co/600x400"}
+                      src={
+                        playlist.videos[0]?.thumbnail ||
+                        'https://placehold.co/600x400'
+                      }
                       alt={playlist.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    
+
                     <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2">
                       <ListVideo size={14} className="text-white" />
                       <span className="text-sm font-semibold text-white">
@@ -163,7 +191,8 @@ function Playlist() {
                       {playlist.name}
                     </h3>
                     <p className="text-sm text-zinc-400">
-                      Updated {new Date(playlist.updatedAt).toLocaleDateString()}
+                      Updated{' '}
+                      {new Date(playlist.updatedAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -179,7 +208,8 @@ function Playlist() {
               No playlists yet
             </h2>
             <p className="text-zinc-400 text-lg mb-8 max-w-md">
-              Create your first playlist to organize your videos and share collections with others
+              Create your first playlist to organize your videos and share
+              collections with others
             </p>
             <CreatePlaylist userVideos={userVideos} channelId={userData._id} />
           </div>
@@ -193,7 +223,7 @@ function Playlist() {
               <div className="p-3 bg-red-500/10 rounded-full">
                 <AlertTriangle size={24} className="text-red-500" />
               </div>
-              <button 
+              <button
                 onClick={() => setPlaylistToDelete(null)}
                 className="text-zinc-400 hover:text-white transition-colors"
               >
@@ -205,7 +235,11 @@ function Playlist() {
               Delete Playlist?
             </h3>
             <p className="text-zinc-400 mb-6">
-              Are you sure you want to delete <span className="text-white font-semibold">"{playlistToDelete.name}"</span>? This action cannot be undone.
+              Are you sure you want to delete{' '}
+              <span className="text-white font-semibold">
+                "{playlistToDelete.name}"
+              </span>
+              ? This action cannot be undone.
             </p>
 
             <div className="flex gap-3 justify-end">

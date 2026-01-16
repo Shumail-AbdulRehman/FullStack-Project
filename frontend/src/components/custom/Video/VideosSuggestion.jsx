@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import VideoCard from '../VideoCard';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
 function VideosSuggestion() {
   const videos = useSelector((state) => state.videos.allVideos);
   const [loading, setLoading] = useState(false);

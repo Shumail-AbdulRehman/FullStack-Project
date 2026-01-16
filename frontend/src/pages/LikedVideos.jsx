@@ -10,7 +10,7 @@ import LoadingSpinner from '@/components/custom/LoadingSpinner';
 function LikedVideos() {
   const userData = useSelector((state) => state.auth.userData);
 
-  const { data: getUserLikedVideos,isPending:likeVideosPending } = useQuery({
+  const { data: getUserLikedVideos, isPending: likeVideosPending } = useQuery({
     queryKey: ['likedVideos', userData?._id],
     queryFn: async () => {
       const res = await axios.get(`http://localhost:8000/api/v1/likes/videos`, {
@@ -21,9 +21,8 @@ function LikedVideos() {
     },
   });
 
-  if(likeVideosPending)
-  {
-    return <LoadingSpinner/>
+  if (likeVideosPending) {
+    return <LoadingSpinner />;
   }
 
   return (

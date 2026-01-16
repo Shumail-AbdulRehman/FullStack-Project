@@ -23,7 +23,7 @@ function VideoListing() {
     // }
     (async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const fetchVideos = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/v1/videos/`,
           { withCredentials: true }
@@ -33,8 +33,8 @@ function VideoListing() {
         dispatch(getVideos(fetchVideos.data.data.docs));
       } catch (error) {
         console.log(error);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     })();
     setLoading(false);

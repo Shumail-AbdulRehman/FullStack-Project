@@ -44,7 +44,6 @@ const userSchema = mongoose.Schema(
     }
 );
 
-
 // userSchema.index({
 //     name: "text",
 // })

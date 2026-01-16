@@ -4,7 +4,7 @@ import {
     deleteTweet,
     getUserTweets,
     updateTweet,
-    getChannelTweetsWithLikes
+    getChannelTweetsWithLikes,
 } from "../controllers/tweet.controller.js";
 
 import { verifyJwt as verifyJWT } from "../middlewares/auth.middleware.js";
