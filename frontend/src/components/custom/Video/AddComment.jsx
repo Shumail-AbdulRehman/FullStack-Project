@@ -31,21 +31,19 @@ function AddComment({ videoId }) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-3 w-full py-4"
+      className="flex flex-col gap-4 p-4 border-t border-gray-700 bg-[#0f0f0f] rounded-lg"
     >
-      <h2 className="text-xl font-bold text-white mb-2">Add a Comment</h2>
-      <div className="relative w-full">
-        <textarea
-          {...register('comment', { required: true })}
-          placeholder="Add a comment..."
-          rows="2"
-          className="w-full bg-transparent text-white text-[14px] border-b border-zinc-700 focus:border-white focus:border-b-2 outline-none pb-2 resize-none placeholder-zinc-400 transition-all duration-200"
-        />
-      </div>
-      <div className="flex justify-end gap-2">
+      <h2 className="font-bold text-white text-lg sm:text-xl">Add a Comment</h2>
+      <textarea
+        {...register('comment', { required: true })}
+        placeholder="Write your comment..."
+        rows="4"
+        className="w-full p-3 text-white text-sm resize-none rounded-md border border-gray-600 bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200"
+      />
+      <div className="flex justify-end">
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-full transition-colors duration-200"
+          className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-md hover:bg-indigo-700 transition-colors duration-200"
         >
           Comment
         </button>
