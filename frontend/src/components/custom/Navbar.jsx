@@ -31,39 +31,39 @@ function Navbar() {
   });
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 bg-zinc-900 rounded-lg shadow-md h-25">
-      <div className="text-2xl font-bold cursor-pointer text-white flex-shrink-0">
+    <header className="flex items-center justify-between px-6 h-20 bg-[#0f0f0f] border-b border-zinc-800 sticky top-0 z-50">
+      <div
+        className="text-xl font-semibold text-white cursor-pointer flex items-center gap-2"
+        onClick={() => navigate('/')}
+      >
         MyTube
       </div>
 
-      <div className="relative border-black flex-1 max-w-xl mx-6">
+      <div className="flex-1 max-w-2xl mx-8 relative">
         <input
           type="text"
           value={query}
           placeholder="Search"
           onKeyDown={handleKeyDown}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full border border-gray-600 bg-white text-black font-normal pl-12 pr-4 py-3 rounded-full shadow-sm  outline-none transition"
+          className="w-full h-10 pl-4 pr-12 rounded-full bg-[#121212] border border-zinc-700 text-sm text-white placeholder-zinc-400 focus:outline-none focus:border-blue-500"
         />
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black w-6 h-6" />
+        <button className="absolute right-0 top-0 h-10 w-12 flex items-center justify-center rounded-r-full bg-zinc-800 hover:bg-zinc-700 transition">
+          <Search className="w-5 h-5 text-zinc-300" />
+        </button>
       </div>
 
       <div className="flex items-center gap-4">
-        {notifications && (
-          <div className="relative">
-            <NotificationBell notifications={notifications} />
-          </div>
-        )}
-
+        {notifications && <NotificationBell notifications={notifications} />}
         {isAuthenticated ? (
           <LogoutBtn />
         ) : (
-          <Button className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-full text-lg font-medium transition">
+          <Button className="h-9 px-5 rounded-full bg-red-600 hover:bg-red-700 text-sm font-medium">
             Login
           </Button>
         )}
       </div>
-    </div>
+    </header>
   );
 }
 

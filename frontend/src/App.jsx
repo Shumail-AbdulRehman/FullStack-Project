@@ -104,7 +104,7 @@ function App() {
     return <LoadingSpinner />;
   }
   return (
-    <div className="bg-[#0f0f0f]">
+    <div className=" bg-[#0f0f0f]">
       <Navbar />
       <Outlet />
       {/* <Video/> */}

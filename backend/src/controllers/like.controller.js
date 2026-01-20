@@ -8,7 +8,6 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
 
     console.log("video id is =>", videoId);
-    //TODO: toggle like on video
     const userId = req.user?._id;
     if (!videoId) {
         throw new ApiError(404, "video not found");
@@ -71,7 +70,8 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
     const { commentId } = req.params;
-    //TODO: toggle like on comment
+
+    console.log("control came here lol :::::::::::::::::::::")
 
     const userId = req.user?._id;
     if (!commentId) {

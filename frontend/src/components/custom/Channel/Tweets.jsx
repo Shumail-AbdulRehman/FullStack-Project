@@ -20,6 +20,7 @@ function Tweets({ channelId }) {
         `http://localhost:8000/api/v1/tweets/user/${channelId}`,
         { withCredentials: true }
       );
+      console.log("tweets are::",res.data.data);
       return res.data.data;
     },
     enabled: !!channelId,

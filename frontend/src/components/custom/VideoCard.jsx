@@ -1,19 +1,18 @@
 import React from 'react';
 
 function formatDuration(duration) {
-  if (!duration) return 'N/A';
+  if (!duration) return '0:00';
   const totalSeconds = Math.floor(duration);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
+
 function timeAgo(date) {
   if (!date) return '';
   const now = new Date();
   const past = new Date(date);
   const seconds = Math.floor((now - past) / 1000);
-
-  if (seconds < 60) return 'Just now';
 
   const intervals = [
     { label: 'year', seconds: 31536000 },
@@ -36,56 +35,45 @@ function timeAgo(date) {
 function VideoCard({
   title,
   views,
-  videoFile,
   thumbnail,
   duration,
   createdAt,
   owner,
 }) {
   return (
-    <div className="bg-zinc-950 text-white w-full  cursor-pointer rounded-lg overflow-hidden hover:bg-zinc-800 transition-colors duration-200">
-      <div className="relative">
-        {thumbnail && (
-          <img
-            src={thumbnail}
-            alt={title || 'thumbnail'}
-            className="w-120 h-60 object-cover"
-          />
-        )}
-        {duration && (
-          <span className="absolute bottom-2 right-2 bg-black/80 text-sm font-medium px-2 py-1 rounded">
-            {formatDuration(duration)}
-          </span>
-        )}
+    <div className="bg-[#0f0f0f] text-white rounded-xl overflow-hidden hover:bg-zinc-800 transition-colors">
+      <div className="relative aspect-video bg-black rounded-xl overflow-hidden">
+        <img
+          src={thumbnail}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
+        <span className="absolute bottom-2 right-2 bg-black/80 text-sm px-1.5 py-0.5 rounded">
+          {formatDuration(duration)}
+        </span>
       </div>
 
-      <div className="p-4">
-        <div className="flex gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden shrink-0">
-            {owner?.avatar ? (
-              <img
-                src={owner.avatar}
-                alt={owner.username}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-sm text-white font-semibold">
-                {owner?.username?.[0]?.toUpperCase() ?? 'U'}
-              </span>
-            )}
-          </div>
+      <div className="flex gap-3 mt-3 px-1">
+        <div className="w-13 mt-4 h-13 rounded-full bg-zinc-700 overflow-hidden shrink-0">
+          {owner?.avatar && (
+            <img
+              src={owner.avatar}
+              alt={owner.username}
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
 
-          <div className="flex-1 min-w-0">
-            <h2 className="font-medium  leading-snug line-clamp-2 text-xl text-white mb-1.5">
-              {title}
-            </h2>
-            <p className="text-lg text-gray-200">
-              {owner?.username ?? 'Unknown'}
-            </p>
-            <p className=" text-lg text-gray-200 mt-0.5">
-              {views ?? 0} views • {timeAgo(createdAt)}
-            </p>
-          </div>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-lg mt-4 font-medium leading-snug line-clamp-2">
+            {title}
+          </h2>
+          <p className="text-lg text-zinc-300 mt-1">
+            {owner?.username}
+          </p>
+          <p className="text-lg text-zinc-300">
+            {views ?? 0} views • {timeAgo(createdAt)}
+          </p>
         </div>
       </div>
     </div>

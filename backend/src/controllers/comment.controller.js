@@ -12,53 +12,89 @@ const getVideoComments = asyncHandler(async (req, res) => {
         throw new ApiError(400, "video id is required");
     }
 
-    const commentsAggregate = Comment.aggregate([
-        {
-            $match: {
-                video: new mongoose.Types.ObjectId(videoId),
-            },
+   const commentsAggregate = Comment.aggregate([
+    {
+        $match: {
+            video: new mongoose.Types.ObjectId(videoId),
         },
-        {
-            $lookup: {
-                from: "users",
-                localField: "owner",
-                foreignField: "_id",
-                as: "owner",
-                pipeline: [
-                    {
-                        $project: {
-                            _id: true,
-                            username: true,
-                            avatar: true,
-                        },
+    },
+    {
+        $lookup: {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "owner",
+            pipeline: [
+                {
+                    $project: {
+                        _id: true,
+                        username: true,
+                        avatar: true,
                     },
-                ],
-            },
+                },
+            ],
         },
-        {
-            $project: {
-                content: true,
-                createdAt: true,
-                owner: true,
-                video: true,
-            },
+    },
+    {
+        $lookup: {
+            from: "likes",
+            localField: "_id",
+            foreignField: "comment",
+            pipeline: [
+                {
+                    $match: {
+                        likedBy: new mongoose.Types.ObjectId(req.user._id) // Match the current user
+                    }
+                }
+            ],
+            as: "isLiked"
+        }
+    },
+    {
+        $addFields: {
+            isLiked: { $gt: [{ $size: "$isLiked" }, 0] }
+        }
+    },
+    {
+        $lookup:{
+            from:"likes",
+            localField:"_id",
+            foreignField:"comment",
+            as:"commentLikes"
+        }
+    },
+    {
+        $addFields:{
+    likeCount: { $size: "$commentLikes" }
+        }
+    },
+    {
+        $project: {
+            content: true,
+            createdAt: true,
+            owner: true,
+            video: true,
+            isLiked: true, 
+            likesCount: true ,
+                likeCount: true  
         },
-        {
-            $sort: {
-                createdAt: -1,
-            },
+    },
+    {
+        $sort: {
+            createdAt: -1,
         },
-        {
-            $unwind: "$owner",
-        },
-    ]);
+    },
+    {
+        $unwind: "$owner",
+    },
+]);
 
     const options = {
         page: parseInt(page),
         limit: parseInt(limit),
     };
 
-    // console.log("comments AGgregate is:=>",commentsAggregate);
+    console.log("comments AGgregate is:=>",commentsAggregate);
 
     const comments = await Comment.aggregatePaginate(
         commentsAggregate,

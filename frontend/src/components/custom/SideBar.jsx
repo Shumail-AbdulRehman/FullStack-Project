@@ -12,7 +12,7 @@ function SideBar() {
   };
 
   return (
-    <div className="h-screen w-auto bg-zinc-950 text-white flex flex-col sticky top-0">
+    <div className="h-full w-auto bg-zinc-950 text-white flex flex-col sticky top-0">
       <ul className="space-y-2 text-lg font-medium">
         <Link to="/">
           <li

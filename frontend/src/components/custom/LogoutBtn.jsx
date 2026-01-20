@@ -4,13 +4,14 @@ import LoadingSpinner from './LoadingSpinner';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/store/authSlice';
 import axios from 'axios';
+
 function LogoutBtn() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
     setLoading(true);
-    const res = await axios.post(
+    await axios.post(
       'http://localhost:8000/api/v1/users/logout',
       {},
       { withCredentials: true }
@@ -20,11 +21,12 @@ function LogoutBtn() {
   };
 
   return (
-    <div>
-      <Button onClick={handleSubmit}>
-        {loading ? <LoadingSpinner /> : <h1>Logout</h1>}
-      </Button>
-    </div>
+    <Button
+      onClick={handleSubmit}
+      className="h-9 px-4 rounded-full bg-zinc-800 hover:bg-zinc-700 text-sm font-medium text-white"
+    >
+      {loading ? <LoadingSpinner /> : 'Logout'}
+    </Button>
   );
 }
 
