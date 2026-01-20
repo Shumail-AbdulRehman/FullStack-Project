@@ -41,12 +41,13 @@ function VideoCard({
   owner,
 }) {
   return (
-    <div className="bg-[#0f0f0f] text-white rounded-xl overflow-hidden hover:bg-zinc-800 transition-colors">
+    <div className="bg-zinc-950 text-white rounded-xl overflow-hidden hover:bg-zinc-800 transition-colors">
       <div className="relative aspect-video bg-black rounded-xl overflow-hidden">
         <img
           src={thumbnail}
           alt={title}
           className="w-full h-full object-cover"
+          loading="lazy"
         />
         <span className="absolute bottom-2 right-2 bg-black/80 text-sm px-1.5 py-0.5 rounded">
           {formatDuration(duration)}

@@ -27,7 +27,7 @@ function LikedVideos() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex">
-      <aside className="w-75 flex-shrink-0 border-r border-gray-800">
+      <aside className="w-60 flex-shrink-0 ">
         <SideBar />
       </aside>
 

@@ -23,7 +23,7 @@ function LogoutBtn() {
   return (
     <Button
       onClick={handleSubmit}
-      className="h-9 px-4 rounded-full bg-zinc-800 hover:bg-zinc-700 text-sm font-medium text-white"
+      className="h-9 px-5 rounded-full bg-[#CC0000] hover:bg-[#990000] text-white text-sm font-medium transition-colors duration-200 shadow-sm"
     >
       {loading ? <LoadingSpinner /> : 'Logout'}
     </Button>

@@ -3,14 +3,14 @@ import VideoCard from '../VideoCard';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { getVideos } from '@/store/videoSlice';
 
 function VideosSuggestion() {
   const videos = useSelector((state) => state.videos.allVideos);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   console.log(videos);
   useEffect(() => {
-    setLoading(true);
     if (videos.length !== 0) {
       setLoading(false);
       return;
@@ -24,18 +24,27 @@ function VideosSuggestion() {
         console.log('Whole fetched videos', fetchVideos.data.data);
         console.log(fetchVideos.data.data.docs);
         dispatch(getVideos(fetchVideos.data.data.docs));
+        setLoading(false);
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     })();
-    setLoading(false);
-  }, [videos]);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col border-2 border-black">
+        <p className="text-white text-center p-4">Loading suggestions...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col border-2 border-black">
       {videos?.map((video) => (
-        <Link to={`/video/${video._id}/${video.owner._id}`}>
-          <VideoCard key={video._id} {...video} />
+        <Link to={`/video/${video._id}/${video.owner._id}`} key={video._id}>
+          <VideoCard {...video} />
         </Link>
       ))}
     </div>

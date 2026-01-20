@@ -31,15 +31,15 @@ export default function SearchResults() {
 
   if (videos.length === 0) {
     return (
-      <div className="flex bg-[#0f0f0f] min-h-screen text-white">
-        <aside className="hidden md:block w-60 border-r border-zinc-800">
+      <div className="flex bg-zinc-950 min-h-screen text-white">
+        <aside className="hidden md:block w-60 ">
           <SideBar />
         </aside>
 
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center space-y-2">
+          <div className="pb-80 pr-40  space-y-2">
             <h1 className="text-2xl font-semibold">No results found</h1>
-            <p className="text-zinc-400 text-sm">
+            <p className="text-zinc-400 text-lg">
               Try different keywords
             </p>
           </div>
@@ -49,9 +49,9 @@ export default function SearchResults() {
   }
 
   return (
-    <div className="flex bg-[#0f0f0f] min-h-screen text-white">
+    <div className="flex bg-zinc-950 min-h-screen text-white">
       {/* Sidebar */}
-      <aside className="hidden md:block w-60 border-r border-zinc-800 sticky top-0 h-screen">
+      <aside className="hidden md:block w-60  sticky top-0 h-screen">
         <SideBar />
       </aside>
 

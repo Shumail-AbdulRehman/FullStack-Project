@@ -23,7 +23,7 @@ function Dashboard() {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: dashboardData, isPending: dashboardPending } = useQuery({
+  const { data: dashboardData,isPending:dashboardPending } = useQuery({
     queryKey: ['DashboardData', userData?._id],
     queryFn: async () => {
       const res = await axios.get(
@@ -37,21 +37,21 @@ function Dashboard() {
     },
   });
 
-  const { mutate: toggelPublishVideo, isPending: publishVideoPending } =
-    useMutation({
-      mutationFn: async (id) => {
-        const res = await axios.patch(
-          `http://localhost:8000/api/v1/videos/toggle/publish/${id}`,
-          {},
-          { withCredentials: true }
-        );
-        return res.data;
-      },
-      onSuccess: () => {
-        if (userData?._id)
-          queryClient.invalidateQueries(['DashboardData', userData._id]);
-      },
-    });
+  const { mutate: toggelPublishVideo,isPending:publishVideoPending } = useMutation({
+    mutationFn: async (id) => {
+      const res = await axios.patch(
+        `http://localhost:8000/api/v1/videos/toggle/publish/${id}`,
+        {},
+        { withCredentials: true }
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      if (userData?._id)
+        queryClient.invalidateQueries(['DashboardData', userData._id]);
+        queryClient.invalidateQueries([])
+    },
+  });
 
   const { mutate: deleteVideo, isPending: deleteVideoPending } = useMutation({
     mutationFn: async (id) => {
@@ -69,13 +69,13 @@ function Dashboard() {
 
   const handleDelete = (id) => deleteVideo(id);
   const handleTogglePublish = (id, currentState) => toggelPublishVideo(id);
-
+  
   const handleEdit = (video) => {
     setSelectedVideo(video);
     setThumbnailPreview(video.thumbnail);
-    reset({
-      title: video.title,
-      description: video.description,
+    reset({ 
+      title: video.title, 
+      description: video.description 
     });
     setIsModalOpen(true); // ✅ Open modal manually
   };
@@ -120,13 +120,13 @@ function Dashboard() {
     }
   }, [selectedVideo, reset]);
 
-  if (deleteVideoPending || dashboardPending || publishVideoPending) {
+  if (deleteVideoPending||dashboardPending|| publishVideoPending) {
     return <LoadingSpinner />;
   }
 
   return (
     <div className="flex bg-zinc-950 min-h-screen">
-      <aside className="w-75 hidden md:block">
+      <aside className="w-60 hidden md:block">
         <SideBar />
       </aside>
 

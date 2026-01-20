@@ -257,7 +257,7 @@ export default function SettingsPage() {
 
   return (
     <div className="flex bg-zinc-950 min-h-screen text-white">
-      <div className="hidden md:block w-64 border-r border-gray-800">
+      <div className="hidden md:block w-60 ">
         <SideBar />
       </div>
 
