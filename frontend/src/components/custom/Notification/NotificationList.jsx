@@ -6,97 +6,87 @@ export default function NotificationList({
   notifications = [],
   onNotificationClick,
 }) {
-  console.log('notifications are:', notifications);
-
   if (notifications.length === 0) {
     return (
-      <div className="max-h-96 overflow-y-auto bg-zinc-900 rounded-lg">
-        <div className="p-8 text-center flex flex-col items-center justify-center">
-          <Bell size={48} className="text-zinc-700 mb-3" />
-          <p className="text-zinc-400 text-lg font-medium">
-            No notifications yet
-          </p>
-          <p className="text-zinc-600 text-sm mt-1">
-            You'll see notifications here when channels upload new videos
-          </p>
+      <div className="w-full h-96 flex flex-col items-center justify-center bg-[#1F1F1F] rounded-xl border border-zinc-800">
+        <div className="w-20 h-20 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4">
+          <Bell size={32} className="text-zinc-500" />
         </div>
+        <h3 className="text-white text-lg font-semibold mb-2">
+          Your notifications live here
+        </h3>
+        <p className="text-[#AAAAAA] text-sm max-w-xs text-center">
+          Subscribe to your favorite channels to get notified about their latest videos.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="max-h-[600px] overflow-y-auto bg-zinc-900 rounded-lg custom-scrollbar">
-      {notifications.map((notification, idx) => {
-        const username = notification.video?.owner?.username || 'A Channel';
-        const title =
-          notification.video?.title || 'New live stream is now live';
-        const videoId = notification.video?._id;
-        const ownerId = notification.video?.owner?._id;
-        const avatar = notification.video?.owner?.avatar;
-        const thumbnail = notification.video?.thumbnail;
-        const createdAt = notification.video?.createdAt;
+    <div className="max-h-[600px] overflow-y-auto bg-[#1F1F1F] rounded-xl border border-zinc-800 custom-scrollbar shadow-2xl">
+      <div className="py-2">
+        {notifications.map((notification, idx) => {
+          const username = notification.video?.owner?.username || 'Channel';
+          const title = notification.video?.title || 'New video uploaded';
+          const videoId = notification.video?._id;
+          const ownerId = notification.video?.owner?._id;
+          const avatar = notification.video?.owner?.avatar;
+          const thumbnail = notification.video?.thumbnail;
+          const createdAt = notification.video?.createdAt;
 
-        return (
-          <Link
-            key={idx}
-            to={`/video/${videoId}/${ownerId}`}
-            className="block"
-            onClick={onNotificationClick}
-          >
-            <div className="flex gap-3 items-start p-3 transition-all duration-200 ease-in-out hover:bg-zinc-800 cursor-pointer border-b border-zinc-800 last:border-b-0 group">
-              {/* Avatar with Notification Badge */}
-              <div className="relative flex-shrink-0">
-                <div className="w-15 h-15 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden ring-2 ring-zinc-800 group-hover:ring-blue-500 transition-all">
-                  {avatar ? (
-                    <img
-                      src={avatar}
-                      alt={username}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User size={20} className="text-white" />
-                  )}
-                </div>
-                {/* New Notification Indicator */}
-                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-blue-500 rounded-full border-2 border-zinc-900"></div>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 min-w-0 pr-3">
-                <div className="flex items-start justify-between gap-2 mb-1">
-                  <p className="text-xl text-zinc-300 leading-snug">
-                    <span className="font-semibold text-white hover:text-blue-400 transition-colors">
-                      {username}
-                    </span>{' '}
-                    uploaded a new video
-                  </p>
-
-                  {/* Time Badge */}
-                  <div className="flex items-center gap-1 text-md text-zinc-300 flex-shrink-0">
-                    <Clock size={12} />
-                    <span>{timeAgo(createdAt)}</span>
+          return (
+            <Link
+              key={idx}
+              to={`/video/${videoId}/${ownerId}`}
+              className="block"
+              onClick={onNotificationClick}
+            >
+              <div className="group flex gap-4 p-4 transition-colors duration-200 hover:bg-[#272727] cursor-pointer">
+                <div className="flex-shrink-0 relative">
+                  <div className="w-12 h-12 rounded-full bg-[#121212] overflow-hidden border border-zinc-800">
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt={username}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-zinc-800">
+                        <User size={20} className="text-zinc-400" />
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Video Title */}
-                <h3 className="text-md font-medium text-white line-clamp-2 mb-2 group-hover:text-blue-400 transition-colors">
-                  {title}
-                </h3>
-              </div>
-
-              {thumbnail && (
-                <div className="flex-shrink-0 w-28 h-16 rounded-md overflow-hidden bg-zinc-800 group-hover:ring-2 group-hover:ring-blue-500 transition-all">
-                  <img
-                    src={thumbnail}
-                    alt="thumbnail"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  <p className="text-sm text-white leading-snug line-clamp-2">
+                    <span className="font-semibold text-white group-hover:text-[#3EA6FF] transition-colors">
+                      {username}
+                    </span>
+                    <span className="text-zinc-300"> uploaded: </span>
+                    <span>{title}</span>
+                  </p>
+                  <div className="flex items-center gap-1 mt-1.5">
+                    <span className="text-xs text-[#AAAAAA] font-medium">
+                      {timeAgo(createdAt)}
+                    </span>
+                  </div>
                 </div>
-              )}
-            </div>
-          </Link>
-        );
-      })}
+
+                {thumbnail && (
+                  <div className="flex-shrink-0 w-32 h-20 rounded-lg overflow-hidden bg-black/20 border border-zinc-800">
+                    <img
+                      src={thumbnail}
+                      alt="thumbnail"
+                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                )}
+              </div>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -119,8 +109,8 @@ function timeAgo(date) {
   for (let interval of intervals) {
     const value = Math.floor(seconds / interval.secs);
     if (value >= 1) {
-      return `${value}${interval.label[0]}`; // "5h ago" → "5h"
+      return `${value} ${interval.label}${value > 1 ? 's' : ''} ago`;
     }
   }
-  return 'now';
+  return 'Just now';
 }

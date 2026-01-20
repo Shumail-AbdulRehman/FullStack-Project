@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import LoadingSpinner from '../LoadingSpinner';
-import { ThumbsUp, Eye } from 'lucide-react';
+import { ThumbsUp, Eye, Check } from 'lucide-react'; 
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 
@@ -90,57 +90,89 @@ function VideoMeta({
   if (loadingLikes || loadingSubscribers) return <LoadingSpinner />;
 
   return (
-    <div className="w-full bg-[#0f0f0f] text-white rounded-xl mt-6 p-4 sm:p-6">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-3 leading-snug">
+    <div className="w-full max-w-6xl ">
+      <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 leading-tight tracking-tight">
         {title}
       </h2>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#272727] pb-4 mb-4">
-        <Link to={`/channel/${owner._id}`} className="flex items-center gap-3">
-          <img
-            src={owner.avatar || '/default-avatar.png'}
-            alt={owner.username}
-            className="w-12 h-12 rounded-full object-cover"
-          />
-          <div>
-            <h3 className="font-medium text-white">{owner.fullName}</h3>
-            <p className="text-sm text-gray-400">
-              {subscribers.toLocaleString()} subscribers
-            </p>
-          </div>
-        </Link>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 mb-6">
+        
+        <div className="flex items-center justify-between sm:justify-start gap-5 w-full sm:w-auto">
+          <Link to={`/channel/${owner._id}`} className="group flex items-center gap-3">
+            <div className="relative">
+              <img
+                src={owner.avatar || '/default-avatar.png'}
+                alt={owner.username}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-transparent group-hover:border-purple-500 transition-all duration-300"
+              />
+            </div>
+            <div className="flex flex-col">
+              <h3 className="font-semibold text-base sm:text-lg text-white group-hover:text-purple-400 transition-colors">
+                {owner.fullName}
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-400">
+                {subscribers.toLocaleString()} subscribers
+              </p>
+            </div>
+          </Link>
 
-        <button
-          onClick={handleSubscriberClick}
-          className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 
-            ${subscribed ? 'bg-gray-300 text-black scale-105' : 'bg-white text-black'} 
-            ${subscribeAnimating ? 'animate-pulse' : ''} hover:scale-105`}
-        >
-          {subscribed ? 'Subscribed' : 'Subscribe'}
-        </button>
-      </div>
+          <button
+            onClick={handleSubscriberClick}
+            className={`
+              ml-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform
+              ${
+                subscribed
+                  ? 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700'
+                  : 'bg-white text-black hover:bg-zinc-200 hover:scale-105 shadow-lg shadow-white/10'
+              }
+              ${subscribeAnimating ? 'scale-95 ring-2 ring-purple-500/50' : ''}
+            `}
+          >
+            <span className="flex items-center gap-2">
+              {subscribed && <Check className="w-4 h-4" />}
+              {subscribed ? 'Subscribed' : 'Subscribe'}
+            </span>
+          </button>
+        </div>
 
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
-        <div className="flex items-center gap-6 text-sm text-gray-400">
-          <div className="flex items-center gap-2">
-            <Eye className="w-5 h-5 text-gray-300" />
-            <span>{views?.toLocaleString()} views</span>
+        <div className="flex items-center gap-2 sm:ml-auto">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-zinc-800/50 text-zinc-400 text-sm">
+            <Eye className="w-5 h-5" />
+            <span className="font-medium">{views?.toLocaleString()}</span>
           </div>
-          <div className="flex items-center gap-2">
+
+          <button
+            onClick={handleLikeClick}
+            className={`
+              group relative flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 border
+              ${
+                liked
+                  ? 'bg-red-600 border-red-500 text-white'
+                  : 'bg-zinc-900/50 border-zinc-800/50 text-zinc-200 hover:bg-zinc-800'
+              }
+            `}
+          >
             <ThumbsUp
-              onClick={handleLikeClick}
-              className={`w-5 h-5 cursor-pointer transition-transform duration-200 
-                ${liked ? 'text-blue-400 scale-125' : 'text-gray-300 scale-100'} 
-                ${likeAnimating ? 'animate-pulse' : ''} hover:scale-110`}
+              className={`w-5 h-5 transition-transform duration-300 
+                ${liked ? 'fill-red-400 scale-110' : 'group-hover:-rotate-12'}
+                ${likeAnimating ? 'animate-bounce' : ''}
+              `}
             />
-            <span>{likes}</span>
-          </div>
+            <span className="font-medium">
+                {liked ? 'Liked' : 'Like'} &nbsp; | &nbsp; {likes}
+            </span>
+          </button>
         </div>
       </div>
 
-      <p className="text-sm sm:text-base text-gray-200 leading-relaxed whitespace-pre-line">
-        {description}
-      </p>
+      <div className="w-full bg-zinc-900/50 hover:bg-zinc-900/80 transition-colors rounded-xl p-4 cursor-pointer group">
+        <div className="flex gap-2 mb-2">
+            <span className="text-sm font-semibold text-white">Description</span>
+        </div>
+        <p className="text-sm sm:text-base text-zinc-300 leading-relaxed whitespace-pre-line">
+          {description}
+        </p>
+      </div>
     </div>
   );
 }

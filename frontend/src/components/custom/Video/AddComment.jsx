@@ -45,7 +45,7 @@ function AddComment({ videoId }) {
       <div className="flex justify-end gap-2">
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-full transition-colors duration-200"
+          className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-medium rounded-full transition-colors duration-200"
         >
           Comment
         </button>

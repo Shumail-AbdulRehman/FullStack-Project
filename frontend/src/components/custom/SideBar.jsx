@@ -20,7 +20,6 @@ function SideBar() {
               isActive('/') ? 'bg-[#383838]' : ''
             }`}
           >
-            {/* Added Home Icon */}
             <Home className="w-6 h-6" />
             <span className="font-semibold">Home</span>
           </li>
