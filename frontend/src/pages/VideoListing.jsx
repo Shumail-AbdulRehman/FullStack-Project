@@ -35,12 +35,13 @@ function VideoListing() {
     return <h1 className="bg-black text-white p-6">No videos to show</h1>;
 
   return (
-   
-    <div className=" flex   
-                    bg-gradient-to-b from-[#181818] via-[#0f0f0f] to-black">
+    // 1. CHANGED: Use 'min-h-screen' instead of 'h-screen'. 
+    // This allows the page to grow naturally with content (removing the inner scrollbar)
+    // while ensuring the background always covers the full view.
+    <div className="flex w-full min-h-screen bg-gradient-to-b from-[#181818] via-[#0f0f0f] to-black">
       
       {/* Background glows */}
-      <div className="pointer-events-none absolute inset-0 z-0">
+      <div className="pointer-events-none absolute inset-0 z-0 h-full overflow-hidden">
         <div className="absolute -top-48 left-1/3 h-[700px] w-[700px]
                         rounded-full bg-red-600/15 blur-[160px]" />
         <div className="absolute bottom-[-300px] right-1/4 h-[600px] w-[600px]
@@ -48,16 +49,15 @@ function VideoListing() {
       </div>
 
       {/* Sidebar */}
-      {/* 2. ADDED: Scroll hiding classes and removed 'custom-scrollbar' */}
-     <aside className="hidden md:block w-60 border-r border-zinc-800 sticky top-0 h-screen">
+      {/* Sticky makes it stay fixed while you scroll the window */}
+      <aside className="hidden md:block w-60 border-r border-zinc-800 sticky top-0 h-screen z-20">
         <SideBar />
       </aside>
 
       {/* Content */}
-      {/* 3. ADDED: overflow-y-auto and scroll hiding classes to Main */}
-      <main className="flex-1 px-4 py-6 z-10 
-                       overflow-y-auto 
-                       [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+      {/* 2. CHANGED: Removed 'overflow-y-auto' and scrollbar hiding classes.
+          We now rely on the window's main scrollbar. */}
+      <main className="flex-1 px-4 py-6 z-10">
         <div className="
           grid
           grid-cols-1
