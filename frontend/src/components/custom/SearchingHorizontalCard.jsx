@@ -1,7 +1,7 @@
 import React from 'react';
 
 function formatDuration(duration) {
-  if (!duration) return '00:00';
+  if (!duration) return 'N/A';
   const totalSeconds = Math.floor(duration);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
@@ -30,46 +30,60 @@ function timeAgo(date) {
     if (count >= 1)
       return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
   }
+
   return 'Just now';
 }
 
-export default function HorizontalVideoCard({
+export default function SearchingHorizontalCard({
   title,
   views,
   thumbnail,
   duration,
   createdAt,
+  description,
   owner,
 }) {
   return (
-    <div className="flex gap-3 p-2 rounded-xl cursor-pointer hover:bg-zinc-800/50 transition-colors duration-200 w-full group">
-      
-      <div className="relative w-40 sm:w-55 flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-zinc-900">
+    <div className="flex gap-6  rounded-xl cursor-pointer bg-zinc-950 hover:bg-zinc-700 transition-colors duration-200 w-full">
+      <div className="relative w-135 h-80 rounded-lg overflow-hidden flex-shrink-0">
         <img
           src={thumbnail}
           alt={title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+          className="w-full h-full object-cover"
         />
-        
+
         {duration && (
-          <span className="absolute bottom-1.5 right-1.5 bg-black/80 text-sm font-medium px-1.5 py-0.5 rounded text-white">
+          <span className="absolute bottom-3 right-3 bg-black/80 text-base px-3 py-1.5 rounded text-white">
             {formatDuration(duration)}
           </span>
         )}
       </div>
 
-      <div className="flex flex-col flex-1 min-w-0 pr-2"> 
-        <h3 className="text-md font-medium text-white leading-tight line-clamp-2 mb-1 group-hover:text-gray-300 transition-colors">
+      <div className="flex flex-col justify-start text-white flex-1">
+        <h2 className="text-xl font-bold leading-snug line-clamp-2">
           {title}
-        </h3>
+        </h2>
 
-        <p className="text-sm text-gray-200 hover:text-white transition-colors mb-0.5">
-          {owner?.username ?? 'Unknown Channel'}
+        <p className="text-md text-gray-300 mt-2">
+          {views ?? 0} views • {timeAgo(createdAt)}
         </p>
 
-        <p className="text-sm text-gray-200">
-          {views ? views.toLocaleString() : 0} views • {timeAgo(createdAt)}
-        </p>
+        <div className="flex items-center gap-4 mt-4">
+          <img
+            src={owner?.avatar}
+            alt="avatar"
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <p className="text-lg text-gray-200">
+            {owner?.username ?? 'Unknown'}
+          </p>
+        </div>
+
+        {description && (
+          <p className="text-lg text-gray-300 mt-4 line-clamp-3">
+            {description}
+          </p>
+        )}
       </div>
     </div>
   );

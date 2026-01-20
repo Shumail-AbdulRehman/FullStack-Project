@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import VideoCard from '../VideoCard';
+// import VideoCard from '../VideoCard';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { getVideos } from '@/store/videoSlice';
-
+import HorizontalVideoCard from '../HorizontalVideoCard';
 function VideosSuggestion() {
   const videos = useSelector((state) => state.videos.allVideos);
   const [loading, setLoading] = useState(true);
@@ -29,22 +29,25 @@ function VideosSuggestion() {
         console.log(error);
         setLoading(false);
       }
+      finally{
+        setLoading(true)
+      }
     })();
   }, []);
 
   if (loading) {
     return (
-      <div className="flex flex-col border-2 border-black">
-        <p className="text-white text-center p-4">Loading suggestions...</p>
+      <div className="flex flex-col  justify-center items-center  ">
+        <p className="text-white text-lg font-bold mt-40 text-center p-4">Loading Recommended videos ...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col border-2 border-black">
+    <div className="flex w-full h-full flex-col ">
       {videos?.map((video) => (
         <Link to={`/video/${video._id}/${video.owner._id}`} key={video._id}>
-          <VideoCard {...video} />
+          <HorizontalVideoCard {...video} />
         </Link>
       ))}
     </div>

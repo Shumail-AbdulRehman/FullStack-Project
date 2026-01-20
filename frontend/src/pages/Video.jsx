@@ -177,10 +177,10 @@ function Video() {
         </div>
       )}
 
-      <div className="max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 px-4 py-6">
+      <div className="max-w-[1800px]  grid grid-cols-1 lg:grid-cols-[1fr_500px] gap-0 px-4 py-6">
         
-        <div className="flex flex-col px-10  gap-4 w-full min-w-0">
-          <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-lg border border-white/10">
+        <div className="flex flex-col pl-5  gap-4 w-full min-w-0">
+          <div className="w-6xl aspect-video bg-black rounded-xl overflow-hidden shadow-lg border border-white/10">
             <VideoPlayer {...video.video[0]} videoId={videoId} />
           </div>
 
@@ -332,7 +332,7 @@ function Video() {
                   );
                 })
               ) : (
-                <div className="text-center py-10 text-zinc-500 text-sm">
+                <div className="text-center py-10 text-white text-lg">
                   No comments yet.
                 </div>
               )}
@@ -340,7 +340,7 @@ function Video() {
           </div>
         </div>
 
-        <div className="w-full">
+        <div className="w-full   ">
           <VideosSuggestion {...video} />
         </div>
 

@@ -20,11 +20,13 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../LoadingSpinner';
 
-function Playlist() {
+function Playlist({channelId}) {
   const userData = useSelector((state) => state.auth.userData);
   const [activeMenu, setActiveMenu] = useState(null);
   const [playlistToDelete, setPlaylistToDelete] = useState(null);
   const queryClient = useQueryClient();
+
+  
   const { data: userVideos, isLoading } = useQuery({
     queryKey: ['userVidoes', userData?._id],
     queryFn: async () => {
@@ -74,7 +76,8 @@ function Playlist() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white relative">
-      <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-zinc-800">
+      {userData?._id == channelId && (
+        <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
@@ -90,10 +93,13 @@ function Playlist() {
                 </p>
               </div>
             </div>
-            <CreatePlaylist userVideos={userVideos} channelId={userData?._id} />
+            {userData?._id == channelId &&(             <CreatePlaylist userVideos={userVideos} channelId={userData?._id} />
+)}
           </div>
         </div>
       </div>
+      )}
+      
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -207,11 +213,15 @@ function Playlist() {
             <h2 className="text-3xl font-bold text-white mb-3">
               No playlists yet
             </h2>
+           {userData?._id == channelId && (
             <p className="text-zinc-400 text-lg mb-8 max-w-md">
               Create your first playlist to organize your videos and share
               collections with others
             </p>
-            <CreatePlaylist userVideos={userVideos} channelId={userData._id} />
+           )}
+            
+             {userData?._id == channelId && (             <CreatePlaylist userVideos={userVideos} channelId={userData._id} />
+)}
           </div>
         )}
       </div>

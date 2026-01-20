@@ -2,8 +2,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import SideBar from '@/components/custom/SideBar';
-import HorizontalVideoCard from '@/components/custom/HorizontalVideoCard';
 import LoadingSpinner from '@/components/custom/LoadingSpinner';
+import SearchingHorizontalCard from '@/components/custom/SearchingHorizontalCard';
 
 export default function SearchResults() {
   const [videos, setVideos] = useState([]);
@@ -50,19 +50,17 @@ export default function SearchResults() {
 
   return (
     <div className="flex bg-zinc-950 min-h-screen text-white">
-      {/* Sidebar */}
       <aside className="hidden md:block w-60  sticky top-0 h-screen">
         <SideBar />
       </aside>
 
-      {/* Content */}
       <main className="flex-1 px-4 py-6">
         <h2 className="text-base font-medium mb-4 text-zinc-200">
           Search results for{' '}
           <span className="font-semibold text-white">"{q}"</span>
         </h2>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col ">
           {videos.map((video) => (
             <Link
               key={video._id}
@@ -70,7 +68,7 @@ export default function SearchResults() {
               className="block"
             >
               <div className="hover:bg-zinc-900 transition-colors rounded-lg p-2">
-                <HorizontalVideoCard {...video} />
+                <SearchingHorizontalCard {...video} />
               </div>
             </Link>
           ))}
