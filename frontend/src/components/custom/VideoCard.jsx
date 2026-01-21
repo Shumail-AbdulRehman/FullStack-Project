@@ -60,6 +60,7 @@ function VideoCard({
             <img
               src={owner.avatar}
               alt={owner.username}
+              loading='lazy'
               className="w-full h-full object-cover"
             />
           )}
