@@ -1,24 +1,33 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import { Provider } from 'react-redux';
 import store from './store/store';
-import { createBrowserRouter } from 'react-router-dom';
-import { RouterProvider } from 'react-router-dom';
-import VideoListing from './pages/VideoListing';
-import AuthLayout from './components/custom/AuthLayout';
-// import VideoUploadPage from './pages/VideoUploadPage';
-import Login from './pages/Login';
-import SignUp from './pages/Signup';
-import Video from './pages/Video';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import UserChannel from './pages/UserChannel';
-import Setting from './pages/Setting';
-import WatchHistory from './pages/WatchHistory';
-import LikedVideos from './pages/LikedVideos';
-import Dashboard from './pages/Dashboard';
-import SearchResults from './pages/SearchResults';
+import AuthLayout from './components/custom/AuthLayout';
+import LoadingSpinner from '@/components/custom/LoadingSpinner';
+
+const NotFound = lazy(() => import('./pages/NotFound')); 
+const VideoListing = lazy(() => import('./pages/VideoListing'));
+const Login = lazy(() => import('./pages/Login'));
+const SignUp = lazy(() => import('./pages/Signup'));
+const Video = lazy(() => import('./pages/Video'));
+const UserChannel = lazy(() => import('./pages/UserChannel'));
+const Setting = lazy(() => import('./pages/Setting'));
+const WatchHistory = lazy(() => import('./pages/WatchHistory'));
+const LikedVideos = lazy(() => import('./pages/LikedVideos'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const SearchResults = lazy(() => import('./pages/SearchResults'));
+
+const queryClient = new QueryClient();
+
+const Loading = () => (
+  <div className="h-screen w-full flex items-center justify-center bg-zinc-950">
+    <LoadingSpinner />
+  </div>
+);
 
 const router = createBrowserRouter([
   {
@@ -29,23 +38,19 @@ const router = createBrowserRouter([
         path: '/',
         element: (
           <AuthLayout>
-            <VideoListing />
+            <Suspense fallback={<Loading />}>
+              <VideoListing />
+            </Suspense>
           </AuthLayout>
         ),
       },
-      // {
-      //   path: '/video/upload-video',
-      //   element: (
-      //     <AuthLayout>
-      //       <VideoUploadPage />
-      //     </AuthLayout>
-      //   ),
-      // },
       {
         path: '/login',
         element: (
           <AuthLayout authentication={false}>
-            <Login />
+            <Suspense fallback={<Loading />}>
+              <Login />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -53,7 +58,9 @@ const router = createBrowserRouter([
         path: '/signup',
         element: (
           <AuthLayout authentication={false}>
-            <SignUp />
+            <Suspense fallback={<Loading />}>
+              <SignUp />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -61,7 +68,9 @@ const router = createBrowserRouter([
         path: '/video/:videoId/:channelId',
         element: (
           <AuthLayout>
-            <Video />
+            <Suspense fallback={<Loading />}>
+              <Video />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -69,7 +78,9 @@ const router = createBrowserRouter([
         path: '/channel/:channelId',
         element: (
           <AuthLayout>
-            <UserChannel />
+            <Suspense fallback={<Loading />}>
+              <UserChannel />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -77,7 +88,9 @@ const router = createBrowserRouter([
         path: '/channel/settings',
         element: (
           <AuthLayout>
-            <Setting />
+            <Suspense fallback={<Loading />}>
+              <Setting />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -85,7 +98,9 @@ const router = createBrowserRouter([
         path: '/user/watch-history',
         element: (
           <AuthLayout>
-            <WatchHistory />
+            <Suspense fallback={<Loading />}>
+              <WatchHistory />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -93,7 +108,9 @@ const router = createBrowserRouter([
         path: '/user/liked-videos',
         element: (
           <AuthLayout>
-            <LikedVideos />
+            <Suspense fallback={<Loading />}>
+              <LikedVideos />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -101,27 +118,31 @@ const router = createBrowserRouter([
         path: '/user/dashboard',
         element: (
           <AuthLayout>
-            <Dashboard />
-          </AuthLayout>
-        ),
-      },
-      {
-        path: '/get-notifications',
-        element: (
-          <AuthLayout>
-            <Notification />
+            <Suspense fallback={<Loading />}>
+              <Dashboard />
+            </Suspense>
           </AuthLayout>
         ),
       },
       {
         path: '/search',
-        element: <SearchResults />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <SearchResults />
+          </Suspense>
+        ),
+      },
+      {
+        path: '*',
+        element: (
+          <Suspense fallback={<Loading />}>
+            <NotFound />
+          </Suspense>
+        ),
       },
     ],
   },
 ]);
-
-const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>

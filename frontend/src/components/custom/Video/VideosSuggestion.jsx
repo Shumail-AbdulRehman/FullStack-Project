@@ -38,7 +38,7 @@ function VideosSuggestion() {
   if (loading) {
     return (
       <div className="flex flex-col  justify-center items-center  ">
-        <p className="text-white text-lg font-bold mt-40 text-center p-4">Loading Recommended videos ...</p>
+        <p className="text-white text-lg font-bold mt-40 text-center p-4">Recommended videos ...</p>
       </div>
     );
   }

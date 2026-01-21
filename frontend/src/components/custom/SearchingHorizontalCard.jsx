@@ -72,6 +72,8 @@ export default function SearchingHorizontalCard({
           <img
             src={owner?.avatar}
             alt="avatar"
+            loading='lazy'
+
             className="w-12 h-12 rounded-full object-cover"
           />
           <p className="text-lg text-gray-200">
