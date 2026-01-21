@@ -30,7 +30,7 @@ function VideosSuggestion() {
         setLoading(false);
       }
       finally{
-        setLoading(true)
+        setLoading(false)
       }
     })();
   }, []);
