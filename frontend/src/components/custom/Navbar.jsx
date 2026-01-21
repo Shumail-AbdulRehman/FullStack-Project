@@ -135,10 +135,12 @@ function Navbar() {
         </div>
       </div>
 
-      <header className="flex items-center justify-between px-4 lg:px-6 h-16 bg-zinc-950 border-b border-zinc-950 sticky top-0 z-40">
+      <header className="flex items-center  justify-between px-4 lg:px-6 h-25 bg-zinc-950 border-b border-zinc-950 sticky top-0 z-40">
         
-        <div className="flex items-center gap-3">
-          {isVideoPage && (
+        <div className="flex mx-10 items-center gap-3">
+
+           <div>
+             {isVideoPage  && (
             <button 
                 onClick={toggleSidebar}
                 className="p-2 hover:bg-zinc-800 rounded-full transition-colors text-white"
@@ -146,16 +148,35 @@ function Navbar() {
                 <Menu className="w-8 h-6 mb-1" />
             </button>
           )}
-            
+          </div>
+          {/* {isVideoPage  && (
+            <button 
+                onClick={toggleSidebar}
+                className="p-2 hover:bg-zinc-800 rounded-full transition-colors text-white"
+            >
+                <Menu className="w-8 h-6 mb-1" />
+            </button>
+          )} */}
+            <button 
+    onClick={toggleSidebar}
+    className={`p-2 hover:bg-zinc-800 rounded-full transition-colors text-white ${
+        
+        isVideoPage ? ' ' : 'lg:hidden'
+    }`}
+>
+    <Menu className="w-8 h-6 mb-1" />
+</button>
 
             <div
-                className="flex items-center gap-1 cursor-pointer group"
+                className="flex items-center gap-2 cursor-pointer group"
                 onClick={() => navigate('/')}
             >
                 <div className="flex items-center justify-center p-2">
-                    <svg height="24" viewBox="0 0 24 24" width="24" focusable="false" className="block  text-red-600 fill-current pb-1 w-8 h-20 mr-1">
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
-                    </svg>
+                    <div className="flex items-center justify-center p-2 mb-1  rounded-4xl ">
+            <svg height="32" viewBox="0 0 24 24" width="32" focusable="false" className="text-red-600     fill-current">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
+            </svg>
+          </div>
                     <span className="text-2xl tracking-tighter font-bold text-white relative bottom-[1px]">
                     MyTube
                     </span>
@@ -163,7 +184,7 @@ function Navbar() {
             </div>
         </div>
 
-        <div className="hidden md:flex flex-1 max-w-2xl mx-4 items-center">
+        <div className="hidden mx-10 sm:flex flex-1 max-w-2xl  items-center">
           <div className="flex w-full relative">
             <input
               type="text"
@@ -182,7 +203,7 @@ function Navbar() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex mx-10 items-center gap-2 mb-1 sm:gap-4">
           <div className="flex items-center">
               {notifications && (
                   <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-zinc-800 transition cursor-pointer relative">

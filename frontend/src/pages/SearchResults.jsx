@@ -4,16 +4,16 @@ import axios from 'axios';
 import SideBar from '@/components/custom/SideBar';
 import LoadingSpinner from '@/components/custom/LoadingSpinner';
 import SearchingHorizontalCard from '@/components/custom/SearchingHorizontalCard';
+import { useSelector } from 'react-redux';
 
 export default function SearchResults() {
   const [videos, setVideos] = useState([]);
   const [params] = useSearchParams();
   const q = params.get('q');
   const [loading, setLoading] = useState(false);
-
+  const userData=useSelector((state)=> state.auth.userData);
   useEffect(() => {
     if (!q) return;
-
     setLoading(true);
     axios
       .get(`http://localhost:8000/api/v1/videos/search?q=${q}`, {

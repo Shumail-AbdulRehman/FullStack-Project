@@ -127,9 +127,12 @@ const router = createBrowserRouter([
       {
         path: '/search',
         element: (
-          <Suspense fallback={<Loading />}>
+          <AuthLayout>
+            <Suspense fallback={<Loading />}>
             <SearchResults />
           </Suspense>
+          </AuthLayout>
+          
         ),
       },
       {

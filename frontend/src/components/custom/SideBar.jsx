@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, History, Video, Users, Settings, Home } from 'lucide-react'; // Added Home here
+import { Heart, History, Video, Users, Settings, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -7,77 +7,67 @@ function SideBar() {
   const userData = useSelector((state) => state.auth.userData);
   const location = useLocation();
 
-  const isActive = (path) => {
-    return location.pathname === path;
+  const getLinkClasses = (path) => {
+    const baseClasses = "flex items-center gap-5 px-3 py-2.5 rounded-xl transition-colors duration-200";
+    const activeClasses = "bg-[#272727] font-semibold text-white";
+    const inactiveClasses = "text-zinc-300 hover:bg-[#272727] hover:text-white";
+
+    return location.pathname === path 
+      ? `${baseClasses} ${activeClasses}` 
+      : `${baseClasses} ${inactiveClasses}`;
   };
 
   return (
-    <div className="h-full w-auto bg-zinc-950 text-white flex flex-col sticky top-0">
-      <ul className="space-y-2 text-lg font-medium">
-        <Link to="/">
-          <li
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive('/') ? 'bg-[#383838]' : ''
-            }`}
-          >
-            <Home className="w-6 h-6" />
-            <span className="font-semibold">Home</span>
-          </li>
+    <div className="w-64 h-screen bg-zinc-950 flex flex-col sticky top-0  overflow-y-auto">
+      
+      <div className="flex flex-col p-3 space-y-1">
+        <Link to="/" className={getLinkClasses('/')}>
+          <Home className="w-5 h-5" />
+          <span className="text-lg">Home</span>
         </Link>
-        <Link to="/user/liked-videos">
-          <li
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive('/user/liked-videos') ? 'bg-[#383838]' : ''
-            }`}
-          >
-            <Heart className="w-6 h-6" />
-            <span>Liked Videos</span>
-          </li>
+        
+        <Link to="/user/liked-videos" className={getLinkClasses('/user/liked-videos')}>
+          <Heart className="w-5 h-5" />
+          <span className="text-lg">Liked Videos</span>
         </Link>
-        <Link to="/user/watch-history">
-          <li
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive('/user/watch-history') ? 'bg-[#383838]' : ''
-            }`}
-          >
-            <History className="w-6 h-6" />
-            <span>History</span>
-          </li>
+        
+        <Link to="/user/watch-history" className={getLinkClasses('/user/watch-history')}>
+          <History className="w-5 h-5" />
+          <span className="text-lg">History</span>
         </Link>
-        <Link to={`/channel/${userData?._id}`}>
-          <li
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive(`/channel/${userData?._id}`) ? 'bg-[#383838]' : ''
-            }`}
-          >
-            <Video className="w-6 h-6" />
-            <span>My Content</span>
-          </li>
+      </div>
+
+      <div className="border-t border-zinc-800 mx-4 my-2"></div>
+
+      <div className="flex flex-col p-3 space-y-1">
+        {userData && (
+            <div className="px-3 py-2 mb-1 text-base font-semibold text-white">
+                You &gt;
+            </div>
+        )}
+        
+        <Link to={`/channel/${userData?._id}`} className={getLinkClasses(`/channel/${userData?._id}`)}>
+          <Video className="w-5 h-5" />
+          <span className="text-lg">My Content</span>
         </Link>
-        <Link to="/user/dashboard">
-          <li
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive('/user/dashboard') ? 'bg-[#383838]' : ''
-            }`}
-          >
-            <Users className="w-6 h-6" />
-            <span>Dashboard</span>
-          </li>
+        
+        <Link to="/user/dashboard" className={getLinkClasses('/user/dashboard')}>
+          <Users className="w-5 h-5" />
+          <span className="text-lg">Dashboard</span>
         </Link>
-      </ul>
-      <div className="border-t border-gray-700 my-5"></div>
-      <ul className="space-y-2 text-lg font-medium">
-        <Link to="/channel/settings">
-          <li
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-[#383838] ${
-              isActive('/channel/settings') ? 'bg-[#383838]' : ''
-            }`}
-          >
-            <Settings className="w-6 h-6" />
-            <span>Settings</span>
-          </li>
+      </div>
+
+      <div className="border-t border-zinc-800 mx-4 my-2"></div>
+
+      <div className="flex flex-col p-3 space-y-1">
+        <Link to="/channel/settings" className={getLinkClasses('/channel/settings')}>
+          <Settings className="w-5 h-5" />
+          <span className="text-lg">Settings</span>
         </Link>
-      </ul>
+      </div>
+
+     
+
     </div>
   );
 }
