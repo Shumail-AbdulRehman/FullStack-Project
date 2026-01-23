@@ -139,7 +139,7 @@ function Navbar() {
         
         <div className="flex mx-10 items-center gap-3">
 
-           <div>
+           {/* <div>
              {isVideoPage  && (
             <button 
                 onClick={toggleSidebar}
@@ -148,7 +148,7 @@ function Navbar() {
                 <Menu className="w-8 h-6 mb-1" />
             </button>
           )}
-          </div>
+          </div> */}
           {/* {isVideoPage  && (
             <button 
                 onClick={toggleSidebar}
