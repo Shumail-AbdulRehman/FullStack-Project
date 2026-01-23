@@ -1,8 +1,6 @@
 import React from 'react';
-<<<<<<< HEAD
-=======
+
 import { motion } from 'framer-motion';
->>>>>>> 4d1eafa (impoved frontend UI)
 
 function formatDuration(duration) {
   if (!duration) return '00:00';
@@ -46,11 +44,7 @@ export default function HorizontalVideoCard({
   owner,
 }) {
   return (
-<<<<<<< HEAD
-    <div className="flex gap-3 p-2 rounded-xl cursor-pointer hover:bg-zinc-800/50 transition-colors duration-200 w-full group">
-      
-      <div className="relative w-40 sm:w-55 flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-zinc-900">
-=======
+
     <motion.div
       whileHover={{ x: 4 }}
       transition={{ duration: 0.2 }}
@@ -58,37 +52,11 @@ export default function HorizontalVideoCard({
     >
       {/* Thumbnail */}
       <div className="relative w-40 sm:w-44 flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-zinc-900">
->>>>>>> 4d1eafa (impoved frontend UI)
         <img
           src={thumbnail}
           alt={title}
           loading='lazy'
-<<<<<<< HEAD
-          className="w-full  h-full object-cover group-hover:scale-105 transition-transform duration-200"
-        />
-        
-        {duration && (
-          <span className="absolute bottom-1.5 right-1.5 bg-black/80 text-sm font-medium px-1.5 py-0.5 rounded text-white">
-            {formatDuration(duration)}
-          </span>
-        )}
-      </div>
 
-      <div className="flex flex-col flex-1 min-w-0 pr-2"> 
-        <h3 className="text-md font-medium text-white leading-tight line-clamp-2 mb-1 group-hover:text-gray-300 transition-colors">
-          {title}
-        </h3>
-
-        <p className="text-sm text-gray-200 hover:text-white transition-colors mb-0.5">
-          {owner?.username ?? 'Unknown Channel'}
-        </p>
-
-        <p className="text-sm text-gray-200">
-          {views ? views.toLocaleString() : 0} views • {timeAgo(createdAt)}
-        </p>
-      </div>
-    </div>
-=======
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
 
@@ -130,6 +98,5 @@ export default function HorizontalVideoCard({
       {/* Left border indicator on hover */}
       <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-gradient-to-b from-violet-500 to-purple-500 rounded-r group-hover:h-8 transition-all duration-300 opacity-0 group-hover:opacity-100" />
     </motion.div>
->>>>>>> 4d1eafa (impoved frontend UI)
   );
 }

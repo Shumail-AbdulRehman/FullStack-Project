@@ -13,21 +13,12 @@ function UserChannel() {
   const [selectedOption, setSelectedOption] = useState('Videos');
 
   return (
-<<<<<<< HEAD
-    <div className="flex gap-2 bg-zinc-950 min-h-screen">
-      <aside className="w-60 hidden md:block">
-        <SideBar />
-      </aside>
-
-      <main className="flex-1">
-=======
     <div className="flex bg-[#050508] min-h-screen">
       <aside className="w-64 flex-shrink-0 hidden lg:block">
         <SideBar />
       </aside>
 
       <main className="flex-1 min-w-0">
->>>>>>> 4d1eafa (impoved frontend UI)
         <ChannelMeta channelId={channelId} />
 
         <ChannelNavbar
@@ -35,19 +26,10 @@ function UserChannel() {
           setSelectedOption={setSelectedOption}
         />
 
-<<<<<<< HEAD
-        <div className="px-4 md:px-8 py-6">
-          {selectedOption === 'Videos' && <Videos channelId={channelId} />}
-          {selectedOption === 'Playlist' && <Playlist channelId={channelId} />}
-          {selectedOption === 'Subscribed' && (
-            <Subscribed channelId={channelId} />
-          )}
-=======
         <div className="px-2 sm:px-4 lg:px-6 py-4 lg:py-6">
           {selectedOption === 'Videos' && <Videos channelId={channelId} />}
           {selectedOption === 'Playlist' && <Playlist channelId={channelId} />}
           {selectedOption === 'Subscribed' && <Subscribed channelId={channelId} />}
->>>>>>> 4d1eafa (impoved frontend UI)
           {selectedOption === 'Tweets' && <Tweets channelId={channelId} />}
         </div>
       </main>

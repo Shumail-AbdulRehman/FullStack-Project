@@ -1,11 +1,9 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-<<<<<<< HEAD
-=======
+
 import { Check } from 'lucide-react';
 import { motion } from 'framer-motion';
->>>>>>> 4d1eafa (impoved frontend UI)
 
 function ChannelMeta({ channelId }) {
   const queryClient = useQueryClient();
@@ -29,10 +27,7 @@ function ChannelMeta({ channelId }) {
         {},
         { withCredentials: true }
       );
-<<<<<<< HEAD
-      console.log('subscription::', res.data.data);
-=======
->>>>>>> 4d1eafa (impoved frontend UI)
+
       return res.data.data;
     },
     onSuccess: () => {
@@ -40,25 +35,12 @@ function ChannelMeta({ channelId }) {
     },
   });
 
-<<<<<<< HEAD
-  console.log('channelData is::', channelData);
 
-=======
->>>>>>> 4d1eafa (impoved frontend UI)
   const toggleSubscription = () => {
     subscriptionMutate();
   };
 
-<<<<<<< HEAD
-  if (isLoading)
-    return (
-      <p className="text-center py-10 text-gray-400">Loading channel info...</p>
-    );
 
-  return (
-    <div className="w-full bg-zinc-950">
-      <div className="relative h-48 w-full bg-zinc-900">
-=======
   if (isLoading) {
     return (
       <div className="w-full bg-[#050508]">
@@ -75,7 +57,6 @@ function ChannelMeta({ channelId }) {
   return (
     <div className="w-full bg-[#050508]">
       <div className="relative h-40 lg:h-56 w-full overflow-hidden">
->>>>>>> 4d1eafa (impoved frontend UI)
         {channelData?.coverImage ? (
           <img
             src={channelData.coverImage}
@@ -83,50 +64,7 @@ function ChannelMeta({ channelId }) {
             className="w-full h-full object-cover"
           />
         ) : (
-<<<<<<< HEAD
-          <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-gray-500">
-            No Cover Image
-          </div>
-        )}
-      </div>
 
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="flex items-start gap-6 -mt-12 pb-6">
-          <div className="relative">
-            <img
-              src={channelData?.avatar || 'https://via.placeholder.com/100'}
-              alt="Avatar"
-              className="w-32 h-32 rounded-full border-4 border-black object-cover"
-            />
-          </div>
-
-          <div className="flex-1 pt-16">
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-2xl font-semibold text-white">
-                  {channelData?.username}
-                </h1>
-                <p className="text-xl text-gray-300 mt-1">
-                  @{channelData?.username?.toLowerCase()}
-                </p>
-                <p className="text-lg text-gray-400 mt-2">
-                  {channelData?.subscribersCount || 0} Subscribers •{' '}
-                  {channelData?.channelSubscribedTo || 0} Subscribed
-                </p>
-              </div>
-
-              <button
-                onClick={toggleSubscription}
-                className={`px-6 py-2 rounded-full font-medium text-xl transition-colors ${
-                  channelData?.isSubscribed
-                    ? 'bg-white text-black hover:bg-gray-300'
-                    : 'bg-red-700 text-white hover:bg-red-800'
-                }`}
-              >
-                {channelData?.isSubscribed ? 'Subscribed' : 'Subscribe'}
-              </button>
-            </div>
-=======
           <div className="w-full h-full bg-gradient-to-br from-violet-900/30 to-purple-900/20" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-transparent" />
@@ -184,7 +122,6 @@ function ChannelMeta({ channelId }) {
                 {channelData?.isSubscribed ? 'Subscribed' : 'Subscribe'}
               </span>
             </motion.button>
->>>>>>> 4d1eafa (impoved frontend UI)
           </div>
         </div>
       </div>

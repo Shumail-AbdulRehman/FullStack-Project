@@ -1,15 +1,5 @@
 import axios from 'axios';
-<<<<<<< HEAD
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-function AddComment({ videoId }) {
-  const { register, handleSubmit, reset } = useForm();
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-=======
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -31,59 +21,24 @@ function AddComment({ videoId }) {
   const isLoggedIn = !!userData;
 
   const { mutate, isPending } = useMutation({
->>>>>>> 4d1eafa (impoved frontend UI)
     mutationFn: async (newComment) => {
       const res = await axios.post(
         `http://localhost:8000/api/v1/comments/${videoId}`,
         { content: newComment },
         { withCredentials: true }
       );
-<<<<<<< HEAD
 
-      console.log('new commnet is::', res.data.data);
-      return res.data.data;
-    },
-    onSuccess: (newComment) => {
-      queryClient.invalidateQueries(['comment', videoId]);
-=======
       return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['comment', videoId]);
       reset();
       setIsFocused(false);
->>>>>>> 4d1eafa (impoved frontend UI)
     },
   });
 
   const onSubmit = (data) => {
-<<<<<<< HEAD
-    mutate(data.comment);
-    reset();
-  };
 
-  return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-3 w-full py-4"
-    >
-      <h2 className="text-xl font-bold text-white mb-2">Add a Comment</h2>
-      <div className="relative w-full">
-        <textarea
-          {...register('comment', { required: true })}
-          placeholder="Add a comment..."
-          rows="2"
-          className="w-full bg-transparent text-white text-[14px] border-b border-zinc-700 focus:border-white focus:border-b-2 outline-none pb-2 resize-none placeholder-zinc-400 transition-all duration-200"
-        />
-      </div>
-      <div className="flex justify-end gap-2">
-        <button
-          type="submit"
-          className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-medium rounded-full transition-colors duration-200"
-        >
-          Comment
-        </button>
-=======
     if (!isLoggedIn) {
       setShowLoginPrompt(true);
       return;
@@ -204,7 +159,6 @@ function AddComment({ videoId }) {
             </button>
           </motion.div>
         )}
->>>>>>> 4d1eafa (impoved frontend UI)
       </div>
     </form>
   );

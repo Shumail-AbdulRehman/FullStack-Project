@@ -6,11 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import LoadingSpinner from '@/components/custom/LoadingSpinner';
 import SideBar from '@/components/custom/SideBar';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-=======
 import { motion } from 'framer-motion';
 import { VideoOff } from 'lucide-react';
->>>>>>> 4d1eafa (impoved frontend UI)
 
 function VideoListing() {
   const videos = useSelector((state) => state.videos.allVideos);
@@ -27,10 +24,6 @@ function VideoListing() {
         );
         dispatch(getVideos(fetchVideos.data.data.docs));
       } catch (error) {
-<<<<<<< HEAD
-        console.log(error);
-=======
->>>>>>> 4d1eafa (impoved frontend UI)
       } finally {
         setLoading(false);
       }
@@ -40,46 +33,6 @@ function VideoListing() {
   if (loading) return <LoadingSpinner />;
 
   if (videos.length === 0)
-<<<<<<< HEAD
-    return <h1 className="bg-black text-white p-6">No videos to show</h1>;
-
-  return (
-   
-    <div className="flex w-full gap-2 min-h-screen bg-zinc-950">
-      
-      {/* <div className="pointer-events-none absolute inset-0 z-0 h-full overflow-hidden">
-        <div className="absolute -top-48 left-1/3 h-[700px] w-[700px]
-                        rounded-full bg-zinc-950 blur-[160px]" />
-        <div className="absolute bottom-[-300px] right-1/4 h-[600px] w-[600px]
-                        rounded-full bg-zinc-950" />
-      </div> */}
-
-      
-      <aside className="hidden lg:block lg:w-60 mt-6  sticky top-0 h-screen z-20">
-        <SideBar />
-      </aside>
-
-      
-      <main className="flex-1 px-4 lg:pl-10 mb-25 mt-10  z-10">
-        <div className="
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          lg:grid-cols-3
-          xl:grid-cols-3
-          gap-x-4 gap-y-8 
-        ">
-          {videos.map((video) => (
-            <Link
-              key={video._id}
-              to={`/video/${video._id}/${video.owner._id}`}
-              className="block"
-            >
-              <VideoCard {...video} />
-            </Link>
-          ))}
-        </div>
-=======
     return (
       <div className="flex min-h-screen bg-[#050508]">
         <aside className="hidden lg:block lg:w-64">
@@ -151,7 +104,6 @@ function VideoListing() {
             </motion.div>
           ))}
         </motion.div>
->>>>>>> 4d1eafa (impoved frontend UI)
       </main>
     </div>
   );

@@ -1,15 +1,5 @@
 {
   "compilerOptions": {
-<<<<<<< HEAD
-    // ...
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-    // ...
-  }
-}
-=======
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -18,4 +8,3 @@
     }
   }
 }
->>>>>>> 4d1eafa (impoved frontend UI)

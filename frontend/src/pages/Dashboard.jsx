@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-<<<<<<< HEAD
-import { Trash2, Pencil, Loader2 } from 'lucide-react';
-=======
 import { Trash2, Pencil, Loader2, Video, Heart, Eye, Users } from 'lucide-react';
->>>>>>> 4d1eafa (impoved frontend UI)
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -19,10 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import SideBar from '@/components/custom/SideBar';
 import LoadingSpinner from '@/components/custom/LoadingSpinner';
-<<<<<<< HEAD
-=======
 import { motion } from 'framer-motion';
->>>>>>> 4d1eafa (impoved frontend UI)
 
 function Dashboard() {
   const userData = useSelector((state) => state.auth.userData);
@@ -31,34 +24,18 @@ function Dashboard() {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-<<<<<<< HEAD
-  const { data: dashboardData,isPending:dashboardPending } = useQuery({
-=======
   const { data: dashboardData, isPending: dashboardPending } = useQuery({
->>>>>>> 4d1eafa (impoved frontend UI)
     queryKey: ['DashboardData', userData?._id],
     queryFn: async () => {
       const res = await axios.get(
         `http://localhost:8000/api/v1/dashboard/stats`,
-<<<<<<< HEAD
-        {
-          withCredentials: true,
-        }
-      );
-      console.log('dashboard :::', res.data.data);
-=======
         { withCredentials: true }
       );
->>>>>>> 4d1eafa (impoved frontend UI)
       return res.data.data;
     },
   });
 
-<<<<<<< HEAD
-  const { mutate: toggelPublishVideo,isPending:publishVideoPending } = useMutation({
-=======
   const { mutate: toggelPublishVideo, isPending: publishVideoPending } = useMutation({
->>>>>>> 4d1eafa (impoved frontend UI)
     mutationFn: async (id) => {
       const res = await axios.patch(
         `http://localhost:8000/api/v1/videos/toggle/publish/${id}`,
@@ -70,10 +47,6 @@ function Dashboard() {
     onSuccess: () => {
       if (userData?._id)
         queryClient.invalidateQueries(['DashboardData', userData._id]);
-<<<<<<< HEAD
-        queryClient.invalidateQueries([])
-=======
->>>>>>> 4d1eafa (impoved frontend UI)
     },
   });
 
@@ -92,18 +65,6 @@ function Dashboard() {
   });
 
   const handleDelete = (id) => deleteVideo(id);
-<<<<<<< HEAD
-  const handleTogglePublish = (id, currentState) => toggelPublishVideo(id);
-  
-  const handleEdit = (video) => {
-    setSelectedVideo(video);
-    setThumbnailPreview(video.thumbnail);
-    reset({ 
-      title: video.title, 
-      description: video.description 
-    });
-    setIsModalOpen(true); // ✅ Open modal manually
-=======
   const handleTogglePublish = (id) => toggelPublishVideo(id);
 
   const handleEdit = (video) => {
@@ -114,7 +75,6 @@ function Dashboard() {
       description: video.description
     });
     setIsModalOpen(true);
->>>>>>> 4d1eafa (impoved frontend UI)
   };
 
   const { register, handleSubmit, reset } = useForm();
@@ -157,58 +117,6 @@ function Dashboard() {
     }
   }, [selectedVideo, reset]);
 
-<<<<<<< HEAD
-  if (deleteVideoPending||dashboardPending|| publishVideoPending) {
-    return <LoadingSpinner />;
-  }
-
-  return (
-    <div className="flex bg-zinc-950 min-h-screen">
-      <aside className="w-60 hidden md:block">
-        <SideBar />
-      </aside>
-
-      <main className="flex-1 text-white p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
-          <div className="border border-gray-700 rounded-xl p-6 bg-gray-900 shadow-lg">
-            <p className="text-gray-400 text-sm mb-1">Total Videos</p>
-            <h2 className="text-3xl font-bold">
-              {dashboardData?.userVideosCount || 0}
-            </h2>
-          </div>
-          <div className="border border-gray-700 rounded-xl p-6 bg-gray-900 shadow-lg">
-            <p className="text-gray-400 text-sm mb-1">Total Likes</p>
-            <h2 className="text-3xl font-bold">
-              {dashboardData?.totalLikesOnVideos || 0}
-            </h2>
-          </div>
-          <div className="border border-gray-700 rounded-xl p-6 bg-gray-900 shadow-lg">
-            <p className="text-gray-400 text-sm mb-1">Total Video Views</p>
-            <h2 className="text-3xl font-bold">
-              {dashboardData?.totalVideoViews || 0}
-            </h2>
-          </div>
-          <div className="border border-gray-700 rounded-xl p-6 bg-gray-900 shadow-lg">
-            <p className="text-gray-400 text-sm mb-1">Total Subscribers</p>
-            <h2 className="text-3xl font-bold">
-              {dashboardData?.totalChannelSubscribers || 0}
-            </h2>
-          </div>
-        </div>
-
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 shadow-xl">
-          <h2 className="text-xl font-semibold mb-4">Your Uploaded Videos</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-800 text-gray-300">
-                  <th className="p-3">Status</th>
-                  <th className="p-3">Thumbnail</th>
-                  <th className="p-3">Title</th>
-                  <th className="p-3">Likes</th>
-                  <th className="p-3">Uploaded</th>
-                  <th className="p-3 text-right">Actions</th>
-=======
   if (deleteVideoPending || dashboardPending || publishVideoPending) {
     return <LoadingSpinner />;
   }
@@ -352,75 +260,10 @@ function Dashboard() {
                   <th className="pb-4 text-zinc-400 text-sm font-medium">Likes</th>
                   <th className="pb-4 text-zinc-400 text-sm font-medium">Uploaded</th>
                   <th className="pb-4 text-zinc-400 text-sm font-medium text-right">Actions</th>
->>>>>>> 4d1eafa (impoved frontend UI)
                 </tr>
               </thead>
               <tbody>
                 {dashboardData?.userVideosAndLikeCountOfEachVideo?.length ? (
-<<<<<<< HEAD
-                  dashboardData.userVideosAndLikeCountOfEachVideo.map(
-                    (video) => (
-                      <tr
-                        key={video._id}
-                        className="border-b border-gray-700 hover:bg-gray-800/70 transition"
-                      >
-                        <td className="p-3">
-                          <button
-                            onClick={() =>
-                              handleTogglePublish(video._id, video.isPublished)
-                            }
-                            className={`w-12 h-6 rounded-full flex items-center transition ${
-                              video.isPublished ? 'bg-green-500' : 'bg-gray-600'
-                            }`}
-                          >
-                            <div
-                              className={`w-5 h-5 bg-white rounded-full transform transition ${
-                                video.isPublished
-                                  ? 'translate-x-6'
-                                  : 'translate-x-1'
-                              }`}
-                            ></div>
-                          </button>
-                        </td>
-                        <td className="p-3">
-                          <img
-                            src={video.thumbnail}
-                            alt="thumb"
-                            className="w-20 h-12 rounded-md object-cover"
-                          />
-                        </td>
-                        <td className="p-3 font-medium">{video.title}</td>
-                        <td className="p-3 text-green-400 font-semibold">
-                          {video.likeCount || 0}
-                        </td>
-                        <td className="p-3">
-                          {new Date(video.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="p-3 text-right flex items-center justify-end gap-4">
-                          {/* ✅ Remove DialogTrigger, use regular button */}
-                          <button
-                            onClick={() => handleEdit(video)}
-                            className="hover:text-yellow-400 transition"
-                          >
-                            <Pencil size={20} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(video._id)}
-                            className="hover:text-red-500 transition"
-                          >
-                            <Trash2 size={20} />
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  )
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="6"
-                      className="text-center py-10 text-gray-400 text-lg"
-                    >
-=======
                   dashboardData.userVideosAndLikeCountOfEachVideo.map((video) => (
                     <motion.tr
                       key={video._id}
@@ -466,7 +309,6 @@ function Dashboard() {
                 ) : (
                   <tr>
                     <td colSpan="5" className="text-center py-12 text-zinc-500">
->>>>>>> 4d1eafa (impoved frontend UI)
                       No videos uploaded yet.
                     </td>
                   </tr>
@@ -474,36 +316,6 @@ function Dashboard() {
               </tbody>
             </table>
           </div>
-<<<<<<< HEAD
-        </div>
-      </main>
-
-      {/* ✅ Move Dialog outside the table */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Edit Video</DialogTitle>
-            <DialogDescription>
-              Update your video details below.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label className="block text-gray-300 mb-1">Thumbnail</label>
-              <div className="mb-2">
-                {thumbnailPreview && (
-                  <img
-                    src={thumbnailPreview}
-                    alt="Thumbnail Preview"
-                    className="w-full h-40 object-cover rounded-md border border-gray-400"
-                  />
-                )}
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                {...register('thumbnail')} // ✅ Removed required: true
-=======
         </motion.div>
       </main>
 
@@ -525,36 +337,10 @@ function Dashboard() {
                 type="file"
                 accept="image/*"
                 {...register('thumbnail')}
->>>>>>> 4d1eafa (impoved frontend UI)
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file) setThumbnailPreview(URL.createObjectURL(file));
                 }}
-<<<<<<< HEAD
-                className="w-full text-black"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-300 mb-1">Title</label>
-              <Input
-                {...register('title', { required: true })}
-                className="w-full text-black"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-300 mb-1">Description</label>
-              <textarea
-                {...register('description', { required: true })}
-                className="w-full text-black p-2 rounded-md"
-                rows={4}
-              />
-            </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={updateVideoPending}
-            >
-=======
                 className="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-violet-500/20 file:text-violet-400 hover:file:bg-violet-500/30 file:cursor-pointer"
               />
             </div>
@@ -567,18 +353,13 @@ function Dashboard() {
               <textarea {...register('description', { required: true })} className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-violet-500/50 focus:outline-none resize-none" rows={4} />
             </div>
             <Button type="submit" className="w-full h-11 gradient-primary text-white font-medium rounded-xl hover:opacity-90 transition-opacity" disabled={updateVideoPending}>
->>>>>>> 4d1eafa (impoved frontend UI)
               {updateVideoPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Updating...
                 </>
               ) : (
-<<<<<<< HEAD
-                'Update'
-=======
                 'Update Video'
->>>>>>> 4d1eafa (impoved frontend UI)
               )}
             </Button>
           </form>

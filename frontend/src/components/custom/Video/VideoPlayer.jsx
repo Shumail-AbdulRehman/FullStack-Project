@@ -16,10 +16,7 @@ function VideoPlayer({ videoFile, thumbnail, videoId }) {
         {},
         { withCredentials: true }
       );
-<<<<<<< HEAD
-      console.log('increase view count re is :::', res.data.data);
-=======
->>>>>>> 4d1eafa (impoved frontend UI)
+
       return res.data.data;
     },
     onSuccess: () => {
@@ -42,11 +39,7 @@ function VideoPlayer({ videoFile, thumbnail, videoId }) {
         {},
         { withCredentials: true }
       );
-<<<<<<< HEAD
-      console.log(res.data.data);
 
-=======
->>>>>>> 4d1eafa (impoved frontend UI)
       return res.data.data;
     },
   });

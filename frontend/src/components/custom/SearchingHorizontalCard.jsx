@@ -1,9 +1,7 @@
 import React from 'react';
-<<<<<<< HEAD
-=======
+
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
->>>>>>> 4d1eafa (impoved frontend UI)
 
 function formatDuration(duration) {
   if (!duration) return 'N/A';
@@ -49,41 +47,7 @@ export default function SearchingHorizontalCard({
   owner,
 }) {
   return (
-<<<<<<< HEAD
-    <div className="flex gap-6  rounded-xl cursor-pointer bg-zinc-950 hover:bg-zinc-700 transition-colors duration-200 w-full">
-      <div className="relative w-135 h-80 rounded-lg overflow-hidden flex-shrink-0">
-        <img
-          src={thumbnail}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
 
-        {duration && (
-          <span className="absolute bottom-3 right-3 bg-black/80 text-base px-3 py-1.5 rounded text-white">
-            {formatDuration(duration)}
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-col justify-start text-white flex-1">
-        <h2 className="text-xl font-bold leading-snug line-clamp-2">
-          {title}
-        </h2>
-
-        <p className="text-md text-gray-300 mt-2">
-          {views ?? 0} views • {timeAgo(createdAt)}
-        </p>
-
-        <div className="flex items-center gap-4 mt-4">
-          <img
-            src={owner?.avatar}
-            alt="avatar"
-            loading='lazy'
-
-            className="w-12 h-12 rounded-full object-cover"
-          />
-          <p className="text-lg text-gray-200">
-=======
     <motion.div
       whileHover={{ x: 4 }}
       transition={{ duration: 0.2 }}
@@ -142,27 +106,19 @@ export default function SearchingHorizontalCard({
             )}
           </div>
           <p className="text-sm text-zinc-400 hover:text-zinc-300 transition-colors">
->>>>>>> 4d1eafa (impoved frontend UI)
             {owner?.username ?? 'Unknown'}
           </p>
         </div>
 
-<<<<<<< HEAD
-        {description && (
-          <p className="text-lg text-gray-300 mt-4 line-clamp-3">
-=======
+
         {/* Description */}
         {description && (
           <p className="text-sm text-zinc-500 mt-3 line-clamp-2 hidden lg:block">
->>>>>>> 4d1eafa (impoved frontend UI)
             {description}
           </p>
         )}
       </div>
-<<<<<<< HEAD
-    </div>
-=======
+
     </motion.div>
->>>>>>> 4d1eafa (impoved frontend UI)
   );
 }

@@ -9,11 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthLayout from './components/custom/AuthLayout';
 import LoadingSpinner from '@/components/custom/LoadingSpinner';
 
-<<<<<<< HEAD
-const NotFound = lazy(() => import('./pages/NotFound')); 
-=======
 const NotFound = lazy(() => import('./pages/NotFound'));
->>>>>>> 4d1eafa (impoved frontend UI)
 const VideoListing = lazy(() => import('./pages/VideoListing'));
 const Login = lazy(() => import('./pages/Login'));
 const SignUp = lazy(() => import('./pages/Signup'));
@@ -24,10 +20,7 @@ const WatchHistory = lazy(() => import('./pages/WatchHistory'));
 const LikedVideos = lazy(() => import('./pages/LikedVideos'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const SearchResults = lazy(() => import('./pages/SearchResults'));
-<<<<<<< HEAD
-=======
 const PlaylistView = lazy(() => import('./pages/PlaylistView'));
->>>>>>> 4d1eafa (impoved frontend UI)
 
 const queryClient = new QueryClient();
 
@@ -83,8 +76,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-<<<<<<< HEAD
-=======
         path: '/playlist/:playlistId/:videoIndex?',
         element: (
           <AuthLayout>
@@ -95,7 +86,6 @@ const router = createBrowserRouter([
         ),
       },
       {
->>>>>>> 4d1eafa (impoved frontend UI)
         path: '/channel/:channelId',
         element: (
           <AuthLayout>
@@ -150,17 +140,10 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout>
             <Suspense fallback={<Loading />}>
-<<<<<<< HEAD
-            <SearchResults />
-          </Suspense>
-          </AuthLayout>
-          
-=======
               <SearchResults />
             </Suspense>
           </AuthLayout>
 
->>>>>>> 4d1eafa (impoved frontend UI)
         ),
       },
       {

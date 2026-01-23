@@ -10,17 +10,10 @@ export default defineConfig(({ mode }) => {
       react(),
       tailwindcss(),
       visualizer({
-<<<<<<< HEAD
-        filename: 'bundle-stats.html', // output file
-        open: true,                    // automatically open in browser
-        gzipSize: true,                // show gzipped size
-        brotliSize: true               // show brotli size
-=======
         filename: 'bundle-stats.html',
         open: true,
         gzipSize: true,
         brotliSize: true
->>>>>>> 4d1eafa (impoved frontend UI)
       })
     ],
     resolve: {

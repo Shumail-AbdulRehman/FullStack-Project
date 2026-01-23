@@ -1,8 +1,6 @@
 import React from 'react';
-<<<<<<< HEAD
-=======
+
 import { motion } from 'framer-motion';
->>>>>>> 4d1eafa (impoved frontend UI)
 
 function formatDuration(duration) {
   if (!duration) return '0:00';
@@ -45,46 +43,7 @@ function VideoCard({
   owner,
 }) {
   return (
-<<<<<<< HEAD
-    <div className="bg-zinc-950 text-white rounded-xl overflow-hidden hover:bg-zinc-800 transition-colors">
-      <div className="relative aspect-video bg-black rounded-xl overflow-hidden">
-        <img
-          src={thumbnail}
-          alt={title}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-        <span className="absolute bottom-2 right-2 bg-black/80 text-sm px-1.5 py-0.5 rounded">
-          {formatDuration(duration)}
-        </span>
-      </div>
 
-      <div className="flex gap-3 mt-3 px-1">
-        <div className="w-13 mt-4 h-13 rounded-full bg-zinc-700 overflow-hidden shrink-0">
-          {owner?.avatar && (
-            <img
-              src={owner.avatar}
-              alt={owner.username}
-              loading='lazy'
-              className="w-full h-full object-cover"
-            />
-          )}
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <h2 className="text-lg mt-4 font-medium leading-snug line-clamp-2">
-            {title}
-          </h2>
-          <p className="text-lg text-zinc-300 mt-1">
-            {owner?.username}
-          </p>
-          <p className="text-lg text-zinc-300">
-            {views ?? 0} views • {timeAgo(createdAt)}
-          </p>
-        </div>
-      </div>
-    </div>
-=======
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -155,7 +114,6 @@ function VideoCard({
 
       <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-8 rounded-full bg-violet-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
     </motion.div>
->>>>>>> 4d1eafa (impoved frontend UI)
   );
 }
 
