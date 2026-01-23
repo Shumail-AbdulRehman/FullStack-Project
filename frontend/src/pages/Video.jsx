@@ -8,22 +8,35 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
+<<<<<<< HEAD
 import { MoreVertical, Trash2, Pencil, Heart } from 'lucide-react';
+=======
+import { MoreVertical, Trash2, Pencil, Heart, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+>>>>>>> 4d1eafa (impoved frontend UI)
 
 function Video() {
   const queryClient = useQueryClient();
   const { videoId, channelId } = useParams();
   const userData = useSelector((state) => state.auth.userData);
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 4d1eafa (impoved frontend UI)
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingContent, setEditingContent] = useState('');
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [deleteModalId, setDeleteModalId] = useState(null);
 
   useEffect(() => {
+<<<<<<< HEAD
     const handleGlobalClick = () => {
       setActiveMenuId(null);
     };
+=======
+    const handleGlobalClick = () => setActiveMenuId(null);
+>>>>>>> 4d1eafa (impoved frontend UI)
     window.addEventListener('click', handleGlobalClick);
     return () => window.removeEventListener('click', handleGlobalClick);
   }, []);
@@ -37,7 +50,11 @@ function Video() {
       );
       return res.data.data;
     },
+<<<<<<< HEAD
     retry: false, 
+=======
+    retry: false,
+>>>>>>> 4d1eafa (impoved frontend UI)
   });
 
   const { data: comments, isLoading: commentsLoading } = useQuery({
@@ -60,9 +77,13 @@ function Video() {
       );
       return res.data;
     },
+<<<<<<< HEAD
     onSuccess: () => {
       queryClient.invalidateQueries(['comment', videoId]); 
     }
+=======
+    onSuccess: () => queryClient.invalidateQueries(['comment', videoId]),
+>>>>>>> 4d1eafa (impoved frontend UI)
   });
 
   const { mutate: deleteUserComment } = useMutation({
@@ -74,7 +95,11 @@ function Video() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['comment', videoId]);
+<<<<<<< HEAD
       setDeleteModalId(null); 
+=======
+      setDeleteModalId(null);
+>>>>>>> 4d1eafa (impoved frontend UI)
     },
   });
 
@@ -112,6 +137,7 @@ function Video() {
 
   const requestDelete = (e, commentId) => {
     e.stopPropagation();
+<<<<<<< HEAD
     setActiveMenuId(null); 
     setDeleteModalId(commentId); 
   };
@@ -128,10 +154,23 @@ function Video() {
         <LoadingSpinner />
       </div>
     );
+=======
+    setActiveMenuId(null);
+    setDeleteModalId(commentId);
+  };
+
+  const confirmDelete = () => {
+    if (deleteModalId) deleteUserComment(deleteModalId);
+  };
+
+  if (videoLoading || commentsLoading) {
+    return <LoadingSpinner />;
+>>>>>>> 4d1eafa (impoved frontend UI)
   }
 
   if (isError) {
     return (
+<<<<<<< HEAD
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#0f0f0f] text-white p-8">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-semibold">Video Unavailable</h1>
@@ -139,11 +178,28 @@ function Video() {
             This video is private, deleted, or does not exist.
           </p>
         </div>
+=======
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#050508] text-white p-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-500/20 to-rose-500/20 flex items-center justify-center">
+            <AlertCircle className="w-10 h-10 text-red-400" />
+          </div>
+          <h1 className="text-2xl font-semibold">Video Unavailable</h1>
+          <p className="text-zinc-400 text-center max-w-sm">
+            This video is private, deleted, or does not exist.
+          </p>
+        </motion.div>
+>>>>>>> 4d1eafa (impoved frontend UI)
       </div>
     );
   }
 
   if (!video || !video.video || !video.video[0]) {
+<<<<<<< HEAD
     return <div className="text-white p-10 bg-zinc-950 min-h-screen">No video data found</div>;
   }
 
@@ -185,11 +241,76 @@ function Video() {
           </div>
 
           <div className="pb-4  border-b border-zinc-800">
+=======
+    return (
+      <div className="text-white p-10 bg-[#050508] min-h-screen flex items-center justify-center">
+        <p className="text-zinc-400">No video data found</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full bg-[#050508] min-h-screen text-white">
+      <AnimatePresence>
+        {deleteModalId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="glass-card w-full max-w-sm rounded-2xl p-6 mx-4"
+            >
+              <h3 className="text-lg font-bold text-white mb-2">Delete comment?</h3>
+              <p className="text-zinc-400 text-sm mb-6">
+                This will permanently delete your comment.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setDeleteModalId(null)}
+                  className="px-4 py-2 text-sm font-medium rounded-xl text-white hover:bg-white/10 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="px-4 py-2 text-sm font-medium rounded-xl bg-red-500 hover:bg-red-600 text-white transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 px-4 lg:px-6 py-6">
+        <div className="flex flex-col gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/5"
+          >
+            <VideoPlayer {...video.video[0]} videoId={videoId} />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="pb-4 border-b border-white/5"
+          >
+>>>>>>> 4d1eafa (impoved frontend UI)
             <VideoMeta
               isSubscribed={video.isSubscribed}
               isLiked={video.isLiked}
               {...video.video[0]}
             />
+<<<<<<< HEAD
           </div>
 
           <div className="flex  flex-col gap-6 mt-4">
@@ -210,33 +331,81 @@ function Video() {
                       {editingCommentId === comment._id ? (
                         <div className="flex gap-4 py-2 w-full pl-2">
                            <img
+=======
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col gap-6 mt-2"
+          >
+            <h2 className="text-lg font-semibold text-white">
+              {comments?.length || 0} Comments
+            </h2>
+
+            <AddComment videoId={videoId} />
+
+            <div className="flex flex-col gap-4">
+              {comments && comments.length > 0 ? (
+                comments.map((comment, index) => {
+                  const isOwner = comment.owner._id === userData?._id;
+
+                  return (
+                    <motion.div
+                      key={comment._id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="group relative"
+                    >
+                      {editingCommentId === comment._id ? (
+                        <div className="flex gap-3 py-2">
+                          <img
+>>>>>>> 4d1eafa (impoved frontend UI)
                             src={comment.owner?.avatar || 'https://ui-avatars.com/api/?rounded=true&size=64'}
                             alt={comment.owner?.username}
                             className="w-10 h-10 rounded-full object-cover opacity-50"
                           />
+<<<<<<< HEAD
                           <div className="flex flex-col gap-3 w-full">
                             <textarea
                               value={editingContent}
                               onChange={(e) => setEditingContent(e.target.value)}
                               className="w-full bg-transparent text-white text-[15px] border-b border-zinc-500 focus:border-[#3ea6ff] focus:border-b-2 focus:outline-none pb-2 resize-y min-h-[40px] transition-all"
+=======
+                          <div className="flex flex-col gap-3 flex-1">
+                            <textarea
+                              value={editingContent}
+                              onChange={(e) => setEditingContent(e.target.value)}
+                              className="w-full bg-white/5 text-white text-sm border border-white/10 rounded-xl p-3 focus:border-violet-500/50 focus:outline-none resize-none min-h-[80px]"
+>>>>>>> 4d1eafa (impoved frontend UI)
                               autoFocus
                               onClick={(e) => e.stopPropagation()}
                             />
                             <div className="flex justify-end gap-2">
                               <button
                                 onClick={(e) => { e.stopPropagation(); setEditingCommentId(null); }}
+<<<<<<< HEAD
                                 className="px-4 py-2 text-sm font-medium rounded-full text-white hover:bg-zinc-700 transition-colors"
+=======
+                                className="px-4 py-2 text-sm font-medium rounded-xl text-zinc-400 hover:bg-white/5 transition-colors"
+>>>>>>> 4d1eafa (impoved frontend UI)
                               >
                                 Cancel
                               </button>
                               <button
                                 onClick={(e) => { e.stopPropagation(); submitEdit(); }}
                                 disabled={!editingContent.trim()}
+<<<<<<< HEAD
                                 className={`px-4 py-2 text-sm font-medium rounded-full text-black transition-colors ${
                                   editingContent.trim() 
                                     ? 'bg-[#3ea6ff] hover:bg-[#65b8ff]' 
                                     : 'bg-zinc-700 text-zinc-500 cursor-not-allowed'
                                 }`}
+=======
+                                className={`px-4 py-2 text-sm font-medium rounded-xl transition-colors ${editingContent.trim() ? 'bg-violet-600 hover:bg-violet-500 text-white' : 'bg-zinc-700 text-zinc-500 cursor-not-allowed'}`}
+>>>>>>> 4d1eafa (impoved frontend UI)
                               >
                                 Save
                               </button>
@@ -244,6 +413,7 @@ function Video() {
                           </div>
                         </div>
                       ) : (
+<<<<<<< HEAD
                         <div className="flex gap-4 items-start w-full">
                           <img
                             src={comment.owner?.avatar || 'https://ui-avatars.com/api/?rounded=true&size=64'}
@@ -259,10 +429,28 @@ function Video() {
                               <span className="text-[12px] text-zinc-400">
                                 {new Date(comment.createdAt).toLocaleDateString(undefined, {
                                   year: 'numeric', month: 'short', day: 'numeric' 
+=======
+                        <div className="flex gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                          <img
+                            src={comment.owner?.avatar || 'https://ui-avatars.com/api/?rounded=true&size=64'}
+                            alt={comment.owner?.username}
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-transparent hover:ring-violet-500/30 transition-all cursor-pointer"
+                          />
+
+                          <div className="flex flex-col gap-1.5 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-white hover:text-violet-400 cursor-pointer transition-colors">
+                                @{comment.owner?.username}
+                              </span>
+                              <span className="text-xs text-zinc-500">
+                                {new Date(comment.createdAt).toLocaleDateString(undefined, {
+                                  year: 'numeric', month: 'short', day: 'numeric'
+>>>>>>> 4d1eafa (impoved frontend UI)
                                 })}
                               </span>
                             </div>
 
+<<<<<<< HEAD
                             <p className="text-[15px] text-[#f1f1f1] leading-relaxed whitespace-pre-wrap pr-8">
                               {comment.content}
                             </p>
@@ -298,10 +486,37 @@ function Video() {
                                       ? 'bg-zinc-800 text-white' 
                                       : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                                   }`}
+=======
+                            <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap">
+                              {comment.content}
+                            </p>
+
+                            <div className="flex items-center gap-3 mt-1">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); toggleLike(comment._id); }}
+                                className="flex items-center gap-1.5 group/like"
+                              >
+                                <Heart
+                                  size={16}
+                                  className={`transition-all duration-200 ${comment.isLiked ? 'fill-red-500 text-red-500' : 'text-zinc-500 group-hover/like:text-red-400'}`}
+                                />
+                                <span className={`text-xs ${comment.isLiked ? 'text-white' : 'text-zinc-500'}`}>
+                                  {comment.likeCount}
+                                </span>
+                              </button>
+                            </div>
+
+                            {isOwner && (
+                              <div className="absolute top-3 right-3">
+                                <button
+                                  onClick={(e) => toggleMenu(e, comment._id)}
+                                  className={`p-1.5 rounded-lg transition-colors ${activeMenuId === comment._id ? 'bg-white/10 text-white' : 'text-zinc-500 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100'}`}
+>>>>>>> 4d1eafa (impoved frontend UI)
                                 >
                                   <MoreVertical size={18} />
                                 </button>
 
+<<<<<<< HEAD
                                 {activeMenuId === comment._id && (
                                   <div 
                                     className="absolute right-0 top-full mt-1 z-10 w-32 bg-[#282828] rounded-xl shadow-xl border border-zinc-700 py-2 overflow-hidden"
@@ -323,11 +538,38 @@ function Video() {
                                     </div>
                                   </div>
                                 )}
+=======
+                                <AnimatePresence>
+                                  {activeMenuId === comment._id && (
+                                    <motion.div
+                                      initial={{ opacity: 0, scale: 0.95 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.95 }}
+                                      className="absolute right-0 top-full mt-1 z-10 w-32 glass-card rounded-xl py-1 shadow-xl"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <button
+                                        onClick={(e) => handleStartEdit(comment, e)}
+                                        className="w-full text-left px-4 py-2 hover:bg-white/10 flex items-center gap-3 text-sm transition-colors"
+                                      >
+                                        <Pencil size={14} /> Edit
+                                      </button>
+                                      <button
+                                        onClick={(e) => requestDelete(e, comment._id)}
+                                        className="w-full text-left px-4 py-2 hover:bg-white/10 flex items-center gap-3 text-red-400 text-sm transition-colors"
+                                      >
+                                        <Trash2 size={14} /> Delete
+                                      </button>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+>>>>>>> 4d1eafa (impoved frontend UI)
                               </div>
                             )}
                           </div>
                         </div>
                       )}
+<<<<<<< HEAD
                     </div>
                   );
                 })
@@ -344,6 +586,37 @@ function Video() {
           <VideosSuggestion {...video} />
         </div>
 
+=======
+                    </motion.div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-12 text-zinc-500">
+                  No comments yet. Be the first to comment!
+                </div>
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="lg:hidden mt-6"
+          >
+            <VideosSuggestion {...video} />
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+          className="hidden lg:block sticky top-20 h-fit max-h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar"
+        >
+          <VideosSuggestion {...video} />
+        </motion.div>
+>>>>>>> 4d1eafa (impoved frontend UI)
       </div>
     </div>
   );

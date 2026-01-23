@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     // ...
     "baseUrl": ".",
     "paths": {
@@ -8,3 +9,13 @@
     // ...
   }
 }
+=======
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  }
+}
+>>>>>>> 4d1eafa (impoved frontend UI)

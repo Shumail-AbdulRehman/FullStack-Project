@@ -2,12 +2,27 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
+<<<<<<< HEAD
 function Card({ className, ...props }) {
+=======
+function Card({ className, variant = 'default', ...props }) {
+  const variants = {
+    default: 'bg-card border border-white/5 shadow-xl',
+    glass: 'glass-card',
+    gradient: 'bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 border border-white/10 backdrop-blur-xl',
+  };
+
+>>>>>>> 4d1eafa (impoved frontend UI)
   return (
     <div
       data-slot="card"
       className={cn(
+<<<<<<< HEAD
         'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
+=======
+        'text-card-foreground flex flex-col gap-6 rounded-2xl py-6',
+        variants[variant] || variants.default,
+>>>>>>> 4d1eafa (impoved frontend UI)
         className
       )}
       {...props}
@@ -32,7 +47,11 @@ function CardTitle({ className, ...props }) {
   return (
     <div
       data-slot="card-title"
+<<<<<<< HEAD
       className={cn('leading-none font-semibold', className)}
+=======
+      className={cn('leading-none font-semibold text-white', className)}
+>>>>>>> 4d1eafa (impoved frontend UI)
       {...props}
     />
   );
@@ -42,7 +61,11 @@ function CardDescription({ className, ...props }) {
   return (
     <div
       data-slot="card-description"
+<<<<<<< HEAD
       className={cn('text-muted-foreground text-sm', className)}
+=======
+      className={cn('text-zinc-400 text-sm', className)}
+>>>>>>> 4d1eafa (impoved frontend UI)
       {...props}
     />
   );
