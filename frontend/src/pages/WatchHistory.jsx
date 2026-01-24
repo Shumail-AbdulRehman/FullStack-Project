@@ -34,6 +34,7 @@ function WatchHistory() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['watchHistory', userData?._id]);
+      queryClient.invalidateQueries(["recommended-videos",videoId]);
     },
   });
 

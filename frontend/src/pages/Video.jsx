@@ -17,7 +17,7 @@ function Video() {
   const { videoId, channelId } = useParams();
   const userData = useSelector((state) => state.auth.userData);
 
-
+  console.log("useParams video is :::",videoId);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingContent, setEditingContent] = useState('');
   const [activeMenuId, setActiveMenuId] = useState(null);
@@ -37,6 +37,7 @@ function Video() {
         `http://localhost:8000/api/v1/videos/${videoId}/${channelId}`,
         { withCredentials: true }
       );
+      // console.log("video is n Vidoe page :::",res.data.data);
       return res.data.data;
     },
 
@@ -379,7 +380,7 @@ function Video() {
             transition={{ delay: 0.3 }}
             className="lg:hidden mt-6"
           >
-            <VideosSuggestion {...video} />
+            <VideosSuggestion videoId={videoId} />
           </motion.div>
         </div>
 

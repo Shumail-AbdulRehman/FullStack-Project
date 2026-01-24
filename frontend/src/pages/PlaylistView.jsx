@@ -18,7 +18,6 @@ function PlaylistView() {
     const queryClient = useQueryClient();
     const { playlistId, videoIndex } = useParams();
     const userData = useSelector((state) => state.auth.userData);
-
     const currentIndex = parseInt(videoIndex) || 0;
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState('');
@@ -442,7 +441,7 @@ function PlaylistView() {
                             currentVideoIndex={currentIndex}
                             onVideoSelect={handleVideoSelect}
                         />
-                        <VideosSuggestion />
+                        <VideosSuggestion videoId={videoId} />
                     </motion.div>
                 </div>
 

@@ -35,6 +35,26 @@ const videoSchema = mongoose.Schema(
             type: Schema.Types.ObjectId,
             ref: "User",
         },
+        category: {
+    type: String,
+    enum: [
+        "programming",
+        "fitness",
+        
+        "tech",
+        "education",
+        "entertainment",
+        "gaming",
+        "vlog",
+    ],
+    required: true,
+},
+    tags: {
+    type: [String],
+    default: [],
+    index: true,
+},
+
     },
     {
         timestamps: true,

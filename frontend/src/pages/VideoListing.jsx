@@ -24,6 +24,7 @@ function VideoListing() {
         );
         dispatch(getVideos(fetchVideos.data.data.docs));
       } catch (error) {
+        console.log("error while fetching videos is::",error);
       } finally {
         setLoading(false);
       }
@@ -32,7 +33,7 @@ function VideoListing() {
 
   if (loading) return <LoadingSpinner />;
 
-  if (videos.length === 0)
+  if (videos?.length === 0)
     return (
       <div className="flex min-h-screen bg-[#050508]">
         <aside className="hidden lg:block lg:w-64">
@@ -84,7 +85,7 @@ function VideoListing() {
           transition={{ duration: 0.3 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8"
         >
-          {videos.map((video, index) => (
+          {videos?.map((video, index) => (
             <motion.div
               key={video._id}
               initial={{ opacity: 0, y: 20 }}

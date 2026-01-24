@@ -1,41 +1,59 @@
-import React, { useEffect, useState } from 'react';
-
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+// import { useEffect } from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { getVideos } from '@/store/videoSlice';
+// import { getVideos } from '@/store/videoSlice';
 import HorizontalVideoCard from '../HorizontalVideoCard';
-
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 function VideosSuggestion() {
-  const videos = useSelector((state) => state.videos.allVideos);
-  const [loading, setLoading] = useState(true);
-  const dispatch = useDispatch();
+  // const videos = useSelector((state) => state.videos.allVideos);
+  // const [loading, setLoading] = useState(true);
+  // const dispatch = useDispatch();
+  // const currentVideoId=videoId?.video;
+
+  // useEffect(() => {
+  //   if (videos.length !== 0) {
+  //     setLoading(false);
+  //     return;
+  //   }
+  //   (async () => {
+  //     try {
+  //       const fetchVideos = await axios.get(
+  //         `${import.meta.env.VITE_API_URL}/api/v1/videos/`,
+  //         { withCredentials: true }
+  //       );
+
+  //       dispatch(getVideos(fetchVideos.data.data.docs));
+  //       setLoading(false);
+  //     } catch (error) {
+  //       setLoading(false);
+  //     }
+  //   })();
+  // }, []);
+
+    // console.log("video Id",videoId);
+
+    const {videoId}=useParams();
+
+        // console.log("video Id",videoId);
+  const currentVideoId=videoId;
+
+  const {data:recommendedVideos,isLoading}=useQuery({
+    queryKey:["recommended-videos",videoId],
+    queryFn:async()=>
+    {
+      const fetchedRecommendedVideos=await axios.get(`http://localhost:8000/api/v1/videos/recommended-videos/${currentVideoId}`,{withCredentials:true});
+      console.log("recommended Videos are::",fetchedRecommendedVideos.data.data.docs);
+      return fetchedRecommendedVideos.data.data.docs;
+    },
+  })
 
 
-  useEffect(() => {
-    if (videos.length !== 0) {
-      setLoading(false);
-      return;
-    }
-    (async () => {
-      try {
-        const fetchVideos = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/v1/videos/`,
-          { withCredentials: true }
-        );
-
-        dispatch(getVideos(fetchVideos.data.data.docs));
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
 
       <div className="flex flex-col items-center justify-center py-12">
@@ -55,7 +73,7 @@ function VideosSuggestion() {
         <span className="text-sm font-medium text-white">Up next</span>
       </div>
 
-      {videos?.map((video, index) => (
+      {recommendedVideos?.map((video, index) => (
         <motion.div
           key={video._id}
           initial={{ opacity: 0, y: 10 }}

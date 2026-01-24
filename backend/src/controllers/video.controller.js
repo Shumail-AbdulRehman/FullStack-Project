@@ -9,6 +9,8 @@ import { Like } from "../models/like.model.js";
 import { Subscription } from "../models/subscription.model.js";
 import { client } from "../index.js";
 import { Notification } from "../models/notification.model.js";
+import { generateTags } from "../utils/tagGenerator.js";
+import { WatchHistory } from "../models/watchHistory.model.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
@@ -64,20 +66,93 @@ const getAllVideos = asyncHandler(async (req, res) => {
     );
 });
 
+const getRecommendedVideos = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const {currentVideoId}=req.params;
+    console.log("current video id is ::",currentVideoId);
+
+    const watchedVideos = await WatchHistory.find({ user: userId }).select("video");
+    const watchedVideoIds = watchedVideos.map(v => v.video.toString());
+
+    const likedVideos = await Like.find({ likedBy: userId, video: { $ne: null } }).select("video");
+    const likedVideoIds = likedVideos.map(v => v.video.toString());
+
+    const videoIdsToConsider = [...new Set([...watchedVideoIds, ...likedVideoIds])];
+
+    const videos = await Video.find({ _id: { $in: videoIdsToConsider } });
+    const userTags = videos.flatMap(v => v.tags);
+    const userCategories = [...new Set(videos.map(v => v.category))];
+
+
+    
+    const pipeline = [
+        {
+            $match: {
+                isPublished: true,
+                _id: { 
+                    $ne: new mongoose.Types.ObjectId(currentVideoId), 
+                    $nin: watchedVideoIds.map(id => new mongoose.Types.ObjectId(id)) },
+                $or: [
+                    { tags: { $in: userTags } },
+                    { category: { $in: userCategories } }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner"
+            }
+        },
+        { $unwind: "$owner" },
+        {
+            $project: {
+                title: 1,
+                description: 1,
+                videoFile: 1,
+                "owner.username": 1,
+                "owner.avatar": 1,
+                "owner._id": 1,
+                views: 1,
+                duration: 1,
+                thumbnail: 1,
+                createdAt: 1
+            }
+        },
+        { $sort: { createdAt: -1 } }
+    ];
+
+    const aggregate = Video.aggregate(pipeline);
+
+    const options = { page: 1, limit: 10 }; 
+    const recommendedResult = await Video.aggregatePaginate(aggregate, options);
+
+    res.status(200).json(
+        new ApiResponse(200, recommendedResult, "recommended videos fetched successfully")
+    );
+});
+
+
+
 const publishAVideo = asyncHandler(async (req, res) => {
-    const { title, description, videoLink, videoDuration } = req.body;
+    const { title, description, videoLink, videoDuration,category } = req.body;
+
+    console.log("catgory is::::",category);
 
     if (
         !(
             title.trim() &&
             description.trim() &&
             videoLink.trim() &&
-            videoDuration.trim()
+            videoDuration.trim()&&
+            category
         )
     )
         throw new ApiError(
             400,
-            "title , description , video link and video duration is required"
+            "title , description , video link and video duration and category is required"
         );
     console.log(videoDuration);
     const userId = req.user._id;
@@ -86,26 +161,38 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
     if (!thumbnailUrl) throw new ApiError(404, "thumbnail not found");
 
+    const tags = generateTags(title, description, category);
+    console.log("tags are::",tags);
     const publishUserVideo = await Video.create({
         title,
         description,
+        category,
+        tags,
         owner: userId,
         videoFile: videoLink,
         thumbnail: thumbnailUrl,
         duration: videoDuration,
+        
     });
 
+    console.log("publishUserVideo:::",publishUserVideo);
+
+
     if (!publishUserVideo)
-        throw new ApiError(
+    {
+         throw new ApiError(
             500,
             "something went wrong while publishing user video"
         );
+    }
+       
 
+        // console.log("publishUserVideo:::",publishUserVideo);
     const subscribersList = await Subscription.find({
         channel: userId,
     });
 
-    console.log("subscription::", subscribersList);
+    // console.log("subscription::", subscribersList);
 
     const firstJob = JSON.stringify({
         video: publishUserVideo,
@@ -119,9 +206,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
     });
 
     await client.lPush("liveNotificationQueue", firstJob);
-    const jobPushed = await client.lPush("videoQueue", job);
+    await client.lPush("videoQueue", job);
 
-    console.log("job pushed to videoQueue", jobPushed);
 
     res.status(201).json(
         new ApiResponse(
@@ -516,4 +602,5 @@ export {
     getChannelVideos,
     getUserNotification,
     searchVideos,
+    getRecommendedVideos
 };

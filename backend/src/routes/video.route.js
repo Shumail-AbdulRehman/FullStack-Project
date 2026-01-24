@@ -10,6 +10,7 @@ import {
     getChannelVideos,
     getUserNotification,
     searchVideos,
+    getRecommendedVideos
 } from "../controllers/video.controller.js";
 
 import { verifyJwt as verifyJWT } from "../middlewares/auth.middleware.js";
@@ -29,10 +30,13 @@ router.patch("/toggle/publish/:videoId", togglePublishStatus);
 
 router.get("/c/:channelId", getChannelVideos);
 
+router.get("/recommended-videos/:currentVideoId",getRecommendedVideos);
+
 router
     .route("/")
     .get(getAllVideos)
     .post(upload.single("thumbnail"), publishAVideo);
+
 
 router
     .route("/:videoId/:channelId")

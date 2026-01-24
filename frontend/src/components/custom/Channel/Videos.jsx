@@ -15,7 +15,18 @@ import {
   Type,
   Loader2,
   AlertCircle,
+  Tag,
 } from 'lucide-react';
+
+const categories = [
+  "programming",
+  "fitness",
+  "tech",
+  "education",
+  "entertainment",
+  "gaming",
+  "vlog",
+];
 
 import { motion } from 'framer-motion';
 
@@ -157,6 +168,7 @@ function Videos({ channelId }) {
       formData.append('videoDuration', videoResult.data.duration);
       formData.append('title', d.title);
       formData.append('description', d.description);
+      formData.append('category', d.category);
 
       await axios.post('http://localhost:8000/api/v1/videos/', formData, {
         withCredentials: true,
@@ -320,6 +332,37 @@ function Videos({ channelId }) {
                 {errors.description && (
                   <p className="text-red-400 text-xs flex items-center gap-1">
                     <AlertCircle size={12} /> {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-zinc-300 font-medium text-sm">
+                  <Tag size={18} className="text-pink-400" />
+                  Category <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <select
+                    {...register('category', { required: 'Category is required' })}
+                    defaultValue=""
+                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="" disabled className="bg-zinc-900 text-zinc-500">
+                      Select a category
+                    </option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat} className="bg-zinc-900 text-white">
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                  </div>
+                </div>
+                {errors.category && (
+                  <p className="text-red-400 text-xs flex items-center gap-1">
+                    <AlertCircle size={12} /> {errors.category.message}
                   </p>
                 )}
               </div>
