@@ -19,6 +19,8 @@ function PlaylistView() {
     const { playlistId, videoIndex } = useParams();
     const userData = useSelector((state) => state.auth.userData);
     const currentIndex = parseInt(videoIndex) || 0;
+    console.log("PlaylistView Render:", { playlistId, videoIndex, currentIndex });
+
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState('');
     const [activeMenuId, setActiveMenuId] = useState(null);
@@ -37,18 +39,7 @@ function PlaylistView() {
                 `http://localhost:8000/api/v1/playlist/${playlistId}`,
                 { withCredentials: true }
             );
-            const playlistData = playlistRes.data.data;
-
-            const userPlaylistsRes = await axios.get(
-                `http://localhost:8000/api/v1/playlist/user/${playlistData.owner}`,
-                { withCredentials: true }
-            );
-
-            const populatedPlaylist = userPlaylistsRes.data.data.find(
-                p => p._id === playlistId
-            );
-
-            return populatedPlaylist || playlistData;
+            return playlistRes.data.data;
         },
         retry: false,
     });
@@ -56,6 +47,8 @@ function PlaylistView() {
     const currentVideo = playlist?.videos?.[currentIndex];
     const videoId = currentVideo?._id;
     const channelId = currentVideo?.owner?._id;
+
+    console.log("currentvideo is ::", currentVideo);
 
     const { data: videoDetails, isLoading: videoLoading } = useQuery({
         queryKey: ['video', videoId, channelId],

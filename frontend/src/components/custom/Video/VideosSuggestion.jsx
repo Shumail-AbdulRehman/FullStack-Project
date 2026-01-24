@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
-function VideosSuggestion() {
+function VideosSuggestion({ videoId: propVideoId }) {
   // const videos = useSelector((state) => state.videos.allVideos);
   // const [loading, setLoading] = useState(true);
   // const dispatch = useDispatch();
@@ -35,19 +35,18 @@ function VideosSuggestion() {
   //   })();
   // }, []);
 
-    // console.log("video Id",videoId);
+  // console.log("video Id",videoId);
 
-    const {videoId}=useParams();
+  const { videoId } = useParams();
 
-        // console.log("video Id",videoId);
-  const currentVideoId=videoId;
+  // console.log("video Id",videoId);
+  const currentVideoId = propVideoId || videoId;
 
-  const {data:recommendedVideos,isLoading}=useQuery({
-    queryKey:["recommended-videos",videoId],
-    queryFn:async()=>
-    {
-      const fetchedRecommendedVideos=await axios.get(`http://localhost:8000/api/v1/videos/recommended-videos/${currentVideoId}`,{withCredentials:true});
-      console.log("recommended Videos are::",fetchedRecommendedVideos.data.data.docs);
+  const { data: recommendedVideos, isLoading } = useQuery({
+    queryKey: ["recommended-videos", videoId],
+    queryFn: async () => {
+      const fetchedRecommendedVideos = await axios.get(`http://localhost:8000/api/v1/videos/recommended-videos/${currentVideoId}`, { withCredentials: true });
+      console.log("recommended Videos are::", fetchedRecommendedVideos.data.data.docs);
       return fetchedRecommendedVideos.data.data.docs;
     },
   })

@@ -102,13 +102,62 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
     if (!playlistId?.trim()) throw new ApiError(400, "playlist id is required");
 
-    const playlist = await Playlist.findById(playlistId);
+    // const playlist = await Playlist.findById(playlistId);
 
-    if (!playlist) throw new ApiError(404, "playlist not found");
+   const playlistAggregate = await Playlist.aggregate([
+    {
+        $match: {
+            _id: new mongoose.Types.ObjectId(playlistId)
+        }
+    },
+    {
+        $lookup: {
+            from: "videos",
+            localField: "videos",
+            foreignField: "_id",
+            as: "videos",
+            pipeline: [
+                {
+                    $match: { isPublished: true }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "owner",
+                        foreignField: "_id",
+                        as: "owner"
+                    }
+                },
+                {
+                    $unwind: "$owner"
+                },
+                {
+                    $project: {
+                        title: 1,
+                        thumbnail: 1,
+                        description: 1, 
+                        duration: 1,
+                        views: 1,
+                        createdAt: 1,
+                        "owner.username": 1, 
+                        "owner.avatar": 1,
+                        "owner._id": 1 
+                    }
+                }
+            ]
+        }
+    }
+]);
 
-    res.status(200).json(
-        new ApiResponse(200, playlist, "playlist fetched successfully")
-    );
+const playlist = playlistAggregate[0];
+
+if (!playlist) throw new ApiError(404, "playlist not found");
+
+return res.status(200).json(
+    new ApiResponse(200, playlist, "playlist fetched successfully")
+);
+
+
 });
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {

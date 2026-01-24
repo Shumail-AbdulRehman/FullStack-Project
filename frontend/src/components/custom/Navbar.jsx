@@ -53,7 +53,7 @@ function Navbar() {
   const closeSidebar = () => setIsSidebarOpen(false);
 
   const isActive = (path) => location.pathname === path;
-  const isVideoPage = location.pathname.startsWith('/video/');
+  const isVideoPage = location.pathname.startsWith('/video/') || location.pathname.startsWith('/playlist/');
 
 
   const { data: notifications } = useQuery({

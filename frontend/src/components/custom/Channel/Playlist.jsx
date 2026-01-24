@@ -45,6 +45,7 @@ function Playlist({ channelId }) {
         `http://localhost:8000/api/v1/playlist/user/${channelId}`,
         { withCredentials: true }
       );
+      console.log("playlists are::", res.data.data);
       return res.data.data;
     },
 
@@ -149,40 +150,42 @@ function Playlist({ channelId }) {
                   onClick={() => navigate(`/playlist/${playlist._id}/0`)}
                   className="group relative cursor-pointer glass-card rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300"
                 >
-                  <div className="absolute top-3 right-3 z-20">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveMenu(activeMenu === playlist._id ? null : playlist._id);
-                      }}
-                      className="p-2 rounded-lg bg-black/60 hover:bg-black/80 text-white transition-colors backdrop-blur-sm"
-                    >
-                      <MoreVertical size={16} />
-                    </button>
+                  {userData?._id === channelId && (
+                    <div className="absolute top-3 right-3 z-20">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenu(activeMenu === playlist._id ? null : playlist._id);
+                        }}
+                        className="p-2 rounded-lg bg-black/60 hover:bg-black/80 text-white transition-colors backdrop-blur-sm"
+                      >
+                        <MoreVertical size={16} />
+                      </button>
 
-                    <AnimatePresence>
-                      {activeMenu === playlist._id && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          className="absolute right-0 mt-2 w-40 glass-card rounded-xl overflow-hidden z-30"
-                        >
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPlaylistToDelete(playlist);
-                              setActiveMenu(null);
-                            }}
-                            className="w-full px-4 py-2.5 text-left text-sm text-red-400 hover:bg-white/5 flex items-center gap-2 transition-colors"
+                      <AnimatePresence>
+                        {activeMenu === playlist._id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="absolute right-0 mt-2 w-40 glass-card rounded-xl overflow-hidden z-30"
                           >
-                            <Trash2 size={14} />
-                            Delete Playlist
-                          </button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPlaylistToDelete(playlist);
+                                setActiveMenu(null);
+                              }}
+                              className="w-full px-4 py-2.5 text-left text-sm text-red-400 hover:bg-white/5 flex items-center gap-2 transition-colors"
+                            >
+                              <Trash2 size={14} />
+                              Delete Playlist
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
 
                   <div className="relative aspect-video overflow-hidden">
                     <img
