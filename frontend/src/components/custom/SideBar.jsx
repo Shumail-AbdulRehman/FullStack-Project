@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState,memo } from 'react';
 import { Heart, History, Video, Users, Settings, Home, ChevronRight, LogIn } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -156,4 +156,4 @@ function SideBar() {
   );
 }
 
-export default SideBar;
+export default memo(SideBar);

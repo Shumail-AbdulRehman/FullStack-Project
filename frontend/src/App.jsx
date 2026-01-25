@@ -9,34 +9,40 @@ import LoadingSpinner from './components/custom/LoadingSpinner';
 import { useQueryClient } from '@tanstack/react-query';
 
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
-  // Helper to update React Query cache immediately when a notification arrives
-  const addNotification = (newNotification) => {
+ const addNotification = (newNotification) => {
     queryClient.setQueryData(['notifications'], (oldData) => {
-      // If no notifications exist yet, create array
-      if (!oldData) return [newNotification];
-      
-      // Add new notification to the top of the list
-      return [newNotification, ...oldData];
+      // If no data exists yet, we can't easily structure an infinite query page.
+      // It's safer to just let the next fetch handle it.
+      if (!oldData) return undefined;
+
+      return {
+        ...oldData,
+        pages: oldData.pages.map((page, index) => {
+          // We only want to add the new notification to the FIRST page (index 0)
+          if (index === 0) {
+            return {
+              ...page,
+              docs: [newNotification, ...page.docs], // Add to the top of the list
+            };
+          }
+          return page; // Leave older pages alone
+        }),
+      };
     });
   };
 
-  // ✅ 1. UPDATED WEBSOCKET LOGIC
   useEffect(() => {
-    // Only connect if user is logged in
     if (!userData) return;
 
-    // The browser will AUTOMATICALLY send cookies with this request
     const ws = new WebSocket('ws://localhost:8080');
 
     ws.onopen = () => {
       console.log('Connected to WebSocket Server');
-      // ❌ REMOVED: ws.send(JSON.stringify({ userId: ... }));
-      // We don't need to send ID manually anymore. The cookie handles it.
     };
 
     ws.onmessage = (event) => {
@@ -53,15 +59,13 @@ function App() {
       console.error('WebSocket Error:', error);
     };
 
-    // Cleanup on unmount or when userData changes
     return () => {
-      if (ws.readyState === 1) { // 1 means OPEN
+      if (ws.readyState === 1) { 
           ws.close();
       }
     };
   }, [userData]); 
 
-  // 2. AUTH CHECK LOGIC (Unchanged)
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -80,14 +84,12 @@ function App() {
       } catch (error) {
         if (error.response?.status) {
           try {
-            // Attempt Refresh
             await axios.post(
               'http://localhost:8000/api/v1/users/refreshtoken',
               {},
               { withCredentials: true }
             );
 
-            // Retry Current User
             const retryUser = await axios.get(
               'http://localhost:8000/api/v1/users/current-user',
               { withCredentials: true }

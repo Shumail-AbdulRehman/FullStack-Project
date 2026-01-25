@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const notifcationSchema = new Schema(
     {
@@ -17,5 +18,7 @@ const notifcationSchema = new Schema(
         timestamps: true,
     }
 );
+
+notifcationSchema.plugin(mongooseAggregatePaginate);
 
 export const Notification = mongoose.model("Notification", notifcationSchema);

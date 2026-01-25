@@ -1,12 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-
+import axios from 'axios';
 import { Bell } from 'lucide-react';
-import NotificationList from './NotificationList';
+import NotificationList from './NotificationList'; 
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
 
+const fetchNotifications = async ({ pageParam = 1 }) => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/v1/videos/get-notifications?page=${pageParam}&limit=10`,
+    { withCredentials: true }
+  );
+  return res.data.data;
+};
+
+// ... (useOutsideAlerter stays the same) ...
 function useOutsideAlerter(wrapperRef, dropdownRef, onOutside) {
   useEffect(() => {
     function handleClickOutside(event) {
@@ -24,26 +35,58 @@ function useOutsideAlerter(wrapperRef, dropdownRef, onOutside) {
   }, [wrapperRef, dropdownRef, onOutside]);
 }
 
-export default function NotificationBell({ notifications = [] }) {
+export default function NotificationBell() {
   const [open, setOpen] = useState(false);
-
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  
   const userData = useSelector((state) => state.auth.userData);
   const wrapperRef = useRef(null);
   const dropdownRef = useRef(null);
+  
+  const { ref, inView } = useInView();
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    isError, 
+    error    
+  } = useInfiniteQuery({
+    queryKey: ['notifications'],
+    queryFn: fetchNotifications,
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasNextPage ? lastPage.nextPage : undefined;
+    },
+    enabled: !!userData, 
+  });
+
+  useEffect(() => {
+    if (data) console.log("Backend Data:", data);
+    if (isError) console.error("Fetch Error:", error);
+  }, [data, isError, error]);
+
+  const notifications = data?.pages.flatMap((page) => page.docs) || [];
+  const unreadCount = notifications.filter((n) => !n.read).length; 
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
 
   useOutsideAlerter(wrapperRef, dropdownRef, () => setOpen(false));
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-
-  // Update position when opening
   useEffect(() => {
     if (open && wrapperRef.current) {
       const rect = wrapperRef.current.getBoundingClientRect();
+      let left = rect.right - 320; 
+      if (left < 10) left = 10; 
+
       setPosition({
-        top: rect.bottom + 8,
-        left: Math.max(rect.right - 320, 16),
+        top: rect.bottom + 12,
+        left: left,
       });
     }
   }, [open]);
@@ -55,7 +98,7 @@ export default function NotificationBell({ notifications = [] }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="fixed w-80 rounded-2xl shadow-2xl overflow-hidden z-[9999]"
+      className="fixed w-80 max-h-[500px] flex flex-col rounded-2xl shadow-2xl overflow-hidden z-[9999]"
       style={{
         top: position.top,
         left: position.left,
@@ -64,38 +107,42 @@ export default function NotificationBell({ notifications = [] }) {
         border: '1px solid rgba(255, 255, 255, 0.1)',
       }}
     >
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-white/10">
+      <div className="px-4 py-3 border-b border-white/10 shrink-0 bg-[#0d0d14]/50 backdrop-blur-md">
         <h3 className="font-semibold text-white flex items-center gap-2">
           <Bell className="w-4 h-4 text-violet-400" />
           Notifications
         </h3>
       </div>
 
-      {!userData ? (
-        <div className="flex flex-col items-center justify-center p-8 text-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center">
-            <Bell className="w-8 h-8 text-violet-400" />
-          </div>
-          <div>
+      <div className="overflow-y-auto custom-scrollbar flex-1">
+        {!userData ? (
+          <div className="flex flex-col items-center justify-center p-8 text-center gap-4">
+             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center">
+              <Bell className="w-8 h-8 text-violet-400" />
+            </div>
             <p className="text-zinc-400 text-sm">
               Sign in to view your notifications
             </p>
+            <Link
+              to="/login"
+              onClick={() => setOpen(false)}
+              className="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium rounded-full hover:shadow-lg hover:shadow-violet-500/25 transition-all"
+            >
+              Sign In
+            </Link>
           </div>
-          <Link
-            to="/login"
-            onClick={() => setOpen(false)}
-            className="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium rounded-full hover:shadow-lg hover:shadow-violet-500/25 transition-all"
-          >
-            Sign In
-          </Link>
-        </div>
-      ) : (
-        <NotificationList
-          notifications={notifications}
-          onNotificationClick={() => setOpen(false)}
-        />
-      )}
+        ) : (
+          <NotificationList
+            notifications={notifications}
+            onNotificationClick={() => setOpen(false)}
+            lastElementRef={ref} 
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage}
+            isLoading={status === 'pending'}
+            isError={isError} 
+          />
+        )}
+      </div>
     </motion.div>
   );
 
@@ -108,8 +155,6 @@ export default function NotificationBell({ notifications = [] }) {
         aria-label="Notifications"
       >
         <Bell className={`w-5 h-5 transition-colors ${open ? 'text-violet-400' : 'text-zinc-400 hover:text-white'}`} />
-
-        {/* Notification Badge */}
         {userData && unreadCount > 0 && (
           <motion.span
             initial={{ scale: 0 }}

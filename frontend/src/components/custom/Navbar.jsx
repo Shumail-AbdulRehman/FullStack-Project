@@ -21,7 +21,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -56,16 +56,16 @@ function Navbar() {
   const isVideoPage = location.pathname.startsWith('/video/') || location.pathname.startsWith('/playlist/');
 
 
-  const { data: notifications } = useQuery({
-    queryKey: ['notifications'],
-    queryFn: async () => {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/videos/get-notifications`,
-        { withCredentials: true }
-      );
-      return res.data.data;
-    },
-  });
+  // const { data: notifications } = useQuery({
+  //   queryKey: ['notifications'],
+  //   queryFn: async () => {
+  //     const res = await axios.get(
+  //       `http://localhost:8000/api/v1/videos/get-notifications`,
+  //       { withCredentials: true }
+  //     );
+  //     return res.data.data;
+  //   },
+  // });
 
 
   const sidebarNavItems = [
@@ -300,7 +300,7 @@ function Navbar() {
             </button>
 
             <div className="relative">
-              <NotificationBell notifications={notifications || []} />
+              <NotificationBell  />
             </div>
 
             <div className="hidden sm:block">

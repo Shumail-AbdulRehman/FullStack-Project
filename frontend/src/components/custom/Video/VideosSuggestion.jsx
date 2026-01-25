@@ -1,60 +1,59 @@
-import React, { useState } from 'react';
-// import { useEffect } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
+// 1. Correct Import
+import { useInView } from 'react-intersection-observer'; 
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-// import { getVideos } from '@/store/videoSlice';
 import HorizontalVideoCard from '../HorizontalVideoCard';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
+
+const fetchRecommendedVideos = async ({ queryKey, pageParam = 1 }) => {
+    const [_, videoId] = queryKey; 
+    
+    const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/v1/videos/recommended-videos/${videoId}?page=${pageParam}&limit=10`, 
+        { withCredentials: true }
+    );
+
+    
+    return res.data.data; 
+};
 
 function VideosSuggestion({ videoId: propVideoId }) {
-  // const videos = useSelector((state) => state.videos.allVideos);
-  // const [loading, setLoading] = useState(true);
-  // const dispatch = useDispatch();
-  // const currentVideoId=videoId?.video;
+  const { videoId: paramVideoId } = useParams();
+  const currentVideoId = propVideoId || paramVideoId;
+  
+  const { ref, inView } = useInView();
 
-  // useEffect(() => {
-  //   if (videos.length !== 0) {
-  //     setLoading(false);
-  //     return;
-  //   }
-  //   (async () => {
-  //     try {
-  //       const fetchVideos = await axios.get(
-  //         `${import.meta.env.VITE_API_URL}/api/v1/videos/`,
-  //         { withCredentials: true }
-  //       );
-
-  //       dispatch(getVideos(fetchVideos.data.data.docs));
-  //       setLoading(false);
-  //     } catch (error) {
-  //       setLoading(false);
-  //     }
-  //   })();
-  // }, []);
-
-  // console.log("video Id",videoId);
-
-  const { videoId } = useParams();
-
-  // console.log("video Id",videoId);
-  const currentVideoId = propVideoId || videoId;
-
-  const { data: recommendedVideos, isLoading } = useQuery({
-    queryKey: ["recommended-videos", videoId],
-    queryFn: async () => {
-      const fetchedRecommendedVideos = await axios.get(`http://localhost:8000/api/v1/videos/recommended-videos/${currentVideoId}`, { withCredentials: true });
-      console.log("recommended Videos are::", fetchedRecommendedVideos.data.data.docs);
-      return fetchedRecommendedVideos.data.data.docs;
+  const {
+    data,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    fetchNextPage
+  } = useInfiniteQuery({
+    queryKey: ["recommended-videos", currentVideoId], 
+    queryFn: fetchRecommendedVideos,
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasNextPage ? lastPage.nextPage : undefined;
     },
-  })
+    enabled: !!currentVideoId, 
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
 
 
-  if (isLoading) {
+  console.log("data pages are::",data?.pages);
+
+  const recommendedVideos = data?.pages.flatMap((page) => page.docs) || [];
+
+  if (status === 'pending') {
     return (
-
       <div className="flex flex-col items-center justify-center py-12">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center mb-3 animate-pulse">
           <Sparkles className="w-6 h-6 text-violet-400" />
@@ -64,15 +63,16 @@ function VideosSuggestion({ videoId: propVideoId }) {
     );
   }
 
-  return (
+  if (status === 'error') return <p className="text-red-500 text-sm text-center">Failed to load</p>;
 
+  return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-2 px-2 mb-3">
         <Sparkles className="w-4 h-4 text-violet-400" />
         <span className="text-sm font-medium text-white">Up next</span>
       </div>
 
-      {recommendedVideos?.map((video, index) => (
+      {recommendedVideos.map((video, index) => (
         <motion.div
           key={video._id}
           initial={{ opacity: 0, y: 10 }}
@@ -84,6 +84,14 @@ function VideosSuggestion({ videoId: propVideoId }) {
           </Link>
         </motion.div>
       ))}
+
+      {hasNextPage && (
+        <div ref={ref} className="w-full flex justify-center py-4">
+          {isFetchingNextPage && (
+            <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

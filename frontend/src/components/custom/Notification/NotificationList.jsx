@@ -1,16 +1,38 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-import { Bell, User, Play } from 'lucide-react';
+import { Bell, User, Play, Loader2, AlertCircle } from 'lucide-react'; // Added AlertCircle
 import { motion } from 'framer-motion';
 
 export default function NotificationList({
   notifications = [],
   onNotificationClick,
+  lastElementRef,      
+  isFetchingNextPage,  
+  hasNextPage,         
+  isLoading,
+  isError
 }) {
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 text-violet-500 animate-spin mb-2" />
+        <p className="text-zinc-500 text-sm">Loading updates...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+        <AlertCircle className="w-8 h-8 text-red-500 mb-2" />
+        <p className="text-zinc-400 text-sm">Failed to load notifications.</p>
+      </div>
+    );
+  }
+
   if (notifications.length === 0) {
     return (
-
       <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center mb-4">
           <Bell className="w-7 h-7 text-zinc-600" />
@@ -24,8 +46,7 @@ export default function NotificationList({
   }
 
   return (
-
-    <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+    <div className="flex flex-col w-full"> 
       {notifications.map((notification, idx) => {
         const username = notification.video?.owner?.username || 'Channel';
         const title = notification.video?.title || 'New video uploaded';
@@ -33,33 +54,27 @@ export default function NotificationList({
         const ownerId = notification.video?.owner?._id;
         const avatar = notification.video?.owner?.avatar;
         const thumbnail = notification.video?.thumbnail;
-        const createdAt = notification.video?.createdAt;
+        const createdAt = notification.createdAt; 
 
         return (
           <motion.div
-            key={idx}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: idx * 0.05 }}
+             // ...
+             key={notification._id || idx} 
+             initial={{ opacity: 0, x: -10 }}
+             animate={{ opacity: 1, x: 0 }}
+             transition={{ delay: idx * 0.05 }}
           >
             <Link
               to={`/video/${videoId}/${ownerId}`}
               className="block"
               onClick={onNotificationClick}
             >
-
-              <div className="group flex gap-3 p-3 hover:bg-white/5 transition-colors">
-                {/* Avatar */}
-                <div className="flex-shrink-0">
+             <div className="group flex gap-3 p-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+               <div className="flex-shrink-0">
                   <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-800 ring-2 ring-transparent group-hover:ring-violet-500/30 transition-all">
                     {avatar ? (
-                      <img
-                        src={avatar}
-                        alt={username}
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={avatar} alt={username} className="w-full h-full object-cover" />
                     ) : (
-
                       <div className="w-full h-full flex items-center justify-center">
                         <User className="w-4 h-4 text-zinc-500" />
                       </div>
@@ -67,8 +82,6 @@ export default function NotificationList({
                   </div>
                 </div>
 
-
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-zinc-200 line-clamp-2 leading-snug">
                     <span className="font-semibold text-white group-hover:text-violet-400 transition-colors">
@@ -82,38 +95,36 @@ export default function NotificationList({
                   </span>
                 </div>
 
-                {/* Thumbnail */}
                 {thumbnail && (
-                  <div className="flex-shrink-0 relative w-24 h-14 rounded-lg overflow-hidden bg-zinc-900">
-                    <img
-                      src={thumbnail}
-                      alt="thumbnail"
-                      className="w-full h-full object-cover"
-                    />
-                    {/* Play overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center">
-                        <Play className="w-3 h-3 text-black fill-black ml-0.5" />
-                      </div>
-                    </div>
+                  <div className="flex-shrink-0 relative w-20 h-12 sm:w-24 sm:h-14 rounded-lg overflow-hidden bg-zinc-900">
+                    <img src={thumbnail} alt="thumbnail" className="w-full h-full object-cover" />
                   </div>
                 )}
-              </div>
+             </div>
             </Link>
-
           </motion.div>
         );
       })}
+
+      {hasNextPage && (
+        <div ref={lastElementRef} className="w-full py-4 flex justify-center items-center">
+          {isFetchingNextPage ? (
+             <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+             <span className="text-xs text-zinc-600">Load more</span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
+// ... timeAgo function ...
 function timeAgo(date) {
   if (!date) return '';
   const now = new Date();
   const past = new Date(date);
   const seconds = Math.floor((now - past) / 1000);
-
   const intervals = [
     { label: 'year', secs: 31536000 },
     { label: 'month', secs: 2592000 },
@@ -122,12 +133,9 @@ function timeAgo(date) {
     { label: 'hour', secs: 3600 },
     { label: 'minute', secs: 60 },
   ];
-
   for (let interval of intervals) {
     const value = Math.floor(seconds / interval.secs);
-    if (value >= 1) {
-      return `${value} ${interval.label}${value > 1 ? 's' : ''} ago`;
-    }
+    if (value >= 1) return `${value} ${interval.label}${value > 1 ? 's' : ''} ago`;
   }
   return 'Just now';
 }

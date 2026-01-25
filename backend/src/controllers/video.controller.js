@@ -67,6 +67,12 @@ const getAllVideos = asyncHandler(async (req, res) => {
 });
 
 const getRecommendedVideos = asyncHandler(async (req, res) => {
+     const { page = 1, limit = 10 } = req.query;
+
+    const options = {
+        page: parseInt(page),
+        limit: parseInt(limit),
+    };
     const userId = req.user._id;
     const {currentVideoId}=req.params;
     console.log("current video id is ::",currentVideoId);
@@ -126,7 +132,6 @@ const getRecommendedVideos = asyncHandler(async (req, res) => {
 
     const aggregate = Video.aggregate(pipeline);
 
-    const options = { page: 1, limit: 10 }; 
     const recommendedResult = await Video.aggregatePaginate(aggregate, options);
 
     res.status(200).json(
@@ -162,7 +167,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     if (!thumbnailUrl) throw new ApiError(404, "thumbnail not found");
 
     const tags = generateTags(title, description, category);
-    console.log("tags are::",tags);
+    // console.log("tags are::",tags);
     const publishUserVideo = await Video.create({
         title,
         description,
@@ -175,7 +180,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
         
     });
 
-    console.log("publishUserVideo:::",publishUserVideo);
+    // console.log("publishUserVideo:::",publishUserVideo);
 
 
     if (!publishUserVideo)
@@ -462,42 +467,16 @@ const getChannelVideos = asyncHandler(async (req, res) => {
 
 const getUserNotification = asyncHandler(async (req, res) => {
     const userId = req.user._id;
+    const { page = 1, limit = 10 } = req.query;
+
+    const options = {
+        page: parseInt(page),
+        limit: parseInt(limit),
+    };
 
     console.log("userId is ::", userId);
 
-    // const notifications=await Notification.aggregate([
-    //     {
-    //         $match:{
-    //             user:new mongoose.Types.ObjectId(userId)
-    //         }
-    //     },
-    //     {
-    //         $lookup:{
-    //             from:"videos",
-    //             localField:"video",
-    //             foreignField:"_id",
-    //             as:"video",
-    //             pipeline:[
-    //                 {
-    //                     $lookup:{
-    //                         from:"users",
-    //                         localField:"owner",
-    //                         foreignField:"_id",
-    //                         as:"owner"
-    //                     }
-    //                 },
-    //                 {
-    //                     $unwind:"$owner"
-    //                 }
-    //             ]
-    //         }
-    //     },
-    //     {
-    //         $unwind:"$video"
-    //     }
-    // ]);
-
-    const notifications = await Notification.aggregate([
+    const result = Notification.aggregate([
         {
             $match: {
                 user: new mongoose.Types.ObjectId(userId),
@@ -527,13 +506,15 @@ const getUserNotification = asyncHandler(async (req, res) => {
         {
             $unwind: "$video",
         },
-        {
-            $sort: {
+       {
+           $sort: {
                 "video.createdAt": -1,
             },
         },
     ]);
-    console.log("notiifcations are:::", notifications);
+    // console.log("notiifcations are:::", notifications);
+
+    const notifications=await Notification.aggregatePaginate(result,options)
 
     res.status(200).json(
         new ApiResponse(
