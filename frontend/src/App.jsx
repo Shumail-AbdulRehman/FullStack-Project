@@ -9,36 +9,59 @@ import LoadingSpinner from './components/custom/LoadingSpinner';
 import { useQueryClient } from '@tanstack/react-query';
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
+  // Helper to update React Query cache immediately when a notification arrives
   const addNotification = (newNotification) => {
     queryClient.setQueryData(['notifications'], (oldData) => {
+      // If no notifications exist yet, create array
       if (!oldData) return [newNotification];
+      
+      // Add new notification to the top of the list
       return [newNotification, ...oldData];
     });
   };
 
-
+  // ✅ 1. UPDATED WEBSOCKET LOGIC
   useEffect(() => {
+    // Only connect if user is logged in
     if (!userData) return;
+
+    // The browser will AUTOMATICALLY send cookies with this request
     const ws = new WebSocket('ws://localhost:8080');
 
     ws.onopen = () => {
-
-      ws.send(JSON.stringify({ userId: userData._id }));
+      console.log('Connected to WebSocket Server');
+      // ❌ REMOVED: ws.send(JSON.stringify({ userId: ... }));
+      // We don't need to send ID manually anymore. The cookie handles it.
     };
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      addNotification(data);
+      try {
+        const data = JSON.parse(event.data);
+        console.log("New Notification:", data);
+        addNotification(data);
+      } catch (err) {
+        console.error("Error parsing WebSocket message:", err);
+      }
     };
 
-    return () => ws.close();
-  }, [userData]);
+    ws.onerror = (error) => {
+      console.error('WebSocket Error:', error);
+    };
 
+    // Cleanup on unmount or when userData changes
+    return () => {
+      if (ws.readyState === 1) { // 1 means OPEN
+          ws.close();
+      }
+    };
+  }, [userData]); 
+
+  // 2. AUTH CHECK LOGIC (Unchanged)
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -57,12 +80,14 @@ function App() {
       } catch (error) {
         if (error.response?.status) {
           try {
+            // Attempt Refresh
             await axios.post(
               'http://localhost:8000/api/v1/users/refreshtoken',
               {},
               { withCredentials: true }
             );
 
+            // Retry Current User
             const retryUser = await axios.get(
               'http://localhost:8000/api/v1/users/current-user',
               { withCredentials: true }
