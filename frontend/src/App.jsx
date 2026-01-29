@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import './App.css';
 import Navbar from './components/custom/Navbar';
 import axios from 'axios';
@@ -8,13 +8,18 @@ import { Outlet } from 'react-router-dom';
 import LoadingSpinner from './components/custom/LoadingSpinner';
 import { useQueryClient } from '@tanstack/react-query';
 
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080';
+
 function App() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const wsRef = useRef(null);
+  const reconnectTimeoutRef = useRef(null);
+  const reconnectAttempts = useRef(0);
 
- const addNotification = (newNotification) => {
+  const addNotification = useCallback((newNotification) => {
     queryClient.setQueryData(['notifications'], (oldData) => {
       // If no data exists yet, we can't easily structure an infinite query page.
       // It's safer to just let the next fetch handle it.
@@ -34,37 +39,72 @@ function App() {
         }),
       };
     });
-  };
+  }, [queryClient]);
 
   useEffect(() => {
-    if (!userData) return;
+    if (!userData?._id) return;
 
-    const ws = new WebSocket('ws://localhost:8080');
-
-    ws.onopen = () => {
-      console.log('Connected to WebSocket Server');
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        console.log("New Notification:", data);
-        addNotification(data);
-      } catch (err) {
-        console.error("Error parsing WebSocket message:", err);
+    const connectWebSocket = () => {
+      // Clean up any existing connection
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.close();
       }
+
+      const ws = new WebSocket(WS_URL);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        console.log('Connected to WebSocket Server');
+        reconnectAttempts.current = 0; // Reset on successful connection
+
+        // Send userId so server knows who this connection belongs to
+        ws.send(JSON.stringify({ type: 'register', userId: userData._id }));
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log("New Notification:", data);
+          addNotification(data);
+        } catch (err) {
+          console.error("Error parsing WebSocket message:", err);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket Error:', error);
+      };
+
+      ws.onclose = (event) => {
+        console.log('WebSocket closed:', event.code, event.reason);
+
+        // Reconnect with exponential backoff (max 30 seconds)
+        if (userData?._id) {
+          const timeout = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000);
+          console.log(`Reconnecting in ${timeout / 1000}s...`);
+
+          reconnectTimeoutRef.current = setTimeout(() => {
+            reconnectAttempts.current++;
+            connectWebSocket();
+          }, timeout);
+        }
+      };
     };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket Error:', error);
-    };
+    connectWebSocket();
 
     return () => {
-      if (ws.readyState === 1) { 
-          ws.close();
+      // Clear reconnect timeout
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      // Close WebSocket
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
       }
     };
-  }, [userData]); 
+  }, [userData?._id, addNotification]);
 
   useEffect(() => {
     const checkAuth = async () => {

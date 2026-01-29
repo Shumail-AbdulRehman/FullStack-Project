@@ -6,9 +6,9 @@ import { motion } from 'framer-motion';
 export default function NotificationList({
   notifications = [],
   onNotificationClick,
-  lastElementRef,      
-  isFetchingNextPage,  
-  hasNextPage,         
+  lastElementRef,
+  isFetchingNextPage,
+  hasNextPage,
   isLoading,
   isError
 }) {
@@ -46,7 +46,7 @@ export default function NotificationList({
   }
 
   return (
-    <div className="flex flex-col w-full"> 
+    <div className="flex flex-col w-full">
       {notifications.map((notification, idx) => {
         const username = notification.video?.owner?.username || 'Channel';
         const title = notification.video?.title || 'New video uploaded';
@@ -54,23 +54,23 @@ export default function NotificationList({
         const ownerId = notification.video?.owner?._id;
         const avatar = notification.video?.owner?.avatar;
         const thumbnail = notification.video?.thumbnail;
-        const createdAt = notification.createdAt; 
+        const createdAt = notification.video?.createdAt;
 
         return (
           <motion.div
-             // ...
-             key={notification._id || idx} 
-             initial={{ opacity: 0, x: -10 }}
-             animate={{ opacity: 1, x: 0 }}
-             transition={{ delay: idx * 0.05 }}
+            // ...
+            key={notification._id || idx}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: idx * 0.05 }}
           >
             <Link
               to={`/video/${videoId}/${ownerId}`}
               className="block"
               onClick={onNotificationClick}
             >
-             <div className="group flex gap-3 p-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
-               <div className="flex-shrink-0">
+              <div className="group flex gap-3 p-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                <div className="flex-shrink-0">
                   <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-800 ring-2 ring-transparent group-hover:ring-violet-500/30 transition-all">
                     {avatar ? (
                       <img src={avatar} alt={username} className="w-full h-full object-cover" />
@@ -100,7 +100,7 @@ export default function NotificationList({
                     <img src={thumbnail} alt="thumbnail" className="w-full h-full object-cover" />
                   </div>
                 )}
-             </div>
+              </div>
             </Link>
           </motion.div>
         );
@@ -109,9 +109,9 @@ export default function NotificationList({
       {hasNextPage && (
         <div ref={lastElementRef} className="w-full py-4 flex justify-center items-center">
           {isFetchingNextPage ? (
-             <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
           ) : (
-             <span className="text-xs text-zinc-600">Load more</span>
+            <span className="text-xs text-zinc-600">Load more</span>
           )}
         </div>
       )}
