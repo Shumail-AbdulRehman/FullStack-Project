@@ -18,6 +18,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function Login() {
   const navigate = useNavigate();
   const {
@@ -38,7 +40,7 @@ export default function Login() {
     setError(null);
     try {
       const res = await axios.post(
-        'http://localhost:8000/api/v1/users/login',
+        `${API_URL}/api/v1/users/login`,
         data,
         { withCredentials: true }
       );

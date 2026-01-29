@@ -30,6 +30,8 @@ import { useForm } from 'react-hook-form';
 import LoadingSpinner from '@/components/custom/LoadingSpinner';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function SettingsPage() {
   const queryClient = useQueryClient();
   const [userData, setUserData] = useState(null);
@@ -38,7 +40,7 @@ export default function SettingsPage() {
     queryKey: ['currentUser'],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/users/current-user`,
+        `${API_URL}/api/v1/users/current-user`,
         { withCredentials: true }
       );
       setUserData(res.data.data);
@@ -68,7 +70,7 @@ export default function SettingsPage() {
   const { mutate: updateFullname } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/users/update-fullname`,
+        `${API_URL}/api/v1/users/update-fullname`,
         data,
         { withCredentials: true }
       );
@@ -91,7 +93,7 @@ export default function SettingsPage() {
     mutationFn: async (data) => {
 
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/users/update-email`,
+        `${API_URL}/api/v1/users/update-email`,
         data,
         { withCredentials: true }
       );
@@ -114,7 +116,7 @@ export default function SettingsPage() {
     mutationFn: async (data) => {
 
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/users/update-username`,
+        `${API_URL}/api/v1/users/update-username`,
         data,
         { withCredentials: true }
       );
@@ -137,7 +139,7 @@ export default function SettingsPage() {
   const { mutate: changeUserPassword, isPending: passwordPending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/users/change-password`,
+        `${API_URL}/api/v1/users/change-password`,
         { oldPassword: data.old, newPassword: data.new },
         { withCredentials: true }
       );
@@ -163,7 +165,7 @@ export default function SettingsPage() {
   const { mutate: updateAvatar, isPending: avatarPending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/users/update-avatar`,
+        `${API_URL}/api/v1/users/update-avatar`,
         data,
         { withCredentials: true }
       );
@@ -189,7 +191,7 @@ export default function SettingsPage() {
   const { mutate: updateCoverImage, isPending: coverImagePending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/users/update-cover-image`,
+        `${API_URL}/api/v1/users/update-cover-image`,
         data,
         { withCredentials: true }
       );

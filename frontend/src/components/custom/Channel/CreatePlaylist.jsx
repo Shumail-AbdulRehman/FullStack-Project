@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
+
+const API_URL = import.meta.env.VITE_API_URL;
 import {
   Dialog,
   DialogContent,
@@ -52,7 +54,7 @@ function CreatePlaylist({ channelId, userVideos }) {
     try {
 
       const res = await axios.post(
-        `http://localhost:8000/api/v1/playlist/`,
+        `${API_URL}/api/v1/playlist/`,
         {
           name: data.playlistName,
           description: data.description,

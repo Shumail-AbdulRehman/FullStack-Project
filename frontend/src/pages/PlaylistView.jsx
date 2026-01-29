@@ -13,6 +13,8 @@ import VideosSuggestion from '@/components/custom/Video/VideosSuggestion';
 import PlaylistSidebar from '@/components/custom/Video/PlaylistSidebar';
 import LoadingSpinner from '@/components/custom/LoadingSpinner';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function PlaylistView() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -36,7 +38,7 @@ function PlaylistView() {
         queryKey: ['playlist', playlistId],
         queryFn: async () => {
             const playlistRes = await axios.get(
-                `http://localhost:8000/api/v1/playlist/${playlistId}`,
+                `${API_URL}/api/v1/playlist/${playlistId}`,
                 { withCredentials: true }
             );
             return playlistRes.data.data;
@@ -54,7 +56,7 @@ function PlaylistView() {
         queryKey: ['video', videoId, channelId],
         queryFn: async () => {
             const res = await axios.get(
-                `http://localhost:8000/api/v1/videos/${videoId}/${channelId}`,
+                `${API_URL}/api/v1/videos/${videoId}/${channelId}`,
                 { withCredentials: true }
             );
             return res.data.data;
@@ -67,7 +69,7 @@ function PlaylistView() {
         queryKey: ['comment', videoId],
         queryFn: async () => {
             const res = await axios.get(
-                `http://localhost:8000/api/v1/comments/${videoId}`,
+                `${API_URL}/api/v1/comments/${videoId}`,
                 { withCredentials: true }
             );
             return res.data.data.docs;
@@ -78,7 +80,7 @@ function PlaylistView() {
     const { mutate: toggleLike } = useMutation({
         mutationFn: async (commentId) => {
             const res = await axios.post(
-                `http://localhost:8000/api/v1/likes/toggle/c/${commentId}`,
+                `${API_URL}/api/v1/likes/toggle/c/${commentId}`,
                 {},
                 { withCredentials: true }
             );
@@ -90,7 +92,7 @@ function PlaylistView() {
     const { mutate: deleteUserComment } = useMutation({
         mutationFn: async (commentId) => {
             await axios.delete(
-                `http://localhost:8000/api/v1/comments/c/${commentId}`,
+                `${API_URL}/api/v1/comments/c/${commentId}`,
                 { withCredentials: true }
             );
         },
@@ -103,7 +105,7 @@ function PlaylistView() {
     const { mutate: updateUserComment } = useMutation({
         mutationFn: async ({ commentId, content }) => {
             await axios.patch(
-                `http://localhost:8000/api/v1/comments/c/${commentId}`,
+                `${API_URL}/api/v1/comments/c/${commentId}`,
                 { newContent: content },
                 { withCredentials: true }
             );
@@ -449,8 +451,8 @@ function PlaylistView() {
                         currentVideoIndex={currentIndex}
                         onVideoSelect={handleVideoSelect}
                     />
-                    <VideosSuggestion />
-                </motion.div>
+    <VideosSuggestion videoId={videoId} /> 
+                 </motion.div>
             </div>
         </div>
     );

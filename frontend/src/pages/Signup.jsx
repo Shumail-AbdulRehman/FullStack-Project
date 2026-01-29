@@ -18,6 +18,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Upload, Image as ImageIcon, Sparkles, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function SignUp() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -52,7 +54,7 @@ export default function SignUp() {
 
 
       const res = await axios.post(
-        'http://localhost:8000/api/v1/users/register',
+        `${API_URL}/api/v1/users/register`,
         formData
       );
 

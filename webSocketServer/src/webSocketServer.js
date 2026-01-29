@@ -11,20 +11,17 @@ console.log(`WebSocket server running on port ${PORT}`);
 const redisClient = createClient();
 await redisClient.connect();
 
-// Map userId -> Set of WebSocket connections (allows multiple tabs/devices)
 const onlineUsers = new Map();
 
-// Helper to add a connection for a user
 const addUserConnection = (userId, ws) => {
   if (!onlineUsers.has(userId)) {
     onlineUsers.set(userId, new Set());
   }
   onlineUsers.get(userId).add(ws);
-  ws.userId = userId; // Store userId on the socket for cleanup
+  ws.userId = userId;
   console.log(`User ${userId} connected. Active connections: ${onlineUsers.get(userId).size}`);
 };
 
-// Helper to remove a connection for a user
 const removeUserConnection = (ws) => {
   const userId = ws.userId;
   if (userId && onlineUsers.has(userId)) {
@@ -36,7 +33,6 @@ const removeUserConnection = (ws) => {
   }
 };
 
-// Heartbeat to detect dead connections
 const heartbeatInterval = setInterval(() => {
   wss.clients.forEach((ws) => {
     if (ws.isAlive === false) {
@@ -46,7 +42,7 @@ const heartbeatInterval = setInterval(() => {
     ws.isAlive = false;
     ws.ping();
   });
-}, 30000); // Every 30 seconds
+}, 30000);
 
 wss.on("close", () => {
   clearInterval(heartbeatInterval);
@@ -59,7 +55,6 @@ wss.on("connection", (ws, req) => {
     ws.isAlive = true;
   });
 
-  // Try cookie-based authentication first
   const rawCookie = req?.headers?.cookie || "";
   const parsedCookie = cookie.parse(rawCookie);
 
@@ -70,17 +65,14 @@ wss.on("connection", (ws, req) => {
       addUserConnection(userId, ws);
     } catch (error) {
       console.log("Cookie token verification failed:", error.message);
-      // Don't close - allow message-based registration as fallback
     }
   }
 
-  // Handle messages (for registration and potential future features)
   ws.on("message", (message) => {
     try {
       const data = JSON.parse(message.toString());
 
       if (data.type === "register" && data.userId) {
-        // Only register if not already authenticated via cookie
         if (!ws.userId) {
           addUserConnection(data.userId, ws);
         }
@@ -113,7 +105,6 @@ const sendNotification = (data) => {
       };
       const payload = JSON.stringify(notificationData);
 
-      // Send to all connections for this user (multiple tabs/devices)
       connections.forEach((ws) => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(payload);
@@ -147,7 +138,6 @@ process.on('SIGINT', async () => {
 
   clearInterval(heartbeatInterval);
 
-  // Close all connections gracefully
   wss.clients.forEach((ws) => {
     ws.close(1001, "Server shutting down");
   });

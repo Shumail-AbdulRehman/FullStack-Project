@@ -17,6 +17,8 @@ import SideBar from '@/components/custom/SideBar';
 import LoadingSpinner from '@/components/custom/LoadingSpinner';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Dashboard() {
   const userData = useSelector((state) => state.auth.userData);
   const queryClient = useQueryClient();
@@ -28,7 +30,7 @@ function Dashboard() {
     queryKey: ['DashboardData', userData?._id],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/dashboard/stats`,
+        `${API_URL}/api/v1/dashboard/stats`,
         { withCredentials: true }
       );
       return res.data.data;
@@ -38,7 +40,7 @@ function Dashboard() {
   const { mutate: toggelPublishVideo, isPending: publishVideoPending } = useMutation({
     mutationFn: async (id) => {
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/videos/toggle/publish/${id}`,
+        `${API_URL}/api/v1/videos/toggle/publish/${id}`,
         {},
         { withCredentials: true }
       );
@@ -53,7 +55,7 @@ function Dashboard() {
   const { mutate: deleteVideo, isPending: deleteVideoPending } = useMutation({
     mutationFn: async (id) => {
       const res = await axios.delete(
-        `http://localhost:8000/api/v1/videos/${id}/${userData?._id}`,
+        `${API_URL}/api/v1/videos/${id}/${userData?._id}`,
         { withCredentials: true }
       );
       return res.data.data;
@@ -82,7 +84,7 @@ function Dashboard() {
   const { mutate: updateVideo, isPending: updateVideoPending } = useMutation({
     mutationFn: async ({ formData, videoId }) => {
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/videos/${videoId}/${userData?._id}`,
+        `${API_URL}/api/v1/videos/${videoId}/${userData?._id}`,
         formData,
         { withCredentials: true }
       );

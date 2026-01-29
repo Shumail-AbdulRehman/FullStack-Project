@@ -9,6 +9,8 @@ import LoadingSpinner from '@/components/custom/LoadingSpinner';
 import { History, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function WatchHistory() {
   const userData = useSelector((state) => state.auth.userData);
   const queryClient = useQueryClient();
@@ -17,7 +19,7 @@ function WatchHistory() {
     queryKey: ['watchHistory', userData?._id],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/users/watch-history`,
+        `${API_URL}/api/v1/users/watch-history`,
         { withCredentials: true }
       );
       return res.data.data;
@@ -27,14 +29,14 @@ function WatchHistory() {
   const { mutate: clearHistory, isPending: clearHistoryPending } = useMutation({
     mutationFn: async () => {
       const res = await axios.delete(
-        `http://localhost:8000/api/v1/users/clear-watch-history`,
+        `${API_URL}/api/v1/users/clear-watch-history`,
         { withCredentials: true }
       );
       return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['watchHistory', userData?._id]);
-      queryClient.invalidateQueries(["recommended-videos",videoId]);
+      queryClient.invalidateQueries(["recommended-videos", videoId]);
     },
   });
 

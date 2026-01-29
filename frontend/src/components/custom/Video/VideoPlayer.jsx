@@ -3,6 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function VideoPlayer({ videoFile, thumbnail, videoId }) {
   const userData = useSelector((state) => state.auth.userData);
   const [hasCountedView, setHasCountedView] = useState(false);
@@ -12,7 +14,7 @@ function VideoPlayer({ videoFile, thumbnail, videoId }) {
   const { mutate: increaseViewCount } = useMutation({
     mutationFn: async () => {
       const res = await axios.patch(
-        `http://localhost:8000/api/v1/videos/incrementViewsCount/${videoId}`,
+        `${API_URL}/api/v1/videos/incrementViewsCount/${videoId}`,
         {},
         { withCredentials: true }
       );
@@ -35,7 +37,7 @@ function VideoPlayer({ videoFile, thumbnail, videoId }) {
   const { mutate: addToWatchHistory } = useMutation({
     mutationFn: async () => {
       const res = await axios.post(
-        `http://localhost:8000/api/v1/users/add-watch-history/${videoId}`,
+        `${API_URL}/api/v1/users/add-watch-history/${videoId}`,
         {},
         { withCredentials: true }
       );

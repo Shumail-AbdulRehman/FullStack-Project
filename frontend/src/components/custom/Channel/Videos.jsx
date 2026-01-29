@@ -18,6 +18,8 @@ import {
   Tag,
 } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const categories = [
   "programming",
   "fitness",
@@ -133,7 +135,7 @@ function Videos({ channelId }) {
     queryKey: ['channelVideos', channelId],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/videos/c/${channelId}`,
+        `${API_URL}/api/v1/videos/c/${channelId}`,
         { withCredentials: true }
       );
       return res.data.data;
@@ -142,7 +144,7 @@ function Videos({ channelId }) {
 
   const uploadToCloudinary = async (file, type) => {
     const { data } = await axios.get(
-      'http://localhost:8000/api/v1/videos/get-signature',
+      `${API_URL}/api/v1/videos/get-signature`,
       { withCredentials: true }
     );
     const formData = new FormData();
@@ -170,7 +172,7 @@ function Videos({ channelId }) {
       formData.append('description', d.description);
       formData.append('category', d.category);
 
-      await axios.post('http://localhost:8000/api/v1/videos/', formData, {
+      await axios.post(`${API_URL}/api/v1/videos/`, formData, {
         withCredentials: true,
       });
 

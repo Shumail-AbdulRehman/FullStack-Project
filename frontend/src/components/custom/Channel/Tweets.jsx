@@ -9,6 +9,8 @@ import LoadingSpinner from '../LoadingSpinner';
 import { motion } from 'framer-motion';
 import { MessageSquare } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Tweets({ channelId }) {
   const userData = useSelector((state) => state.auth.userData);
 
@@ -20,7 +22,7 @@ function Tweets({ channelId }) {
     queryKey: ['tweets', channelId],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/tweets/user/${channelId}`,
+        `${API_URL}/api/v1/tweets/user/${channelId}`,
         { withCredentials: true }
       );
 

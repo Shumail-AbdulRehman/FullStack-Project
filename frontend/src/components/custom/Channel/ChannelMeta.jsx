@@ -5,6 +5,8 @@ import axios from 'axios';
 import { Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function ChannelMeta({ channelId }) {
   const queryClient = useQueryClient();
 
@@ -12,7 +14,7 @@ function ChannelMeta({ channelId }) {
     queryKey: ['channelData', channelId],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/users/channel-profile/${channelId}`,
+        `${API_URL}/api/v1/users/channel-profile/${channelId}`,
         { withCredentials: true }
       );
       return res.data.data;
@@ -23,7 +25,7 @@ function ChannelMeta({ channelId }) {
   const { mutate: subscriptionMutate } = useMutation({
     mutationFn: async () => {
       const res = await axios.post(
-        `http://localhost:8000/api/v1/subscriptions/c/${channelId}`,
+        `${API_URL}/api/v1/subscriptions/c/${channelId}`,
         {},
         { withCredentials: true }
       );

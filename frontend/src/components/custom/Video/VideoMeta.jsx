@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import LoginPromptModal from '../LoginPromptModal';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function VideoMeta({
   isSubscribed,
   isLiked,
@@ -38,7 +40,7 @@ function VideoMeta({
     queryKey: ['subscriber', channelId],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/subscriptions/c/${channelId}`,
+        `${API_URL}/api/v1/subscriptions/c/${channelId}`,
         { withCredentials: true }
       );
       return res.data.data.length;
@@ -49,7 +51,7 @@ function VideoMeta({
     queryKey: ['likes', videoId],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/likes/v/${videoId}`,
+        `${API_URL}/api/v1/likes/v/${videoId}`,
         { withCredentials: true }
       );
       return res.data.data;
@@ -59,7 +61,7 @@ function VideoMeta({
   const { mutate: likeMutate } = useMutation({
     mutationFn: async () => {
       const res = await axios.post(
-        `http://localhost:8000/api/v1/likes/toggle/v/${videoId}`,
+        `${API_URL}/api/v1/likes/toggle/v/${videoId}`,
         {},
         { withCredentials: true }
       );
@@ -83,7 +85,7 @@ function VideoMeta({
   const { mutate: subscriberMutate } = useMutation({
     mutationFn: async () => {
       const res = await axios.post(
-        `http://localhost:8000/api/v1/subscriptions/c/${channelId}`,
+        `${API_URL}/api/v1/subscriptions/c/${channelId}`,
         {},
         { withCredentials: true }
       );

@@ -9,13 +9,15 @@ import LoadingSpinner from '@/components/custom/LoadingSpinner';
 import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function LikedVideos() {
   const userData = useSelector((state) => state.auth.userData);
 
   const { data: getUserLikedVideos, isPending: likeVideosPending } = useQuery({
     queryKey: ['likedVideos', userData?._id],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:8000/api/v1/likes/videos`, {
+      const res = await axios.get(`${API_URL}/api/v1/likes/videos`, {
         withCredentials: true,
       });
       return res.data.data;

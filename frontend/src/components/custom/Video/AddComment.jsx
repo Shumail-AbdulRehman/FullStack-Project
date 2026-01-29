@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import LoginPromptModal from '../LoginPromptModal';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function AddComment({ videoId }) {
   const { register, handleSubmit, reset, watch } = useForm();
   const [isFocused, setIsFocused] = useState(false);
@@ -23,7 +25,7 @@ function AddComment({ videoId }) {
   const { mutate, isPending } = useMutation({
     mutationFn: async (newComment) => {
       const res = await axios.post(
-        `http://localhost:8000/api/v1/comments/${videoId}`,
+        `${API_URL}/api/v1/comments/${videoId}`,
         { content: newComment },
         { withCredentials: true }
       );

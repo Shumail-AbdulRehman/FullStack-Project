@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function PostTweetCard({ channelId }) {
   const queryClient = useQueryClient();
   const userData = useSelector((state) => state.auth.userData);
@@ -17,7 +19,7 @@ function PostTweetCard({ channelId }) {
   const { mutate: tweetMutate, isPending } = useMutation({
     mutationFn: async (content) => {
       const res = await axios.post(
-        `http://localhost:8000/api/v1/tweets/${channelId}`,
+        `${API_URL}/api/v1/tweets/${channelId}`,
         { content },
         { withCredentials: true }
       );

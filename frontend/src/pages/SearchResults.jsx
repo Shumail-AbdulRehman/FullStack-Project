@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { Search, VideoOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function SearchResults() {
   const [videos, setVideos] = useState([]);
   const [params] = useSearchParams();
@@ -19,7 +21,7 @@ export default function SearchResults() {
     if (!q) return;
     setLoading(true);
     axios
-      .get(`http://localhost:8000/api/v1/videos/search?q=${q}`, {
+      .get(`${API_URL}/api/v1/videos/search?q=${q}`, {
         withCredentials: true,
       })
       .then((res) => {

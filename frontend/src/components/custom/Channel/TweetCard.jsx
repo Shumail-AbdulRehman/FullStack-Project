@@ -6,6 +6,8 @@ import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function timeAgo(date) {
   const now = new Date();
   const past = new Date(date);
@@ -43,7 +45,7 @@ function TweetCard({
   const likeTweet = async (tweetId) => {
     try {
       await axios.post(
-        `http://localhost:8000/api/v1/likes/toggle/t/${tweetId}`,
+        `${API_URL}/api/v1/likes/toggle/t/${tweetId}`,
         {},
         { withCredentials: true }
       );
@@ -56,7 +58,7 @@ function TweetCard({
 
   const deleteTweet = async (tweetId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/tweets/${tweetId}`, {
+      await axios.delete(`${API_URL}/api/v1/tweets/${tweetId}`, {
         withCredentials: true,
       });
       queryClient.invalidateQueries(['tweets', channelId]);

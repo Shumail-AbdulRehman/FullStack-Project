@@ -18,6 +18,8 @@ import LoadingSpinner from '../LoadingSpinner';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Playlist({ channelId }) {
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
@@ -30,7 +32,7 @@ function Playlist({ channelId }) {
     queryKey: ['userVidoes', userData?._id],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/videos/c/${userData?._id}`,
+        `${API_URL}/api/v1/videos/c/${userData?._id}`,
         { withCredentials: true }
       );
       return res.data.data;
@@ -42,7 +44,7 @@ function Playlist({ channelId }) {
     queryKey: ['playlists', channelId],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/api/v1/playlist/user/${channelId}`,
+        `${API_URL}/api/v1/playlist/user/${channelId}`,
         { withCredentials: true }
       );
       console.log("playlists are::", res.data.data);
@@ -57,7 +59,7 @@ function Playlist({ channelId }) {
     try {
 
       await axios.delete(
-        `http://localhost:8000/api/v1/playlist/${playlistToDelete._id}`,
+        `${API_URL}/api/v1/playlist/${playlistToDelete._id}`,
         { withCredentials: true }
       );
       queryClient.invalidateQueries(['playlists', userData?._id]);
