@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+
+  my-redis:
+    image: redis
+    container_name: my-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    image: shumail47891/fullstack:frontend-v1
+    container_name: frontend-fullstack
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+      - VITE_WS_URL=${VITE_WS_URL}
+
+  backend:
+    image: shumail47891/fullstack:backend-v1
+    container_name: backend-fullstack
+    ports:
+      - "8000:8000"
+    depends_on:
+      my-redis:
+        condition: service_healthy
+    environment:
+      - PORT=${PORT}
+      - MONGODB_URL=${MONGODB_URL}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - ACCESS_TOKEN_EXPIRY=${ACCESS_TOKEN_EXPIRY}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+      - REFRESH_TOKEN_EXPIRY=${REFRESH_TOKEN_EXPIRY}
+      - PRESENT_NAME=${PRESENT_NAME}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+
+  worker:
+    image: shumail47891/fullstack:worker-v1
+    container_name: worker-fullstack
+    depends_on:
+      my-redis:
+        condition: service_healthy
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+
+  webSocketServer:
+    image: shumail47891/fullstack:webSocket-v1
+    container_name: webSocket-fullstack
+    ports:
+      - "8080:8080"
+    depends_on:
+      my-redis:
+        condition: service_healthy
+    environment:
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - ACCESS_TOKEN_EXPIRY=${ACCESS_TOKEN_EXPIRY}
+      - WS_PORT=${WS_PORT}

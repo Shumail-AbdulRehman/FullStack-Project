@@ -1,6 +1,0 @@
-[33m4d1eafa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: rebase (abort): returning to refs/heads/main
-[33mb32f056[m HEAD@{1}: commit: improved ui
-[33m99637bc[m HEAD@{2}: pull origin main --rebase (start): checkout 99637bc71a5c75b668c5cb2f3d2fe9ec1a5f85a1
-[33m4d1eafa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{3}: Branch: renamed refs/heads/main to refs/heads/main
-[33m4d1eafa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{5}: Branch: renamed refs/heads/master to refs/heads/main
-[33m4d1eafa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{7}: commit (initial): impoved frontend UI

@@ -8,7 +8,13 @@ const PORT = process.env.WS_PORT || 8080;
 const wss = new WebSocketServer({ port: PORT });
 console.log(`WebSocket server running on port ${PORT}`);
 
-const redisClient = createClient();
+const redisClient = createClient({
+  socket: {
+    host: 'my-redis',
+    port: 6379
+  }
+});
+
 await redisClient.connect();
 
 const onlineUsers = new Map();

@@ -9,7 +9,14 @@ dotenv.config({ path: "./.env" });
 
 connectDb();
 
-const redisClient = createClient();
+
+const redisClient = createClient({
+  socket: {
+    host: 'my-redis',
+    port: 6379
+  }
+});
+
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 await redisClient.connect();
 

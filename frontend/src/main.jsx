@@ -7,7 +7,8 @@ import store from './store/store';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthLayout from './components/custom/AuthLayout';
-import LoadingSpinner from '@/components/custom/LoadingSpinner';
+
+import LoadingSpinner from './components/custom/LoadingSpinner';
 
 const NotFound = lazy(() => import('./pages/NotFound'));
 const VideoListing = lazy(() => import('./pages/VideoListing'));

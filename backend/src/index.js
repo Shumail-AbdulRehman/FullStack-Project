@@ -4,7 +4,13 @@ import app from "./app.js";
 import { createClient } from "redis";
 import { Video } from "./models/video.model.js";
 
-export const client = createClient();
+export const client = createClient({
+  socket: {
+    host: 'my-redis',
+    port: 6379
+  }
+});
+
 
 dotenv.config({
     path: "./.env",

@@ -1,4 +1,3 @@
-import { ZeroAddress } from "ethers";
 import mongoose, { Schema } from "mongoose";
 
 const playlistSchema = new Schema(
